@@ -63,6 +63,11 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.6.0</version> <!-- Reemplaza con la última versión si es necesario -->
+		</dependency>
 	</dependencies>
 
 	<build>
