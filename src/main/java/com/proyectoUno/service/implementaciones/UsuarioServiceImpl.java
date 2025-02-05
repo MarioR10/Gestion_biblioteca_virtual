@@ -7,6 +7,7 @@ import com.proyectoUno.service.interfaces.UsuarioService;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,14 +19,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private UsuarioRepository usuarioRepository;
 
-    private EntityManager entityManager;
+
 
     //Inyeccion de dependencias
     @Autowired
-    public  UsuarioServiceImpl(UsuarioRepository usuarioRepository, EntityManager entityManager){
+    public  UsuarioServiceImpl(UsuarioRepository usuarioRepository){
 
         this.usuarioRepository=usuarioRepository;
-        this.entityManager=entityManager;
+
 
     }
 
@@ -51,20 +52,27 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuario;
 
     }else {
-        throw  new RuntimeException("El usuasrio con id: "+ theid+ " no ha sido encontrado");
+        throw  new RuntimeException("El usuario con id: "+ theid+ " no ha sido encontrado");
     }
 
 
     }
 
     @Override
+    @Transactional
     public void eliminarUsuarioPorId(UUID theid) {
 
         usuarioRepository.deleteById(theid);
     }
 
     @Override
+    @Transactional
     public Usuario actualizarUsuario(Usuario usuario) {
+
+
+        // orElseThrow() verifica si el Optional tiene un valor:
+        // - Si el Optional tiene un valor (isPresent() es true), lo devuelve.
+        // - Si está vacío (isPresent() es false), lanza la excepción especificada.
 
         //Verificamos si el usuario existe
        Optional<Usuario> usuarioExistente = usuarioRepository.findById(usuario.getId());
@@ -83,11 +91,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    @Transactional
     public Usuario guardarUsuario(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
 
     @Override
+    @Transactional
     public Usuario cambiarRol(UUID theid, String nuevoRol) {
 
         //Encontramos el usuario
@@ -123,6 +133,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    @Transactional
     public Usuario cambiarEstadoUsuario(UUID theid,boolean estado) {
 
         //Encontramos el usuario

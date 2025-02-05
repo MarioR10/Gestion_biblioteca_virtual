@@ -6,6 +6,7 @@ import com.proyectoUno.service.interfaces.LibroService;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,13 +15,13 @@ import java.util.UUID;
 @Service
 public class LibroServiceImpl implements LibroService {
     private LibroRepository libroRepository;
-    private EntityManager entityManager;
+
 
     @Autowired
-    public LibroServiceImpl(LibroRepository libroRepository, EntityManager entityManager){
+    public LibroServiceImpl(LibroRepository libroRepository){
 
         this.libroRepository=libroRepository;
-        this.entityManager=entityManager;
+
     }
 
     @Override
@@ -52,12 +53,14 @@ public class LibroServiceImpl implements LibroService {
     }
 
     @Override
+    @Transactional
     public void eliminarLibroPorId(UUID theid) {
 
         libroRepository.deleteById(theid);
     }
 
     @Override
+    @Transactional
     public Libro actualizarLibro(Libro libro) {
 
         // Verificamos si el libro existe usando findById, que devuelve un Optional
@@ -74,6 +77,7 @@ public class LibroServiceImpl implements LibroService {
     }
 
     @Override
+    @Transactional
     public Libro guardarLibro(Libro libro) {
         return libroRepository.save(libro);
     }

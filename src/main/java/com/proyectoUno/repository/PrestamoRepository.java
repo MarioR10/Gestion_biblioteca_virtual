@@ -8,13 +8,14 @@ import java.util.UUID;
 
 public interface PrestamoRepository extends JpaRepository<Prestamo, UUID> {
 
-    //CONSULTAS SIGUIENDO CONVENCION DE SPRING DATA JPA (EN NOTION HAY MAS SOBRE ESTO)
 
-    //Consultar prestamos activos por usuario y estado
-    List<Prestamo> findByUsuarioIdAndEstado(UUID theid,String estado );
+    // Metodo para encontrar los préstamos activos por usuario
+    List<Prestamo> findPrestamoByUsuarioIdAndEstado(UUID theid, String estado);
 
-    //Historico de Prestamos
-    List<Prestamo> findByUsuarioId(UUID theid);
+    // Metodo para encontrar el histórico de préstamos de un usuario
+    List<Prestamo> findByUsuarioId(UUID usuarioId);
+
+    // Metodo para encontrar préstamos activos
+    List<Prestamo> findByEstado(String estado);
 }
-
 

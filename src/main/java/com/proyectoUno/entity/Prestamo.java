@@ -107,5 +107,17 @@ public class Prestamo {
 
 
     //toString
+
+    @Override
+    public String toString() {
+        return "Prestamo{" +
+                "id=" + id +
+                ", fechaPrestamo=" + fechaPrestamo +
+                ", fechaDevolucion=" + fechaDevolucion +
+                ", estado='" + estado + '\'' +
+                ", usuario=" + usuario +
+                ", libro=" + libro +
+                '}';
+    }
 }
 
