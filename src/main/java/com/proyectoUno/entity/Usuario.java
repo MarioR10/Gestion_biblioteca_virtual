@@ -21,7 +21,7 @@ public class Usuario {
     private UUID id;
 
     @Column(name ="nombre")
-    private String name;
+    private String nombre;
 
     @Column(name ="apellido")
     private String apellido;
@@ -38,6 +38,9 @@ public class Usuario {
     @Column(name= "fecha_registro", nullable = false,updatable = false)
     private LocalDateTime fechaRegistro;
 
+    @Column(name = "activo")
+    private boolean activo;
+
     //Campos que ayudan a la relacion bidireccional con la entidad Prestamos
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Prestamo> prestamo= new ArrayList<>();
@@ -47,8 +50,8 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String name, String apellido, String email, String contrasena, String rol, LocalDateTime fechaRegistro, UUID id) {
-        this.name = name;
+    public Usuario(String nombre, String apellido, String email, String contrasena, String rol, LocalDateTime fechaRegistro, UUID id) {
+        this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
         this.contrasena = contrasena;
@@ -62,11 +65,11 @@ public class Usuario {
 
 
     public String getName() {
-        return name;
+        return nombre;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getApellido() {
@@ -117,6 +120,22 @@ public class Usuario {
         this.id = id;
     }
 
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    public List<Prestamo> getPrestamo() {
+        return prestamo;
+    }
+
+    public void setPrestamo(List<Prestamo> prestamo) {
+        this.prestamo = prestamo;
+    }
+
     //Metodos de conveniencia
 
     public void agregarPrestamo( Prestamo tempPrestamo){
@@ -131,12 +150,14 @@ public class Usuario {
     public String toString() {
         return "Usuario{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
                 ", email='" + email + '\'' +
                 ", contrasena='" + contrasena + '\'' +
                 ", rol='" + rol + '\'' +
                 ", fechaRegistro=" + fechaRegistro +
+                ", activo=" + activo +
+                ", prestamo=" + prestamo +
                 '}';
     }
 }
