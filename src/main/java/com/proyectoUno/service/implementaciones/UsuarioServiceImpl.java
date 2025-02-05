@@ -1,5 +1,6 @@
 package com.proyectoUno.service.implementaciones;
 
+import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Usuario;
 import com.proyectoUno.repository.UsuarioRepository;
 import com.proyectoUno.service.interfaces.UsuarioService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,16 +31,30 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public List<Usuario> encontrarUsuarios() {
-        return usuarioRepository.findAll();
+
+        List<Usuario> usuarios= usuarioRepository.findAll();
+
+        if (usuarios.isEmpty()) {
+            throw new RuntimeException("Usuarios no encontrados con el estado");
+        } else {
+            return usuarios;
+        }
+
     }
 
     @Override
-    public Usuario encontrarUsuarioPorId(UUID theid) {
+    public Optional <Usuario>  encontrarUsuarioPorId(UUID theid) {
 
-    //nos devuelve un <Optional>, de esta forma devolvemos un valor si elOptional tiene o mandamos que no se encontro
+    Optional <Usuario> usuario= usuarioRepository.findById(theid);
 
-    return  usuarioRepository.findById(theid)
-            .orElseThrow(() -> new RuntimeException("No encontramos el usuario especificado"));
+    if(usuario.isPresent()){
+        return usuario;
+
+    }else {
+        throw  new RuntimeException("El usuasrio con id: "+ theid+ " no ha sido encontrado");
+    }
+
+
     }
 
     @Override
@@ -51,11 +67,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario actualizarUsuario(Usuario usuario) {
 
         //Verificamos si el usuario existe
-        if( !usuarioRepository.existsById(usuario.getId()))
-            throw new RuntimeException("Usuario con ID " + usuario.getId() + " no encontrado");
+       Optional<Usuario> usuarioExistente = usuarioRepository.findById(usuario.getId());
+
+        // Si el usuario no existe, lanzamos una excepción
+
+        usuarioExistente.orElseThrow(() ->
+                new RuntimeException("El usuario con ID: "+usuario.getId()+ " no ha sido encontrado")
+        );
+
 
         //guarda el usuario actualizado
         return usuarioRepository.save(usuario);
+
+
     }
 
     @Override
@@ -67,8 +91,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario cambiarRol(UUID theid, String nuevoRol) {
 
         //Encontramos el usuario
-       Usuario usuario = usuarioRepository.findById(theid)
-               .orElseThrow(() -> new RuntimeException("Usuario con ID " + theid + " no encontrado"));
+
+        Optional <Usuario> usuarioOptional= usuarioRepository.findById(theid);
+
+        Usuario usuario= null;
+
+        if(usuarioOptional.isPresent())
+
+            usuario= usuarioOptional.get();
+
+        else {
+           throw  new RuntimeException("Usuario con ID " + theid + " no encontrado");
+        }
+
 
         /*
          * Si el nuevo rol no es "admin" ni "usuario", lanza una excepción.
@@ -81,8 +116,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         //cambiar rol
-
-       usuario.setRol(nuevoRol);
+        usuario.setRol(nuevoRol);
 
        // guardamos los cambios
         return  usuarioRepository.save(usuario);
@@ -92,10 +126,23 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario cambiarEstadoUsuario(UUID theid,boolean estado) {
 
         //Encontramos el usuario
-        Usuario usuario = usuarioRepository.findById(theid)
-                .orElseThrow(() -> new RuntimeException("Usuario con ID " + theid + " no encontrado"));
 
+        Optional <Usuario> usuarioOptional= usuarioRepository.findById(theid);
+
+        Usuario usuario= null;
+
+        if(usuarioOptional.isPresent())
+
+            usuario= usuarioOptional.get();
+
+        else {
+            throw  new RuntimeException("Usuario con ID " + theid + " no encontrado");
+        }
+
+        //cambiar rol
         usuario.setActivo(estado);
+
+        //Guardamos
         return usuarioRepository.save(usuario);
     }
 

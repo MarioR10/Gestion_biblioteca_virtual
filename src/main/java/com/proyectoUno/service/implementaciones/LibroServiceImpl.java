@@ -26,7 +26,14 @@ public class LibroServiceImpl implements LibroService {
     @Override
     public List<Libro> encontrarLibros() {
 
-        return libroRepository.findAll();
+        List<Libro> libros=libroRepository.findAll();
+        //verificamos si fueron encontrados
+
+        if (libros.isEmpty()) {
+            throw new RuntimeException("No se encontraron Libros" );
+        }
+
+        return  libros;
     }
 
     @Override
