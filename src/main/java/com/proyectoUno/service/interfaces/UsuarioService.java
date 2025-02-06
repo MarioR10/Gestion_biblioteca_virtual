@@ -10,7 +10,7 @@ public interface UsuarioService {
 
     //CRUD para Usuario
      List<Usuario> encontrarUsuarios ();
-     Optional<Usuario> encontrarUsuarioPorId (UUID theid);
+     Usuario encontrarUsuarioPorId (UUID theid);
      void eliminarUsuarioPorId (UUID theid);
      Usuario actualizarUsuario(Usuario usuario);
      Usuario guardarUsuario(Usuario usuario);

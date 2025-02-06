@@ -11,7 +11,7 @@ public interface LibroService {
 
     //CRUD para Libro
     List<Libro> encontrarLibros ();
-    Optional<Libro> encontrarLibroPorId (UUID theid);
+    Libro encontrarLibroPorId (UUID theid);
     void eliminarLibroPorId (UUID theid);
     Libro actualizarLibro(Libro libro);
     Libro guardarLibro(Libro libro);
@@ -22,7 +22,7 @@ public interface LibroService {
 
     List<Libro> encontrarLibroPorAutor(String autor);
 
-    Optional<Libro> encontrarLibroPorIsbn(String isbn);
+    Libro encontrarLibroPorIsbn(String isbn);
 
     List<Libro> encontrarLibroPorCategoria(String categoria);
 

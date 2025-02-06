@@ -1,9 +1,11 @@
 package com.proyectoUno.service.implementaciones;
 
 import com.proyectoUno.entity.Libro;
+import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.repository.LibroRepository;
 import com.proyectoUno.service.interfaces.LibroService;
 import jakarta.persistence.EntityManager;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 @Service
 public class LibroServiceImpl implements LibroService {
+
+    private static final Logger log = (Logger) LoggerFactory.getLogger(LibroService.class);
     private LibroRepository libroRepository;
 
 
@@ -27,27 +32,26 @@ public class LibroServiceImpl implements LibroService {
     @Override
     public List<Libro> encontrarLibros() {
 
+        //Obtener la lista de libros
         List<Libro> libros=libroRepository.findAll();
-        //verificamos si fueron encontrados
+
+        //Verificar que la lista no este vacia
         if (libros.isEmpty()) {
-            throw new RuntimeException("No se encontraron Libros" );
+
+            //Si esta vacia mandamos mandamos mensaje
+            log.info("No hay libros disponibles en este momento");  // Mensaje de advertencia
         }
 
+        //retonrmaos la lista
         return  libros;
     }
 
     @Override
-    public Optional <Libro>  encontrarLibroPorId(UUID theid) {
+    public Libro  encontrarLibroPorId(UUID theid) {
 
-        Optional<Libro> libro=libroRepository.findById(theid);
-
-        if(libro.isPresent()){
-
-            return libro;
-        } else{
-            throw  new RuntimeException("El libro con ID"+ theid+ " no ha sido encontrado");
-
-        }
+        //Verificamos que se encuentre la entidad dentro del Optional, si no esta tiramos excepcion
+        return libroRepository.findById(theid)
+                .orElseThrow(() -> new EntidadNoEncontradaException("El libro con ID " + theid + " no ha sido encontrado"));
 
     }
 
@@ -62,17 +66,21 @@ public class LibroServiceImpl implements LibroService {
     @Transactional
     public Libro actualizarLibro(Libro libro) {
 
-        // Verificamos si el libro existe usando findById, que devuelve un Optional
-        Optional<Libro> libroExistente = libroRepository.findById(libro.getId());
+        //Encontramos el libro (es decir verificamos que exista algo para actualizar)
 
-        // Si el libro no existe, lanzamos una excepción
-        libroExistente.orElseThrow(() ->
-                new RuntimeException("El libro con ID " + libro.getId() + " no ha sido encontrado")
-        );
+        Libro libroEncontrado= libroRepository.findById(libro.getId())
+                .orElseThrow(()-> new EntidadNoEncontradaException("El libro con ID " + libro.getId() + " no ha sido encontrado"));
 
-        //guarda el usuario actualizado
+        //Si si fue encontrado (existe) actualizamos los campos
 
-        return libroRepository.save(libro);
+        libroEncontrado.setTitulo(libro.getTitulo());
+        libroEncontrado.setAutor(libro.getAutor());
+        libroEncontrado.setCategoria(libro.getCategoria());
+        libroEncontrado.setAnioDePublicacion(libro.getAnioDePublicacion());
+
+
+        //Gaurdamos el libro actualizado
+        return libroEncontrado; // JPA actualizará automáticamente los cambios, No es necesario save()
     }
 
     @Override
@@ -90,9 +98,8 @@ public class LibroServiceImpl implements LibroService {
         //verificamos si fueron encontrados
 
         if (libros.isEmpty()) {
-            throw new RuntimeException("Libros no encontrados con el título: " + titulo);
+            throw new EntidadNoEncontradaException("Libros no encontrados con el título: " + titulo);
         }
-
 
         return libros;
     }
@@ -105,27 +112,19 @@ public class LibroServiceImpl implements LibroService {
         //verificamos si fueron encontrados
 
         if (libros.isEmpty()) {
-            throw new RuntimeException("Libros no encontrados con el autor: " + autor);
+            throw new EntidadNoEncontradaException("Libros no encontrados con el autor: " + autor);
         }
-        else {
+
             return libros;
 
-        }
     }
 
     @Override
-    public  Optional<Libro> encontrarLibroPorIsbn(String isbn) {
+    public  Libro encontrarLibroPorIsbn(String isbn) {
 
-        Optional<Libro> libro = libroRepository.findLibroByIsbn(isbn);
+       return  libroRepository.findLibroByIsbn(isbn)
+                .orElseThrow(()-> new EntidadNoEncontradaException("El libro con Isbn " + isbn + " no ha sido encontrado"));
 
-        if( libro.isPresent()){
-
-            return libro;
-
-        }else {
-
-            throw  new RuntimeException("El libro con isbn"+ isbn+ " no ha sido encontrado");
-        }
 
     }
 

@@ -10,6 +10,7 @@ public interface PrestamoService {
     // Crear prestamo
     Prestamo crearPrestamo(UUID usuarioId, UUID libroId);
 
+
     //Consultar prestamos activos por ususario
     List<Prestamo> encontrarPrestamosActivosPorUsuarios(UUID usuarioId);
 

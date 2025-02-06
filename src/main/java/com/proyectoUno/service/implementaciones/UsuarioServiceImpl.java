@@ -2,6 +2,7 @@ package com.proyectoUno.service.implementaciones;
 
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Usuario;
+import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.repository.UsuarioRepository;
 import com.proyectoUno.service.interfaces.UsuarioService;
 import jakarta.persistence.EntityManager;
@@ -26,8 +27,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     public  UsuarioServiceImpl(UsuarioRepository usuarioRepository){
 
         this.usuarioRepository=usuarioRepository;
-
-
     }
 
     @Override
@@ -44,17 +43,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Optional <Usuario>  encontrarUsuarioPorId(UUID theid) {
+    public Usuario  encontrarUsuarioPorId(UUID theid) {
 
-    Optional <Usuario> usuario= usuarioRepository.findById(theid);
-
-    if(usuario.isPresent()){
-        return usuario;
-
-    }else {
-        throw  new RuntimeException("El usuario con id: "+ theid+ " no ha sido encontrado");
-    }
-
+        //Verificamos que se encuentre la entidad dentro del Optional, si no esta tiramos excepcion
+    return  usuarioRepository.findById(theid)
+            .orElseThrow(()-> new EntidadNoEncontradaException("El Usuario con ID: "+theid+ " no ha sido encontrado"));
 
     }
 
@@ -69,23 +62,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public Usuario actualizarUsuario(Usuario usuario) {
 
+        //Encontramos el Usuario a actualizar
 
-        // orElseThrow() verifica si el Optional tiene un valor:
-        // - Si el Optional tiene un valor (isPresent() es true), lo devuelve.
-        // - Si está vacío (isPresent() es false), lanza la excepción especificada.
+        Usuario usuarioEncontrado = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new EntidadNoEncontradaException("El usuario con ID: " +usuario.getId()+ " no ha sido encontrado"));
 
-        //Verificamos si el usuario existe
-       Optional<Usuario> usuarioExistente = usuarioRepository.findById(usuario.getId());
-
-        // Si el usuario no existe, lanzamos una excepción
-
-        usuarioExistente.orElseThrow(() ->
-                new RuntimeException("El usuario con ID: "+usuario.getId()+ " no ha sido encontrado")
-        );
-
+        //Actualizamos el Usuario
+        usuarioEncontrado.setRol(usuario.getRol());
+        usuarioEncontrado.setActivo(usuario.getActivo());
+        usuarioEncontrado.setEmail(usuario.getEmail());
 
         //guarda el usuario actualizado
-        return usuarioRepository.save(usuario);
+        return usuarioEncontrado; // JPA actualizará automáticamente por @Transactional
 
 
     }
@@ -102,34 +90,18 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         //Encontramos el usuario
 
-        Optional <Usuario> usuarioOptional= usuarioRepository.findById(theid);
-
-        Usuario usuario= null;
-
-        if(usuarioOptional.isPresent())
-
-            usuario= usuarioOptional.get();
-
-        else {
-           throw  new RuntimeException("Usuario con ID " + theid + " no encontrado");
-        }
-
-
-        /*
-         * Si el nuevo rol no es "admin" ni "usuario", lanza una excepción.
-         * Esto se logra mediante dos condiciones que verifican si el rol es diferente de "admin"
-         * y diferente de "usuario". Si ambas son verdaderas, la excepción se lanza.
-         */
+        Usuario usuario = usuarioRepository.findById(theid)
+                .orElseThrow(()-> new EntidadNoEncontradaException("El usuario con ID: "+ theid+ " no ha sido encontrado"));
 
         if(!nuevoRol.equals("admin") && !nuevoRol.equals("usuario")){
             throw new RuntimeException("Rol no válido: " + nuevoRol);
         }
 
-        //cambiar rol
+        //Actualizamos el rol al usuario
         usuario.setRol(nuevoRol);
 
        // guardamos los cambios
-        return  usuarioRepository.save(usuario);
+        return  usuario; // JPA actualizará automáticamente por @Transactional
     }
 
     @Override
@@ -138,23 +110,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         //Encontramos el usuario
 
-        Optional <Usuario> usuarioOptional= usuarioRepository.findById(theid);
+        Usuario usuario = usuarioRepository.findById(theid)
+                .orElseThrow(()-> new EntidadNoEncontradaException("El usuario con ID: "+ theid+ " no ha sido encontrado"));
 
-        Usuario usuario= null;
 
-        if(usuarioOptional.isPresent())
-
-            usuario= usuarioOptional.get();
-
-        else {
-            throw  new RuntimeException("Usuario con ID " + theid + " no encontrado");
-        }
-
-        //cambiar rol
+        //Actualizamos el rol del usuario
         usuario.setActivo(estado);
 
         //Guardamos
-        return usuarioRepository.save(usuario);
+        return usuario; // JPA actualizará automáticamente por @Transactional
     }
 
 }

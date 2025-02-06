@@ -50,7 +50,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nombre, String apellido, String email, String contrasena, String rol, LocalDateTime fechaRegistro, UUID id) {
+    public Usuario(String nombre, String apellido, String email, String contrasena, String rol, LocalDateTime fechaRegistro, UUID id, boolean activo) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
@@ -58,17 +58,18 @@ public class Usuario {
         this.rol = rol;
         this.fechaRegistro = fechaRegistro;
         this.id = id;
+        this.activo=activo;
     }
 
 
     //Metodos getters and setters
 
 
-    public String getName() {
+    public String getNombre() {
         return nombre;
     }
 
-    public void setName(String nombre) {
+    public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
@@ -120,7 +121,7 @@ public class Usuario {
         this.id = id;
     }
 
-    public boolean isActivo() {
+    public boolean getActivo() {
         return activo;
     }
 
@@ -135,6 +136,8 @@ public class Usuario {
     public void setPrestamo(List<Prestamo> prestamo) {
         this.prestamo = prestamo;
     }
+
+
 
     //Metodos de conveniencia
 

@@ -3,6 +3,7 @@ package com.proyectoUno.service.implementaciones;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Prestamo;
 import com.proyectoUno.entity.Usuario;
+import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.repository.LibroRepository;
 import com.proyectoUno.repository.PrestamoRepository;
 import com.proyectoUno.repository.UsuarioRepository;
@@ -38,15 +39,16 @@ public class PrestamoServiceImpl implements PrestamoService {
         this.libroRepository = libroRepository;
     }
 
+
     @Override
     @Transactional
     public Prestamo crearPrestamo(UUID usuarioId, UUID libroId) {
 
         //Verificamos el  Usuario existe
-        Usuario usuario = usuarioService.encontrarUsuarioPorId(usuarioId).get();
+        Usuario usuario = usuarioService.encontrarUsuarioPorId(usuarioId);
 
         //Verificamos el  Libro existe
-        Libro libro = libroService.encontrarLibroPorId(libroId).get();
+        Libro libro = libroService.encontrarLibroPorId(libroId);
 
         //verificar si esta disponible
         if( !libro.getEstado().equals("disponible")) {
@@ -61,7 +63,7 @@ public class PrestamoServiceImpl implements PrestamoService {
         prestamo.setFechaDevolucion(LocalDateTime.now().plusDays(15));
 
 
-        return prestamoRepository.save(prestamo);
+        return prestamo; // JPA actualizará automáticamente por @Transactional
     }
 
     @Override
@@ -75,18 +77,17 @@ public class PrestamoServiceImpl implements PrestamoService {
     public void registrarDevoluvion(UUID prestamoId) {
 
         //Verificamos si el prestamo existe
-        Prestamo prestamo = prestamoRepository.findById(prestamoId).get();
+        Prestamo prestamo = prestamoRepository.findById(prestamoId)
+                .orElseThrow(()-> new EntidadNoEncontradaException("El prestamos con ID: "+prestamoId+ " no ha sido encontrado"));
 
-        //Actualizar
+        //Actualizamos el estado del prestamo
         prestamo.setEstado("devuelto");
 
         // Actualizar el estado del libro a "disponible"
         Libro libro = prestamo.getLibro();
         libro.setEstado("disponible");
-        libroService.actualizarLibro(libro);
 
-        // Guardar los cambios
-        prestamoRepository.save(prestamo);
+
     }
 
     @Override
