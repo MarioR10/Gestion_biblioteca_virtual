@@ -22,6 +22,7 @@ import java.util.UUID;
 @Service
 public class PrestamoServiceImpl implements PrestamoService {
 
+    private final LibroRepository libroRepository;
     private PrestamoRepository prestamoRepository;
     private UsuarioService usuarioService;
     private LibroService libroService;
@@ -29,12 +30,12 @@ public class PrestamoServiceImpl implements PrestamoService {
 
 
     @Autowired
-    public  PrestamoServiceImpl(UsuarioService usuarioService, LibroService libroService, PrestamoRepository prestamoRepository){
+    public  PrestamoServiceImpl(UsuarioService usuarioService, LibroService libroService, PrestamoRepository prestamoRepository, LibroRepository libroRepository){
 
         this.prestamoRepository=prestamoRepository;
         this.usuarioService=usuarioService;
         this.libroService=libroService;
-
+        this.libroRepository = libroRepository;
     }
 
     @Override
@@ -42,37 +43,25 @@ public class PrestamoServiceImpl implements PrestamoService {
     public Prestamo crearPrestamo(UUID usuarioId, UUID libroId) {
 
         //Verificamos el  Usuario existe
-
         Usuario usuario = usuarioService.encontrarUsuarioPorId(usuarioId).get();
 
         //Verificamos el  Libro existe
-
         Libro libro = libroService.encontrarLibroPorId(libroId).get();
 
-
         //verificar si esta disponible
-
         if( !libro.getEstado().equals("disponible")) {
 
             throw new RuntimeException("El libro con ID: " + libroId + " no está disponible");
 
         }
 
-        // Si el libro está disponible, creamos el préstamo
-
         Prestamo prestamo = new Prestamo();
         prestamo.setUsuario(usuario);
         prestamo.setLibro(libro);
-        prestamo.setEstado("ACTIVO");
-        prestamo.setFechaDevolucion(LocalDateTime.now().plusDays(14)); // 14 días de préstamo
+        prestamo.setFechaDevolucion(LocalDateTime.now().plusDays(15));
 
-        // Actualizar estado del libro
-        libro.setEstado("PRESTADO");
-        libro.setCantidadDisponible(libro.getCantidadDisponible() - 1);
-        libroService.actualizarLibro(libro);
 
         return prestamoRepository.save(prestamo);
-
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.proyectoUno.repository;
 
 import com.proyectoUno.entity.Prestamo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,4 +19,3 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, UUID> {
     // Metodo para encontrar préstamos activos
     List<Prestamo> findByEstado(String estado);
 }
-

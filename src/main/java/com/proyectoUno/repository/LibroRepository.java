@@ -30,5 +30,5 @@ public interface LibroRepository  extends JpaRepository<Libro, UUID> {
     // Encontrar por estado
     List<Libro> findByEstado(String estado);
 
-
+   
 }

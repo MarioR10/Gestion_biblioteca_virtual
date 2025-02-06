@@ -34,9 +34,6 @@ public class Libro {
     @Column(name = "anio_de_publicacion")
     private Integer AnioDePublicacion;
 
-    @Column(name = "cantidad_disponible")
-    private Integer cantidadDisponible;
-
     @Column(name = "estado")
     private String estado;
 
@@ -49,14 +46,13 @@ public class Libro {
     public Libro() {
     }
 
-    public Libro(UUID id, String titulo, String isbn, String autor, String categoria, Integer anioDePublicacion, Integer cantidadDisponible, String estado) {
+    public Libro(UUID id, String titulo, String isbn, String autor, String categoria, Integer anioDePublicacion, String estado) {
         this.id = id;
         this.titulo = titulo;
         this.isbn = isbn;
         this.autor = autor;
         this.categoria = categoria;
-        AnioDePublicacion = anioDePublicacion;
-        this.cantidadDisponible = cantidadDisponible;
+        this.AnioDePublicacion = anioDePublicacion;
         this.estado = estado;
     }
 
@@ -111,13 +107,6 @@ public class Libro {
         AnioDePublicacion = anioDePublicacion;
     }
 
-    public Integer getCantidadDisponible() {
-        return cantidadDisponible;
-    }
-
-    public void setCantidadDisponible(Integer cantidadDisponible) {
-        this.cantidadDisponible = cantidadDisponible;
-    }
 
     public String getEstado() {
         return estado;
@@ -151,7 +140,6 @@ public class Libro {
                 ", isbn='" + isbn + '\'' +
                 ", categoria='" + categoria + '\'' +
                 ", AnioDePublicacion=" + AnioDePublicacion +
-                ", cantidadDisponible=" + cantidadDisponible +
                 ", estado='" + estado + '\'' +
                 '}';
     }

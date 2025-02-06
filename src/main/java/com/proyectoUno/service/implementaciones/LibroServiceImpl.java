@@ -29,7 +29,6 @@ public class LibroServiceImpl implements LibroService {
 
         List<Libro> libros=libroRepository.findAll();
         //verificamos si fueron encontrados
-
         if (libros.isEmpty()) {
             throw new RuntimeException("No se encontraron Libros" );
         }
@@ -155,7 +154,6 @@ public class LibroServiceImpl implements LibroService {
             throw new RuntimeException("Libros no encontrados con el estado: " + estado);
         } else {
             return libros;
-
 
         }
     }
