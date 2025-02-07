@@ -1,32 +1,32 @@
 package com.proyectoUno.service.interfaces;
 
-import com.proyectoUno.entity.Libro;
-import com.proyectoUno.entity.Usuario;
+import com.proyectoUno.dto.reponse.LibroResponseDTO;
+import com.proyectoUno.dto.request.LibroActualizarRequestDTO;
+import com.proyectoUno.dto.request.LibroCrearRequestDTO;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface LibroService {
 
     //CRUD para Libro
-    List<Libro> encontrarLibros ();
-    Libro encontrarLibroPorId (UUID theid);
+    List<LibroResponseDTO> encontrarLibros ();
+    LibroResponseDTO encontrarLibroPorId (UUID theid);
     void eliminarLibroPorId (UUID theid);
-    Libro actualizarLibro(Libro libro);
-    Libro guardarLibro(Libro libro);
+    LibroResponseDTO actualizarLibro(LibroActualizarRequestDTO libroActualizar);
+    void guardarLibro(LibroCrearRequestDTO libroCrearRequestDTO);
 
     //metodos adicionales
 
-    List<Libro> encontrarLibroPorTitulo(String titulo);
+    List<LibroResponseDTO> encontrarLibroPorTitulo(String titulo);
 
-    List<Libro> encontrarLibroPorAutor(String autor);
+    List<LibroResponseDTO> encontrarLibroPorAutor(String autor);
 
-    Libro encontrarLibroPorIsbn(String isbn);
+    LibroResponseDTO encontrarLibroPorIsbn(String isbn);
 
-    List<Libro> encontrarLibroPorCategoria(String categoria);
+    List<LibroResponseDTO> encontrarLibroPorCategoria(String categoria);
 
-    List<Libro> encontrarLibroPorEstado(String estado);
+    List<LibroResponseDTO> encontrarLibroPorEstado(String estado);
 
 
 

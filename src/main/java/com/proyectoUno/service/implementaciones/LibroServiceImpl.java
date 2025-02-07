@@ -1,17 +1,20 @@
 package com.proyectoUno.service.implementaciones;
 
+import com.proyectoUno.dto.reponse.LibroResponseDTO;
+import com.proyectoUno.dto.request.LibroActualizarRequestDTO;
+import com.proyectoUno.dto.request.LibroCrearRequestDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.exception.EntidadNoEncontradaException;
+import com.proyectoUno.maper.LibroRequestMapper;
+import com.proyectoUno.maper.LibroResponseMapper;
 import com.proyectoUno.repository.LibroRepository;
 import com.proyectoUno.service.interfaces.LibroService;
-import jakarta.persistence.EntityManager;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -19,18 +22,23 @@ import java.util.logging.Logger;
 public class LibroServiceImpl implements LibroService {
 
     private static final Logger log = (Logger) LoggerFactory.getLogger(LibroService.class);
-    private LibroRepository libroRepository;
+    private final LibroResponseMapper libroResponseMapper;
+    private final LibroRequestMapper libroRequestMapper;
+    private final LibroRepository libroRepository;
+
+
 
 
     @Autowired
-    public LibroServiceImpl(LibroRepository libroRepository){
+    public LibroServiceImpl(LibroRepository libroRepository, LibroResponseMapper libroResponseMapper, LibroRequestMapper libroRequestMapper){
 
         this.libroRepository=libroRepository;
-
+        this.libroResponseMapper = libroResponseMapper;
+        this.libroRequestMapper = libroRequestMapper;
     }
 
     @Override
-    public List<Libro> encontrarLibros() {
+    public List<LibroResponseDTO> encontrarLibros() {
 
         //Obtener la lista de libros
         List<Libro> libros=libroRepository.findAll();
@@ -42,17 +50,20 @@ public class LibroServiceImpl implements LibroService {
             log.info("No hay libros disponibles en este momento");  // Mensaje de advertencia
         }
 
-        //retonrmaos la lista
-        return  libros;
+        //Convertimos lista Libros a DTO
+        return  libroResponseMapper.convertirAListaResponseDTO(libros);
     }
 
     @Override
-    public Libro  encontrarLibroPorId(UUID theid) {
+    public LibroResponseDTO  encontrarLibroPorId(UUID theid) {
 
         //Verificamos que se encuentre la entidad dentro del Optional, si no esta tiramos excepcion
-        return libroRepository.findById(theid)
+        Libro libro = libroRepository.findById(theid)
                 .orElseThrow(() -> new EntidadNoEncontradaException("El libro con ID " + theid + " no ha sido encontrado"));
 
+
+        //Convertimos Libro a DTO
+        return libroResponseMapper.convertirAResponseDTO(libro);
     }
 
     @Override
@@ -64,49 +75,47 @@ public class LibroServiceImpl implements LibroService {
 
     @Override
     @Transactional
-    public Libro actualizarLibro(Libro libro) {
+    public LibroResponseDTO actualizarLibro(LibroActualizarRequestDTO actualizarLibroRequestDTO) {
 
         //Encontramos el libro (es decir verificamos que exista algo para actualizar)
 
-        Libro libroEncontrado= libroRepository.findById(libro.getId())
-                .orElseThrow(()-> new EntidadNoEncontradaException("El libro con ID " + libro.getId() + " no ha sido encontrado"));
+        Libro libroEncontrado= libroRepository.findById(actualizarLibroRequestDTO.getId())
+                .orElseThrow(()-> new EntidadNoEncontradaException("El libro con ID " + actualizarLibroRequestDTO.getId() + " no ha sido encontrado"));
 
-        //Si si fue encontrado (existe) actualizamos los campos
+        //Asignamos nuevos valores y actualizamos con los datos del DTO
+        Libro libroActualizado= libroRequestMapper.actualizarEntidadDesdeDTO(actualizarLibroRequestDTO, libroEncontrado);
 
-        libroEncontrado.setTitulo(libro.getTitulo());
-        libroEncontrado.setAutor(libro.getAutor());
-        libroEncontrado.setCategoria(libro.getCategoria());
-        libroEncontrado.setAnioDePublicacion(libro.getAnioDePublicacion());
-
-
-        //Gaurdamos el libro actualizado
-        return libroEncontrado; // JPA actualizará automáticamente los cambios, No es necesario save()
+        //Convertimos entidad a DTO y retonamos respuesta
+        return libroResponseMapper.convertirAResponseDTO(libroActualizado);
     }
 
     @Override
     @Transactional
-    public Libro guardarLibro(Libro libro) {
-        return libroRepository.save(libro);
+    public void guardarLibro(LibroCrearRequestDTO libroCrearRequestDTO) {
+        Libro libro= libroRequestMapper.crearEntidadDesdeDTO(libroCrearRequestDTO);
+         libroRepository.save(libro);
     }
 
     @Override
-    public List<Libro> encontrarLibroPorTitulo(String titulo) {
+    public List<LibroResponseDTO> encontrarLibroPorTitulo(String titulo) {
 
-
+        //Lista de Entidad Libro
         List <Libro>  libros = libroRepository.findLibroByTituloContaining(titulo);
 
-        //verificamos si fueron encontrados
+        //verificamos si la lista esta vacia
 
         if (libros.isEmpty()) {
             throw new EntidadNoEncontradaException("Libros no encontrados con el título: " + titulo);
         }
+        //Convertimos a lista de tipo LibroResponseDTO
 
-        return libros;
+        return libroResponseMapper.convertirAListaResponseDTO(libros);
     }
 
     @Override
-    public List<Libro> encontrarLibroPorAutor(String autor) {
+    public List<LibroResponseDTO> encontrarLibroPorAutor(String autor) {
 
+        //Lista de Entidad Libro
         List <Libro> libros = libroRepository.findAllByAutorContaining(autor);
 
         //verificamos si fueron encontrados
@@ -115,46 +124,51 @@ public class LibroServiceImpl implements LibroService {
             throw new EntidadNoEncontradaException("Libros no encontrados con el autor: " + autor);
         }
 
-            return libros;
+            //Convertimos a lista de tipo LibroResponseDTO
+            return libroResponseMapper.convertirAListaResponseDTO(libros);
 
     }
 
     @Override
-    public  Libro encontrarLibroPorIsbn(String isbn) {
+    public  LibroResponseDTO encontrarLibroPorIsbn(String isbn) {
 
-       return  libroRepository.findLibroByIsbn(isbn)
+        //Encuentra el libro (Entidad)
+
+        Libro libro = libroRepository.findLibroByIsbn(isbn)
                 .orElseThrow(()-> new EntidadNoEncontradaException("El libro con Isbn " + isbn + " no ha sido encontrado"));
 
+        //Convierte a DTO
+        return libroResponseMapper.convertirAResponseDTO(libro);
 
     }
 
 
     @Override
-    public List<Libro> encontrarLibroPorCategoria(String categoria) {
+    public List<LibroResponseDTO> encontrarLibroPorCategoria(String categoria) {
 
+        //Encuentra  lista de libros (Entidad)
         List <Libro> libros = libroRepository.findLibroByCategoriaContaining(categoria);
 
         if (libros.isEmpty()) {
             throw new RuntimeException("Libros no encontrados con la categoria: " + categoria);
         }
-        else {
-            return libros;
 
-        }
+        //Convierte Lista Libro a Lista DTO
+        return libroResponseMapper.convertirAListaResponseDTO(libros);
 
     }
 
     @Override
-    public List<Libro> encontrarLibroPorEstado(String estado) {
+    public List<LibroResponseDTO> encontrarLibroPorEstado(String estado) {
 
+        //Encuentra  lista de libros (Entidad)
         List<Libro> libros = libroRepository.findByEstado(estado);
 
         if (libros.isEmpty()) {
             throw new RuntimeException("Libros no encontrados con el estado: " + estado);
-        } else {
-            return libros;
-
         }
+
+        return libroResponseMapper.convertirAListaResponseDTO(libros);
     }
 
 
