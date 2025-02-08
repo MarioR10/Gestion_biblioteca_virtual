@@ -1,4 +1,4 @@
-package com.proyectoUno.maper;
+package com.proyectoUno.maper.libro;
 
 import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
 import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
@@ -39,20 +39,35 @@ public class LibroRequestMapper {
 
     // Metodo para convertir un DTO request  en una entidad (para creación)
 
-    public Libro crearEntidadDesdeDTO (LibroCrearRequestDTO libroRequestDTO){
+    public Libro crearEntidadDesdeDTO (LibroCrearRequestDTO libroRequestDTO) {
 
         //Entidad
         Libro libro = new Libro();
 
         //DTO a entidad
-        libro.setTitulo(libroRequestDTO.getTitulo());
-        libro.setAutor(libroRequestDTO.getAutor());
-        libro.setIsbn(libroRequestDTO.getIsbn());
-        libro.setCategoria(libroRequestDTO.getCategoria());
-        libro.setAnioDePublicacion(libroRequestDTO.getAnioDePublicacion());
+
+        if (libroRequestDTO.getTitulo() != null) {
+            libro.setTitulo(libroRequestDTO.getTitulo());
+        }
+
+        if (libroRequestDTO.getAutor() != null) {
+            libro.setAutor(libroRequestDTO.getAutor());
+        }
+
+        if (libroRequestDTO.getIsbn() != null) {
+            libro.setIsbn(libroRequestDTO.getIsbn());
+        }
+
+        if (libroRequestDTO.getCategoria() != null) {
+            libro.setCategoria(libroRequestDTO.getCategoria());
+        }
+
+        if (libroRequestDTO.getAnioDePublicacion() != null) {
+            libro.setAnioDePublicacion(libroRequestDTO.getAnioDePublicacion());
+        }
 
         //Retonarmos la Entidad
-        return  libro;
+        return libro;
 
     }
 

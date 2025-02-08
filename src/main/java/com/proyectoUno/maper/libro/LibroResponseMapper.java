@@ -1,4 +1,4 @@
-package com.proyectoUno.maper;
+package com.proyectoUno.maper.libro;
 
 import com.proyectoUno.dto.reponse.LibroResponseDTO;
 import com.proyectoUno.entity.Libro;
