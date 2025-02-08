@@ -1,12 +1,12 @@
 package com.proyectoUno.service.implementaciones;
 
 import com.proyectoUno.dto.reponse.LibroResponseDTO;
-import com.proyectoUno.dto.request.LibroActualizarRequestDTO;
-import com.proyectoUno.dto.request.LibroCrearRequestDTO;
+import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
+import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.exception.EntidadNoEncontradaException;
-import com.proyectoUno.maper.LibroRequestMapper;
-import com.proyectoUno.maper.LibroResponseMapper;
+import com.proyectoUno.maper.libro.LibroRequestMapper;
+import com.proyectoUno.maper.libro.LibroResponseMapper;
 import com.proyectoUno.repository.LibroRepository;
 import com.proyectoUno.service.interfaces.LibroService;
 import org.slf4j.LoggerFactory;
@@ -87,6 +87,7 @@ public class LibroServiceImpl implements LibroService {
 
         //Convertimos entidad a DTO y retonamos respuesta
         return libroResponseMapper.convertirAResponseDTO(libroActualizado);
+
     }
 
     @Override
