@@ -9,9 +9,9 @@ public class LibroResponseDTO {
     private String autor;
     private String estado;
 
+
+
     //Getter and Setter
-
-
     public String getTitulo() {
         return titulo;
     }

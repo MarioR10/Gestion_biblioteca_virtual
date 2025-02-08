@@ -1,7 +1,7 @@
 package com.proyectoUno.maper;
 
-import com.proyectoUno.dto.request.LibroActualizarRequestDTO;
-import com.proyectoUno.dto.request.LibroCrearRequestDTO;
+import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
+import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
 import com.proyectoUno.entity.Libro;
 import org.springframework.stereotype.Component;
 

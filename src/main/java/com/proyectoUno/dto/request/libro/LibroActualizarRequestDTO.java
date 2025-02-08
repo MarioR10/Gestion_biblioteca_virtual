@@ -1,4 +1,4 @@
-package com.proyectoUno.dto.request;
+package com.proyectoUno.dto.request.libro;
 
 import java.util.UUID;
 
@@ -8,7 +8,6 @@ public class LibroActualizarRequestDTO {
     private String titulo;
     private String autor;
     private String categoria;
-
     private  String estado;
 
 
@@ -43,9 +42,6 @@ public class LibroActualizarRequestDTO {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public String getEstado() {
         return estado;

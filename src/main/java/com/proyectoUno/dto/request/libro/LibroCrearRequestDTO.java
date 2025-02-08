@@ -1,4 +1,4 @@
-package com.proyectoUno.dto.request;
+package com.proyectoUno.dto.request.libro;
 
 public class LibroCrearRequestDTO {
 
