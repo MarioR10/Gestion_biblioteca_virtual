@@ -1,4 +1,4 @@
-package com.proyectoUno.service.interfaces;
+package com.proyectoUno.service.External.interfaces;
 
 import com.proyectoUno.dto.reponse.LibroResponseDTO;
 import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
@@ -7,7 +7,7 @@ import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
 import java.util.List;
 import java.util.UUID;
 
-public interface LibroService {
+public interface LibroServiceExternal {
 
     //CRUD para Libro
     List<LibroResponseDTO> encontrarLibros ();

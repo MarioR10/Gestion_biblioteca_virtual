@@ -1,54 +1,55 @@
-package com.proyectoUno.service.implementaciones;
+package com.proyectoUno.service.External.implementaciones;
 
-import com.proyectoUno.entity.Libro;
+import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
+import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
 import com.proyectoUno.entity.Usuario;
 import com.proyectoUno.exception.EntidadNoEncontradaException;
+import com.proyectoUno.maper.usuario.UsuarioResponseMapper;
 import com.proyectoUno.repository.UsuarioRepository;
-import com.proyectoUno.service.interfaces.UsuarioService;
-import jakarta.persistence.EntityManager;
+import com.proyectoUno.service.External.interfaces.UsuarioServiceExternal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UsuarioServiceImpl implements UsuarioService {
+public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
 
 
+    private final UsuarioResponseMapper usuarioResponseMapper;
     private UsuarioRepository usuarioRepository;
 
 
 
     //Inyeccion de dependencias
     @Autowired
-    public  UsuarioServiceImpl(UsuarioRepository usuarioRepository){
+    public UsuarioServiceExternalImpl(UsuarioRepository usuarioRepository, UsuarioResponseMapper usuarioResponseMapper){
 
         this.usuarioRepository=usuarioRepository;
+        this.usuarioResponseMapper = usuarioResponseMapper;
     }
 
     @Override
-    public List<Usuario> encontrarUsuarios() {
+    public List<UsuarioResponseDTO> encontrarUsuarios() {
 
         List<Usuario> usuarios= usuarioRepository.findAll();
 
         if (usuarios.isEmpty()) {
             throw new RuntimeException("Usuarios no encontrados con el estado");
-        } else {
-            return usuarios;
         }
-
+            return usuarioResponseMapper.convertirAListaResponseDTO(usuarios);
     }
 
     @Override
-    public Usuario  encontrarUsuarioPorId(UUID theid) {
+    public UsuarioResponseDTO  encontrarUsuarioPorId(UUID theid) {
 
         //Verificamos que se encuentre la entidad dentro del Optional, si no esta tiramos excepcion
-    return  usuarioRepository.findById(theid)
+    Usuario usuario=  usuarioRepository.findById(theid)
             .orElseThrow(()-> new EntidadNoEncontradaException("El Usuario con ID: "+theid+ " no ha sido encontrado"));
 
+        return usuarioResponseMapper.convertirAResponseDTO(usuario);
     }
 
     @Override
@@ -60,36 +61,34 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public Usuario actualizarUsuario(Usuario usuario) {
+    public UsuarioResponseDTO actualizarUsuario( UsuarioActualizarDTO usuarioActualizar) {
 
         //Encontramos el Usuario a actualizar
 
-        Usuario usuarioEncontrado = usuarioRepository.findById(usuario.getId())
-                .orElseThrow(() -> new EntidadNoEncontradaException("El usuario con ID: " +usuario.getId()+ " no ha sido encontrado"));
+        Usuario usuarioEncontrado = usuarioRepository.findById(usuarioActualizar.getId())
+                .orElseThrow(() -> new EntidadNoEncontradaException("El usuario con ID: " +usuarioActualizar.getId()+ " no ha sido encontrado"));
 
         //Actualizamos el Usuario
-        usuarioEncontrado.setRol(usuario.getRol());
-        usuarioEncontrado.setActivo(usuario.getActivo());
-        usuarioEncontrado.setEmail(usuario.getEmail());
+        usuarioEncontrado.setRol(usuarioActualizar.getRol());
+        usuarioEncontrado.setEmail(usuarioActualizar.getEmail());
 
         //guarda el usuario actualizado
-        return usuarioEncontrado; // JPA actualizará automáticamente por @Transactional
+        return usuarioResponseMapper.convertirAResponseDTO(usuarioEncontrado); // JPA actualizará automáticamente por @Transactional
 
 
     }
 
     @Override
     @Transactional
-    public Usuario guardarUsuario(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public void guardarUsuario(Usuario usuario) {
+        usuarioRepository.save(usuario);
     }
 
     @Override
     @Transactional
-    public Usuario cambiarRol(UUID theid, String nuevoRol) {
+    public UsuarioResponseDTO cambiarRol(UUID theid, String nuevoRol) {
 
         //Encontramos el usuario
-
         Usuario usuario = usuarioRepository.findById(theid)
                 .orElseThrow(()-> new EntidadNoEncontradaException("El usuario con ID: "+ theid+ " no ha sido encontrado"));
 
@@ -101,12 +100,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setRol(nuevoRol);
 
        // guardamos los cambios
-        return  usuario; // JPA actualizará automáticamente por @Transactional
+        return  usuarioResponseMapper.convertirAResponseDTO(usuario); // JPA actualizará automáticamente por @Transactional
     }
 
     @Override
     @Transactional
-    public Usuario cambiarEstadoUsuario(UUID theid,boolean estado) {
+    public UsuarioResponseDTO cambiarEstadoUsuario(UUID theid,boolean estado) {
 
         //Encontramos el usuario
 
@@ -118,7 +117,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setActivo(estado);
 
         //Guardamos
-        return usuario; // JPA actualizará automáticamente por @Transactional
+        return usuarioResponseMapper.convertirAResponseDTO(usuario); // JPA actualizará automáticamente por @Transactional
     }
 
 }

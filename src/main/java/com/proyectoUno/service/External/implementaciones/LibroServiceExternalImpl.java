@@ -1,4 +1,4 @@
-package com.proyectoUno.service.implementaciones;
+package com.proyectoUno.service.External.implementaciones;
 
 import com.proyectoUno.dto.reponse.LibroResponseDTO;
 import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
@@ -8,7 +8,7 @@ import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.maper.libro.LibroRequestMapper;
 import com.proyectoUno.maper.libro.LibroResponseMapper;
 import com.proyectoUno.repository.LibroRepository;
-import com.proyectoUno.service.interfaces.LibroService;
+import com.proyectoUno.service.External.interfaces.LibroServiceExternal;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +19,9 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 @Service
-public class LibroServiceImpl implements LibroService {
+public class LibroServiceExternalImpl implements LibroServiceExternal {
 
-    private static final Logger log = (Logger) LoggerFactory.getLogger(LibroService.class);
+    private static final Logger log = (Logger) LoggerFactory.getLogger(LibroServiceExternal.class);
     private final LibroResponseMapper libroResponseMapper;
     private final LibroRequestMapper libroRequestMapper;
     private final LibroRepository libroRepository;
@@ -29,8 +29,10 @@ public class LibroServiceImpl implements LibroService {
 
 
 
+
+
     @Autowired
-    public LibroServiceImpl(LibroRepository libroRepository, LibroResponseMapper libroResponseMapper, LibroRequestMapper libroRequestMapper){
+    public LibroServiceExternalImpl(LibroRepository libroRepository, LibroResponseMapper libroResponseMapper, LibroRequestMapper libroRequestMapper){
 
         this.libroRepository=libroRepository;
         this.libroResponseMapper = libroResponseMapper;
@@ -47,7 +49,7 @@ public class LibroServiceImpl implements LibroService {
         if (libros.isEmpty()) {
 
             //Si esta vacia mandamos mandamos mensaje
-            log.info("No hay libros disponibles en este momento");  // Mensaje de advertencia
+            log.warning("No hay libros disponibles en este momento");  // Mensaje de advertencia
         }
 
         //Convertimos lista Libros a DTO
