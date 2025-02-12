@@ -77,7 +77,7 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
         libro.setEstado("prestado");
 
-        libroServicesInternal.actualizarLibro(libro);
+        libroServicesInternal.actualizarLibro(libro.getId(),libro);
 
     }
 

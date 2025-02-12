@@ -13,7 +13,7 @@ public interface LibroServiceExternal {
     List<LibroResponseDTO> encontrarLibros ();
     LibroResponseDTO encontrarLibroPorId (UUID theid);
     void eliminarLibroPorId (UUID theid);
-    LibroResponseDTO actualizarLibro(LibroActualizarRequestDTO libroActualizar);
+    LibroResponseDTO actualizarLibro(UUID id, LibroActualizarRequestDTO libroActualizar);
     void guardarLibro(LibroCrearRequestDTO libroCrearRequestDTO);
 
     //metodos adicionales
