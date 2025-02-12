@@ -12,4 +12,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> manejarEntidadNoEncontrada(EntidadNoEncontradaException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);  // Devuelve un mensaje de error y un código 404
     }
+
+    @ExceptionHandler(ListaDeEntidadesVaciaException.class)
+    public ResponseEntity<String> manejarListaEntidadesVacia( ListaDeEntidadesVaciaException ex){
+
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NO_CONTENT); //Devuelve un mensaje de error y un codigo 204
+
+
+    }
+
+    @ExceptionHandler(EntidadNoEncontradaException.class)
+    public ResponseEntity<String> manejarEntidadDuplicada( EntidadDuplicadaException ex){
+
+
+        return  new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }
