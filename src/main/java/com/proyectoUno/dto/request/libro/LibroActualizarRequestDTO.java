@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class LibroActualizarRequestDTO {
 
-    private UUID id;
+
     @NotNull(message = "El título no puede ser nulo")
     private String titulo;
     @NotNull(message = "El autor no puede ser nulo")
@@ -13,8 +13,6 @@ public class LibroActualizarRequestDTO {
     @NotNull(message = "La categoría no puede ser nula")
     private String categoria;
 
-    @NotNull(message = "El estado no puede ser nulo")
-    private  String estado;
 
 
     //Getter and Setter
@@ -44,16 +42,5 @@ public class LibroActualizarRequestDTO {
         this.categoria = categoria;
     }
 
-    public UUID getId() {
-        return id;
-    }
 
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
 }
