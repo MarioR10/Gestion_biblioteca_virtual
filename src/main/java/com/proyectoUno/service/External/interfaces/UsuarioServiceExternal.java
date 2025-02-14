@@ -13,7 +13,7 @@ public interface UsuarioServiceExternal {
      List<UsuarioResponseDTO> encontrarUsuarios ();
      UsuarioResponseDTO encontrarUsuarioPorId (UUID theid);
      void eliminarUsuarioPorId (UUID theid);
-     UsuarioResponseDTO actualizarUsuario(UsuarioActualizarDTO usuarioActualizar);
+     UsuarioResponseDTO actualizarUsuario(UUID id, UsuarioActualizarDTO usuarioActualizar);
      void guardarUsuario(Usuario usuario);
 
      //Metodos adicionales

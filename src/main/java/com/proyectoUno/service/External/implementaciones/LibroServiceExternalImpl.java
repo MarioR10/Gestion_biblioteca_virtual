@@ -12,7 +12,7 @@ import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -58,7 +58,6 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
     }
 
     @Override
-    @Transactional
     public void eliminarLibroPorId(UUID theid) {
 
         libroRepository.deleteById(theid);
