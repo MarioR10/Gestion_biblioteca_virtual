@@ -42,8 +42,7 @@ public class LibroValidacionServiceImpl implements LibroValidacionService {
         if (Stream.of(
                         datosActualizacion.getTitulo(),
                         datosActualizacion.getAutor(),
-                        datosActualizacion.getCategoria(),
-                        datosActualizacion.getEstado())
+                        datosActualizacion.getCategoria())
                 .allMatch(Objects::isNull)) {
             throw new ValidationException("Debe proporcionar al menos un campo para actualizar");
         }
@@ -58,4 +57,15 @@ public class LibroValidacionServiceImpl implements LibroValidacionService {
 
     }
 
+    @Override
+    public void validarDisponibilidadDelLibro(Libro libro){
+
+        //verificar si esta disponible
+        if (!libro.getEstado().equals("disponible")) {
+
+            throw new RuntimeException("El libro con ID: " + libro.getId() + " no está disponible");
+
+        }
+
+    }
 }

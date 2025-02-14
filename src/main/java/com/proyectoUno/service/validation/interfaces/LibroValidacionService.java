@@ -15,6 +15,7 @@ public interface LibroValidacionService {
 
     void validarLibroNoDuplicado(Optional <Libro> libro, String isbn);
 
+    void validarDisponibilidadDelLibro(Libro libro);
 
 
 }
