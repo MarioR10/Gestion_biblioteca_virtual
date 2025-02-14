@@ -1,11 +1,16 @@
 package com.proyectoUno.dto.request.usuario;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 public class UsuarioActualizarDTO {
 
     private UUID id;
+
+    @NotNull(message = "El email no puede ser nulo")
     private String email;
+
+    @NotNull(message = "El rol no puede ser nulo")
     private String rol;
 
     public String getEmail() {

@@ -1,12 +1,19 @@
 package com.proyectoUno.dto.request.usuario;
 
+import javax.validation.constraints.NotNull;
+
 public class UsuarioCrearRequestDTO {
 
 
+    @NotNull(message = "El nombre no puede ser nulo")
     private String nombre;
+    @NotNull(message = "El apellido no puede ser nulo")
     private String apellido;
+    @NotNull(message = "El email no puede ser nulo")
     private String email;
+    @NotNull(message = "La contraseña no puede ser nulo")
     private String contraseña;
+    @NotNull(message = "El rol no puede ser nulo")
     private String rol;
 
     //metodos setter and getter
