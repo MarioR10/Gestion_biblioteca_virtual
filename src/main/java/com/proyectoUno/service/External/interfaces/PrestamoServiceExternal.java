@@ -2,7 +2,6 @@ package com.proyectoUno.service.External.interfaces;
 
 import com.proyectoUno.dto.reponse.PrestamoResponseDTO;
 import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
-import com.proyectoUno.entity.Prestamo;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,10 +13,10 @@ public interface PrestamoServiceExternal {
 
 
     //Consultar prestamos activos por ususario
-    List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId);
+    List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId,String estado);
 
     //registrar devolucion de un libro
-    void registrarDevoluvion(UUID prestamo);
+    void registrarDevolucion(UUID prestamo);
 
     //Obtener historial de prestamos de un usuario
 

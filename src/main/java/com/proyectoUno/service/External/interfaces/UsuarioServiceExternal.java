@@ -2,6 +2,7 @@ package com.proyectoUno.service.External.interfaces;
 
 import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
+import com.proyectoUno.dto.request.usuario.UsuarioCrearRequestDTO;
 import com.proyectoUno.entity.Usuario;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface UsuarioServiceExternal {
      UsuarioResponseDTO encontrarUsuarioPorId (UUID theid);
      void eliminarUsuarioPorId (UUID theid);
      UsuarioResponseDTO actualizarUsuario(UUID id, UsuarioActualizarDTO usuarioActualizar);
-     void guardarUsuario(Usuario usuario);
+     void guardarUsuario(UsuarioCrearRequestDTO usuarioDTO);
 
      //Metodos adicionales
      UsuarioResponseDTO cambiarRol(UUID theid, String nuevoRol);
