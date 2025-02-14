@@ -29,7 +29,7 @@ public class LibroValidacionServiceImpl implements LibroValidacionService {
     @Override
     public Libro validarLibroExistencia(Optional<Libro> libroOptional) {
         Libro libro= libroOptional.orElseThrow(
-                () ->new EntidadNoEncontradaException("El libro buscado no ha sido encontrado"));
+                () -> new EntidadNoEncontradaException("El libro buscado no ha sido encontrado"));
 
         return libro;
 
