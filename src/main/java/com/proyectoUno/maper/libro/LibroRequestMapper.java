@@ -15,7 +15,7 @@ public class LibroRequestMapper {
             libro.setTitulo(libroRequestDTO.getTitulo());
             libro.setAutor(libroRequestDTO.getAutor());
             libro.setCategoria(libroRequestDTO.getCategoria());
-            libro.setEstado(libroRequestDTO.getEstado());
+
 
         return libro;
 
