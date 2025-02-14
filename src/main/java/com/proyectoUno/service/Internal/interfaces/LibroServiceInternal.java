@@ -30,6 +30,9 @@ public interface LibroServiceInternal {
 
     List<Libro> encontrarLibroPorEstado(String estado);
 
+    void marcarLibroComoPrestado(Libro libro);
+
+    void marcarLibroComoDisponible(Libro libro);
 
 
 }

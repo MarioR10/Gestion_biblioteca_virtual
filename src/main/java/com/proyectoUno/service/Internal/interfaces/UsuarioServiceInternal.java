@@ -24,4 +24,6 @@ public interface UsuarioServiceInternal {
 
    Usuario actualizarEstadoUsuario(UUID id, boolean estado);
 
+
+
 }

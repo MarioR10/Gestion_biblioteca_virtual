@@ -79,7 +79,6 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
         libroExistente.setTitulo(datosActualizacion.getTitulo());
         libroExistente.setAutor(datosActualizacion.getAutor());
         libroExistente.setCategoria(datosActualizacion.getCategoria());
-        libroExistente.setEstado(datosActualizacion.getEstado());
 
 
         return libroExistente;
@@ -159,5 +158,23 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
         libroValidacionService.validarListaDeLibrosNoVacia(libros);
 
         return libros;
+    }
+
+    @Override
+    @Transactional
+    public void marcarLibroComoPrestado(Libro libro){
+
+        //Asiganmos que el libro ha sido prestado
+        libro.setEstado("prestado");
+
+    }
+
+    @Override
+    @Transactional
+    public void marcarLibroComoDisponible(Libro libro){
+
+        //Asignamos disponible
+        libro.setEstado("disponible");
+
     }
 }
