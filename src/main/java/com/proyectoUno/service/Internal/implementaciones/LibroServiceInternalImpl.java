@@ -51,6 +51,7 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     }
 
     @Override
+    @Transactional
     public void eliminarLibroPorId(UUID id) {
 
         try {
@@ -85,6 +86,7 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     }
 
     @Override
+    @Transactional
     public void guardarLibro(Libro libro) {
 
         //Encontramos el Optional con el isbn
