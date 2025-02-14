@@ -12,13 +12,13 @@ import com.proyectoUno.service.External.interfaces.LibroServiceExternal;
 import com.proyectoUno.service.External.interfaces.PrestamoServiceExternal;
 import com.proyectoUno.service.External.interfaces.UsuarioServiceExternal;
 import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
+import com.proyectoUno.service.Internal.interfaces.PrestamoServiceIternal;
 import com.proyectoUno.service.Internal.interfaces.UsuarioServiceInternal;
+import com.proyectoUno.service.validation.interfaces.LibroValidacionService;
+import com.proyectoUno.service.validation.interfaces.PrestamoValidacionService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -26,101 +26,78 @@ import java.util.logging.Logger;
 @Service
 public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
-
     private final UsuarioServiceInternal usuarioServiceInternal;
     private final PrestamoResponseMapper prestamoResponseMapper;
-    private PrestamoRepository prestamoRepository;
-    private UsuarioServiceExternal usuarioService;
-
+    private final LibroValidacionService libroValidacionService;
+    private final PrestamoServiceIternal prestamoServiceIternal;
+    private final PrestamoValidacionService prestamoValidacionService;
     private LibroServiceInternal libroServicesInternal;
 
     private static final Logger log = (Logger) LoggerFactory.getLogger(LibroServiceExternal.class);
 
 
     @Autowired
-    public PrestamoServiceExternalImpl(UsuarioServiceExternal usuarioService, LibroServiceInternal libroServicesInternal, PrestamoRepository prestamoRepository, UsuarioServiceInternal usuarioServiceInternal, PrestamoResponseMapper prestamoResponseMapper){
-
-        this.prestamoRepository=prestamoRepository;
-        this.usuarioService=usuarioService;
+    public PrestamoServiceExternalImpl(LibroServiceInternal libroServicesInternal, UsuarioServiceInternal usuarioServiceInternal, PrestamoResponseMapper prestamoResponseMapper, LibroValidacionService libroValidacionService, PrestamoServiceIternal prestamoServiceIternal, PrestamoValidacionService prestamoValidacionService){
 
         this.libroServicesInternal=libroServicesInternal;
         this.usuarioServiceInternal = usuarioServiceInternal;
         this.prestamoResponseMapper = prestamoResponseMapper;
+        this.libroValidacionService = libroValidacionService;
+        this.prestamoServiceIternal = prestamoServiceIternal;
+        this.prestamoValidacionService = prestamoValidacionService;
     }
-
-
     @Override
-    @Transactional
     public void guardarPrestamo(PrestamoCrearRequestDTO prestamoCrearRequestDTO) {
 
-        //Verificamos el  Usuario existe
+        //Encontramos el usuario
         Usuario usuario = usuarioServiceInternal.encontrarUsuarioPorId(prestamoCrearRequestDTO.getIdUsuario());
 
-        //Verificamos el  Libro existe
+        //Encontramos el libro
         Libro libro = libroServicesInternal.encontrarLibroPorId(prestamoCrearRequestDTO.getIdLibro());
 
-        //verificar si esta disponible
-        if (!libro.getEstado().equals("disponible")) {
+        //verificar si el libro esta disponible
+        libroValidacionService.validarDisponibilidadDelLibro(libro);
 
-            throw new RuntimeException("El libro con ID: " + prestamoCrearRequestDTO.getIdLibro() + " no está disponible");
-
-        }
-
-        Prestamo prestamo = new Prestamo();
-        prestamo.setUsuario(usuario);
-        prestamo.setLibro(libro);
-        prestamo.setFechaDevolucion(LocalDateTime.now().plusDays(15));
-
-        Prestamo prestamoGuardado = prestamoRepository.save(prestamo);
+        //Crear Prestamo
+        prestamoServiceIternal.crearPrestamo(libro,usuario);
 
         //Actualizar estado del libro
-
-        libro.setEstado("prestado");
-
-        libroServicesInternal.actualizarLibro(libro.getId(),libro);
+        libroServicesInternal.marcarLibroComoPrestado(libro);
 
     }
-
     @Override
-    public List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId) {
+    public List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId,String estado) {
 
-       List<Prestamo> prestamos= prestamoRepository.findPrestamoByUsuarioIdAndEstado(usuarioId, "activo");
+      //Encontramos prestamos
+        List <Prestamo> prestamos= prestamoServiceIternal.encontrarPrestamosActivosPorIdUsuario(usuarioId,estado);
 
-        // Verificar si no se encontraron préstamos
-        if (prestamos.isEmpty()) {
-         log.warning("No se encontraron préstamos activos para el usuario");
-        }
-
+     //Convertimos a DTO
        return prestamoResponseMapper.convertirAListaResponseDTO(prestamos);
     }
-
     @Override
-    @Transactional
-    public void registrarDevoluvion(UUID prestamoId) {
+    public void registrarDevolucion(UUID prestamoId) {
 
         //Verificamos si el prestamo existe
-        Prestamo prestamo = prestamoRepository.findById(prestamoId)
-                .orElseThrow(()-> new EntidadNoEncontradaException("El prestamos con ID: "+prestamoId+ " no ha sido encontrado"));
+        Prestamo prestamo = prestamoServiceIternal.encontrarPrestamoPorId(prestamoId);
 
-        //Actualizamos el estado del prestamo
-        prestamo.setEstado("devuelto");
+        //Validamos que el prestamo este activo aun
+        prestamoValidacionService.validarEstadoDelPrestamo(prestamo.getEstado());
 
-        // Actualizar el estado del libro a "disponible"
-        Libro libro = prestamo.getLibro();
-        libro.setEstado("disponible");
+        //Actualizamos el estado del prestamo a devuelto
+        prestamoServiceIternal.marcarPrestamoComoDevuelto(prestamo);
+        //guardamos los datos
 
+        //Actualizamos el estado del libro a disponible
+        libroServicesInternal.marcarLibroComoDisponible(prestamo.getLibro());
 
     }
-
     @Override
     public List<PrestamoResponseDTO> obtenerHistorialDePrestamoPorUsuario(UUID usuarioId) {
-        List<Prestamo> prestamos = prestamoRepository.findByUsuarioId(usuarioId);
 
-        // Verificar si no se encontraron préstamos
-        if (prestamos.isEmpty()) {
-            log.warning("No se encontraron préstamos activos para el usuario");
-        }
+        //Encontrar el historial de prestamos
+        List<Prestamo> prestamos = prestamoServiceIternal.encontrarPrestamosPorIdUsuario(usuarioId);
 
+        //Convertir a DTO
         return prestamoResponseMapper.convertirAListaResponseDTO(prestamos);
     }
 }

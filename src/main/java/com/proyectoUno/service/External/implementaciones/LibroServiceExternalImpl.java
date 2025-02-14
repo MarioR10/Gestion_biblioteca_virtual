@@ -58,9 +58,9 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
     }
 
     @Override
-    public void eliminarLibroPorId(UUID theid) {
+    public void eliminarLibroPorId(UUID id) {
 
-        libroRepository.deleteById(theid);
+        libroServiceInternal.eliminarLibroPorId(id);
     }
 
     @Override
@@ -76,14 +76,12 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
         return libroResponseMapper.convertirAResponseDTO(libroActualizado);
 
     }
-
     @Override
 
     public void guardarLibro(LibroCrearRequestDTO libroCrearRequestDTO) {
 
         //Convertir DTO en entidad
         Libro libro= libroRequestMapper.crearEntidadDesdeDTO(libroCrearRequestDTO);
-
 
         //Guardamos la entidad
          libroServiceInternal.guardarLibro(libro);
@@ -119,8 +117,6 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
         return libroResponseMapper.convertirAResponseDTO(libro);
 
     }
-
-
     @Override
     public List<LibroResponseDTO> encontrarLibroPorCategoria(String categoria) {
 
@@ -131,7 +127,6 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
         return libroResponseMapper.convertirAListaResponseDTO(libros);
 
     }
-
     @Override
     public List<LibroResponseDTO> encontrarLibroPorEstado(String estado) {
 
@@ -141,6 +136,5 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
         //Convierte Lista Libro a Lista DTO
         return libroResponseMapper.convertirAListaResponseDTO(libros);
     }
-
 
 }

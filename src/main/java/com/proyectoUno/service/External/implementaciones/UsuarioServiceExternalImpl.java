@@ -2,6 +2,7 @@ package com.proyectoUno.service.External.implementaciones;
 
 import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
+import com.proyectoUno.dto.request.usuario.UsuarioCrearRequestDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Usuario;
 import com.proyectoUno.exception.EntidadNoEncontradaException;
@@ -81,7 +82,12 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
     }
 
     @Override
-    public void guardarUsuario(Usuario usuario) {
+    public void guardarUsuario(UsuarioCrearRequestDTO usuarioDTO) {
+
+        //convertir DTO a Entidad:
+        Usuario usuario= usuarioRequestMapper.crearEntidadDesdeDTO(usuarioDTO);
+
+        //Guardar Usuario
         usuarioServiceInternal.guardarUsuario(usuario);
     }
 
