@@ -10,19 +10,15 @@ public class UsuarioRequestMapper {
 
     // Metodo para actualizar una entidad a partir de un DTO request
 
-    public Usuario actualizarEntidadDesdeDTO(UsuarioActualizarDTO usuarioActualizarDTO, Usuario usuarioExistente){
+    public Usuario actualizarEntidadDesdeDTO(UsuarioActualizarDTO usuarioActualizarDTO){
 
-        if (usuarioActualizarDTO.getEmail() != null){
+        Usuario usuarioActualizar = new Usuario();
 
-            usuarioExistente.setEmail(usuarioActualizarDTO.getEmail());
-        }
+        usuarioActualizar.setEmail(usuarioActualizarDTO.getEmail());
+        usuarioActualizar.setRol(usuarioActualizarDTO.getRol());
 
-        if (usuarioActualizarDTO.getRol() != null){
 
-            usuarioExistente.setRol(usuarioActualizarDTO.getRol());
-        }
-
-        return  usuarioExistente;
+        return  usuarioActualizar;
     }
 
 
