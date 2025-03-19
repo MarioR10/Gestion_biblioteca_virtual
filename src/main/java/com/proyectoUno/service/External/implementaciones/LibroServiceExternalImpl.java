@@ -21,17 +21,16 @@ import java.util.logging.Logger;
 @Service
 public class LibroServiceExternalImpl implements LibroServiceExternal {
 
-    private static final Logger log = (Logger) LoggerFactory.getLogger(LibroServiceExternal.class);
     private final LibroResponseMapper libroResponseMapper;
     private final LibroRequestMapper libroRequestMapper;
-    private final LibroRepository libroRepository;
+
     private final LibroServiceInternal libroServiceInternal;
 
 
     @Autowired
-    public LibroServiceExternalImpl(LibroRepository libroRepository, LibroResponseMapper libroResponseMapper, LibroRequestMapper libroRequestMapper, LibroServiceInternal libroServiceInternal){
+    public LibroServiceExternalImpl(LibroResponseMapper libroResponseMapper, LibroRequestMapper libroRequestMapper, LibroServiceInternal libroServiceInternal){
 
-        this.libroRepository=libroRepository;
+
         this.libroResponseMapper = libroResponseMapper;
         this.libroRequestMapper = libroRequestMapper;
         this.libroServiceInternal = libroServiceInternal;

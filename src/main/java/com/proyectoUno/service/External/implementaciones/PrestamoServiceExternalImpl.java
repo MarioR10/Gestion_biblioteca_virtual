@@ -33,7 +33,6 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
     private final PrestamoValidacionService prestamoValidacionService;
     private LibroServiceInternal libroServicesInternal;
 
-    private static final Logger log = (Logger) LoggerFactory.getLogger(LibroServiceExternal.class);
 
 
     @Autowired
