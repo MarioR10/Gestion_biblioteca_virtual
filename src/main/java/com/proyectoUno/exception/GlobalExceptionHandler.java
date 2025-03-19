@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     }
 
-    @ExceptionHandler(EntidadNoEncontradaException.class)
+    @ExceptionHandler(EntidadDuplicadaException.class)
     public ResponseEntity<String> manejarEntidadDuplicada( EntidadDuplicadaException ex){
 
 
