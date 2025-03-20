@@ -12,9 +12,6 @@ public class LibroCrearRequestDTO {
     @NotNull(message = "La categoría no puede ser nula")
     private String categoria;
 
-    @NotNull(message = "El estado no puede ser nulo")
-    private String estado;
-
     @NotNull(message = "El isbn no puede ser nulo")
     private String isbn;
 
@@ -35,10 +32,6 @@ public class LibroCrearRequestDTO {
 
     public String getCategoria() {
         return categoria;
-    }
-
-    public String getEstado() {
-        return estado;
     }
 
     public Integer getAnioDePublicacion() {
