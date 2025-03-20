@@ -22,8 +22,12 @@ public class LibroResponseMapper {
 
 
         //Entidad a DTO
+        libroResponseDTO.setId(libro.getId());
         libroResponseDTO.setTitulo(libro.getTitulo());
         libroResponseDTO.setAutor(libro.getAutor());
+        libroResponseDTO.setIsbn(libro.getIsbn());
+        libroResponseDTO.setCategoria(libro.getCategoria());
+        libroResponseDTO.setAnioDePublicacion(libro.getAnioDePublicacion());
         libroResponseDTO.setEstado(libro.getEstado());
 
         //Retorna el DTO

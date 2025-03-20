@@ -15,8 +15,7 @@ public class LibroRequestMapper {
             libro.setTitulo(libroRequestDTO.getTitulo());
             libro.setAutor(libroRequestDTO.getAutor());
             libro.setCategoria(libroRequestDTO.getCategoria());
-            libro.setEstado(libroRequestDTO.getEstado());
-
+            libro.setAnioDePublicacion(libroRequestDTO.getAnioDePublicacion());
         return libro;
 
     }
@@ -38,9 +37,8 @@ public class LibroRequestMapper {
 
             libro.setCategoria(libroRequestDTO.getCategoria());
 
-            libro.setEstado(libroRequestDTO.getEstado());
-
             libro.setAnioDePublicacion(libroRequestDTO.getAnioDePublicacion());
+
 
         //Retonarmos la Entidad
         return libro;
