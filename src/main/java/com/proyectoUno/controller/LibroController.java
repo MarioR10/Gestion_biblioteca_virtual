@@ -4,11 +4,8 @@ import com.proyectoUno.dto.reponse.LibroResponseDTO;
 
 import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
 import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
-import com.proyectoUno.entity.Libro;
 import com.proyectoUno.service.External.interfaces.LibroServiceExternal;
-import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +19,13 @@ import java.util.UUID;
 public class LibroController {
 
     private final LibroServiceExternal libroServiceExternal;
-    private final LibroServiceInternal libroServiceInternal;
+
 
     @Autowired
-    public LibroController(LibroServiceExternal libroServiceExternal, LibroServiceInternal libroServiceInternal) {
+    public LibroController(LibroServiceExternal libroServiceExternal) {
 
         this.libroServiceExternal = libroServiceExternal;
-        this.libroServiceInternal = libroServiceInternal;
+
     }
 
 
