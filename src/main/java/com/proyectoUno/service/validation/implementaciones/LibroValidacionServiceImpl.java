@@ -42,7 +42,8 @@ public class LibroValidacionServiceImpl implements LibroValidacionService {
         if (Stream.of(
                         datosActualizacion.getTitulo(),
                         datosActualizacion.getAutor(),
-                        datosActualizacion.getCategoria())
+                        datosActualizacion.getCategoria(),
+                        datosActualizacion.getEstado())
                 .allMatch(Objects::isNull)) {
             throw new ValidationException("Debe proporcionar al menos un campo para actualizar");
         }
