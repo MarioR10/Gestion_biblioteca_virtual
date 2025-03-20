@@ -11,7 +11,6 @@ import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 @Service
@@ -43,7 +42,7 @@ public class LibroValidacionServiceImpl implements LibroValidacionService {
                         datosActualizacion.getTitulo(),
                         datosActualizacion.getAutor(),
                         datosActualizacion.getCategoria(),
-                        datosActualizacion.getEstado())
+                        datosActualizacion.getAnioDePublicacion())
                 .allMatch(Objects::isNull)) {
             throw new ValidationException("Debe proporcionar al menos un campo para actualizar");
         }
