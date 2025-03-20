@@ -79,6 +79,7 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
         libroExistente.setTitulo(datosActualizacion.getTitulo());
         libroExistente.setAutor(datosActualizacion.getAutor());
         libroExistente.setCategoria(datosActualizacion.getCategoria());
+        libroExistente.setEstado((datosActualizacion.getEstado()));
 
 
         return libroExistente;
