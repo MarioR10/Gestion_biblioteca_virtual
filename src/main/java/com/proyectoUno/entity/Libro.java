@@ -34,7 +34,7 @@ public class Libro {
     @Column(name = "anio_de_publicacion")
     private Integer AnioDePublicacion;
 
-    @Column(name = "estado")
+    @Column(name = "estado", insertable = false)
     private String estado;
 
     //Campos que ayudan a la relacion bidireccional con la entidad Prestamos
