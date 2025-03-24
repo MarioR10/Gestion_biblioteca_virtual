@@ -75,8 +75,11 @@ public class UsuarioServiceInternalImpl implements com.proyectoUno.service.Inter
 
         //Actualizamos la entidad
 
+        usuarioEncontrado.setNombre(datosValidar.getNombre());
+        usuarioEncontrado.setApellido(datosValidar.getApellido());
         usuarioEncontrado.setEmail(datosValidar.getEmail());
         usuarioEncontrado.setRol(datosValidar.getRol());
+        usuarioEncontrado.setActivo(datosValidar.getActivo());
 
         return  usuarioEncontrado;
     }
