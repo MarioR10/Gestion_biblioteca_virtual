@@ -14,8 +14,11 @@ public class UsuarioRequestMapper {
 
         Usuario usuarioActualizar = new Usuario();
 
+        usuarioActualizar.setNombre(usuarioActualizarDTO.getNombre());
+        usuarioActualizar.setApellido(usuarioActualizarDTO.getApellido());
         usuarioActualizar.setEmail(usuarioActualizarDTO.getEmail());
         usuarioActualizar.setRol(usuarioActualizarDTO.getRol());
+        usuarioActualizar.setActivo(usuarioActualizarDTO.getActivo());
 
 
         return  usuarioActualizar;
