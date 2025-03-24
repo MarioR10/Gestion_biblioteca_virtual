@@ -17,11 +17,6 @@ public interface UsuarioServiceExternal {
      UsuarioResponseDTO actualizarUsuario(UUID id, UsuarioActualizarDTO usuarioActualizar);
      void guardarUsuario(UsuarioCrearRequestDTO usuarioDTO);
 
-     //Metodos adicionales
-     UsuarioResponseDTO cambiarRol(UUID theid, String nuevoRol);
-     UsuarioResponseDTO cambiarEstadoUsuario(UUID theid, boolean estado);
-
-
 }
 
 

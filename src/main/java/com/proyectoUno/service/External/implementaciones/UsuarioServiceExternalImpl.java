@@ -91,24 +91,5 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
         usuarioServiceInternal.guardarUsuario(usuario);
     }
 
-    @Override
-    public UsuarioResponseDTO cambiarRol(UUID id, String nuevoRol) {
-
-        //Cambiamos el rol del ususario
-       Usuario usuario = usuarioServiceInternal.actualizarRolUsuario(id,nuevoRol);
-
-       // guardamos los cambios
-        return  usuarioResponseMapper.convertirAResponseDTO(usuario);
-    }
-
-    @Override
-    public UsuarioResponseDTO cambiarEstadoUsuario(UUID id,boolean estado) {
-
-        //Cambiamos el estado del usuario
-        Usuario usuario = usuarioServiceInternal.actualizarEstadoUsuario(id,estado);
-
-        //Guardamos
-        return usuarioResponseMapper.convertirAResponseDTO(usuario); // JPA actualizará automáticamente por @Transactional
-    }
 
 }
