@@ -19,14 +19,14 @@ public class Prestamo {
     private UUID id;
 
     @CreationTimestamp
-    @Column(name = "fecha_prestamo", nullable = false,updatable = false)
+    @Column(name = "fecha_prestamo", insertable = false)
     private LocalDateTime fechaPrestamo;
 
 
-    @Column(name = "fecha_devolucion", nullable = false,updatable = false)
+    @Column(name = "fecha_devolucion", insertable = false)
     private LocalDateTime fechaDevolucion;
 
-    @Column( name="estado")
+    @Column( name="estado",insertable = false)
     private String estado;
 
 
