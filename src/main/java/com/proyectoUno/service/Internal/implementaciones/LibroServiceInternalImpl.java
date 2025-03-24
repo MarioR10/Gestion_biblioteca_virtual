@@ -166,7 +166,7 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     public void marcarLibroComoPrestado(Libro libro){
 
         //Asiganmos que el libro ha sido prestado
-        libro.setEstado("prestado");
+        libro.setEstado("reservado");
 
     }
 
