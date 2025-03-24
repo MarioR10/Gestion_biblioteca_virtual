@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/usuario")
 public class UsuarioController {
 
     private final UsuarioServiceExternal usuarioServiceExternal;
@@ -65,12 +65,5 @@ public class UsuarioController {
 
         usuarioServiceExternal.guardarUsuario(request);
     }
-
-
-
-
-
-
-
 
 }
