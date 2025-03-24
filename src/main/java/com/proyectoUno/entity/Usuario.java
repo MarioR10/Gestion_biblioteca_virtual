@@ -38,7 +38,7 @@ public class Usuario {
     @Column(name= "fecha_registro", nullable = false,updatable = false)
     private LocalDateTime fechaRegistro;
 
-    @Column(name = "activo")
+    @Column(name = "activo", insertable = false)
     private boolean activo;
 
     //Campos que ayudan a la relacion bidireccional con la entidad Prestamos
