@@ -73,6 +73,17 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
      //Convertimos a DTO
        return prestamoResponseMapper.convertirAListaResponseDTO(prestamos);
     }
+
+    @Override
+
+    public PrestamoResponseDTO encontrarPrestamoPorId(UUID id){
+
+        //obtenemos prestamo
+        Prestamo prestamo = prestamoServiceIternal.encontrarPrestamoPorId(id);
+
+        //converitmos a DTO
+        return prestamoResponseMapper.convertirAresponseDTO(prestamo);
+    }
     @Override
     public void registrarDevolucion(UUID prestamoId) {
 

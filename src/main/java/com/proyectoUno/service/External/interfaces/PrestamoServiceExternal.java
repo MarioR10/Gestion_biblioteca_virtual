@@ -15,6 +15,10 @@ public interface PrestamoServiceExternal {
     //Consultar prestamos activos por ususario
     List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId,String estado);
 
+    //Encontrar prestamo por Id
+
+    PrestamoResponseDTO encontrarPrestamoPorId(UUID id);
+
     //registrar devolucion de un libro
     void registrarDevolucion(UUID prestamo);
 
