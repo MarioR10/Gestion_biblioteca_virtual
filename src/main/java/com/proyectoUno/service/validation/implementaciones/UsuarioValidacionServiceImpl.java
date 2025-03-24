@@ -38,8 +38,11 @@ public class UsuarioValidacionServiceImpl implements UsuarioValidacionService {
     public void validarDatosActualizacion(Usuario datosActualizacion) {
         // Validar que al menos un campo viene para actualizar
         if (Stream.of(
+                        datosActualizacion.getNombre(),
+                        datosActualizacion.getApellido(),
                         datosActualizacion.getEmail(),
-                        datosActualizacion.getRol())
+                        datosActualizacion.getRol(),
+                        datosActualizacion.getActivo())
 
                 .allMatch(Objects::isNull)) {
             throw new ValidationException("Debe proporcionar al menos un campo para actualizar");
@@ -55,16 +58,5 @@ public class UsuarioValidacionServiceImpl implements UsuarioValidacionService {
             throw new EntidadDuplicadaException("Ya existe un usuario con email: "+ email);
         }
     }
-
-
-    @Override
-    public  void validarRolUsuario(String nuevoRol){
-
-        if(!nuevoRol.equals("admin") && !nuevoRol.equals("usuario")){
-            throw new RuntimeException("Rol no válido: " + nuevoRol);
-        }
-    }
-
-
 
 }

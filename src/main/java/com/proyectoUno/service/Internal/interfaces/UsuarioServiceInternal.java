@@ -20,9 +20,6 @@ public interface UsuarioServiceInternal {
 
    Usuario encontrarUsuarioPorEmail(String email);
 
-   Usuario actualizarRolUsuario(UUID id, String rol);
-
-   Usuario actualizarEstadoUsuario(UUID id, boolean estado);
 
 
 

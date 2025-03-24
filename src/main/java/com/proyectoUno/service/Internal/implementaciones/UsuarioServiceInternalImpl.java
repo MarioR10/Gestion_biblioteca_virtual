@@ -4,6 +4,7 @@ import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Usuario;
 import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.repository.UsuarioRepository;
+import com.proyectoUno.service.Internal.interfaces.UsuarioServiceInternal;
 import com.proyectoUno.service.validation.interfaces.UsuarioValidacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UsuarioServiceInternalImpl implements com.proyectoUno.service.Internal.interfaces.UsuarioServiceInternal {
+public class UsuarioServiceInternalImpl implements UsuarioServiceInternal {
 
 
     private UsuarioRepository usuarioRepository;
@@ -108,35 +109,6 @@ public class UsuarioServiceInternalImpl implements com.proyectoUno.service.Inter
         return usuario;
     }
 
-    @Override
-    @Transactional
-    public Usuario actualizarRolUsuario(UUID id, String rol) {
-
-        //Encontramos al usuario por ID
-        Usuario usuario= encontrarUsuarioPorId(id);
-
-        //Validamos los roles enviados
-        usuarioValidacionService.validarRolUsuario(rol);
-
-        //Actualizamos rol
-
-        usuario.setRol(rol);
-
-        return usuario;
-    }
-
-    @Override
-    @Transactional
-    public Usuario actualizarEstadoUsuario(UUID id, boolean estado) {
-
-        //Encontramos al usuario por ID
-        Usuario usuario= encontrarUsuarioPorId(id);
-
-        //Actualizamos rol
-        usuario.setActivo(estado);
-
-        return usuario;
-    }
 
 
 }

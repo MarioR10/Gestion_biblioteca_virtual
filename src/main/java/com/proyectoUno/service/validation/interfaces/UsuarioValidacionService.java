@@ -15,7 +15,6 @@ public interface UsuarioValidacionService {
 
     void validarUsuarioNoDuplicado(Optional <Usuario> usuario, String email);
 
-    void validarRolUsuario(String rol);
 
 
 
