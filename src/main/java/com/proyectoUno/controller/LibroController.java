@@ -62,7 +62,7 @@ public class LibroController {
 
     @PostMapping("/crear")
     @ResponseStatus(HttpStatus.CREATED)
-    public void crearLibro(@RequestBody LibroCrearRequestDTO request){
+    public void crearLibro(@Valid @RequestBody LibroCrearRequestDTO request){
 
         libroServiceExternal.guardarLibro(request);
     }
