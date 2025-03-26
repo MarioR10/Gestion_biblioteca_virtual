@@ -19,7 +19,7 @@ public class Prestamo {
     private UUID id;
 
     @CreationTimestamp
-    @Column(name = "fecha_prestamo", insertable = false)
+    @Column(name = "fecha_prestamo")
     private LocalDateTime fechaPrestamo;
 
 
