@@ -65,10 +65,10 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
     }
     @Override
-    public List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId,String estado) {
+    public List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId) {
 
       //Encontramos prestamos
-        List <Prestamo> prestamos= prestamoServiceIternal.encontrarPrestamosActivosPorIdUsuario(usuarioId,estado);
+        List <Prestamo> prestamos= prestamoServiceIternal.encontrarPrestamosActivosPorIdUsuario(usuarioId);
 
      //Convertimos a DTO
        return prestamoResponseMapper.convertirAListaResponseDTO(prestamos);

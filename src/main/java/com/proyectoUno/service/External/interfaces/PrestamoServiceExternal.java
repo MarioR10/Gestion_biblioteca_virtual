@@ -13,7 +13,7 @@ public interface PrestamoServiceExternal {
 
 
     //Consultar prestamos activos por ususario
-    List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId,String estado);
+    List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId);
 
     //Encontrar prestamo por Id
 
