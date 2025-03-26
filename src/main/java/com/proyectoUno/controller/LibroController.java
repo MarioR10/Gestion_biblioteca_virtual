@@ -86,11 +86,11 @@ public class LibroController {
     }
 
     @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<LibroResponseDTO> encontrarPorIsbn(@PathVariable String isbn){
+    public ResponseEntity<List<LibroResponseDTO>> encontrarPorIsbn(@PathVariable String isbn){
 
-        LibroResponseDTO libroEncontrado = libroServiceExternal.encontrarLibroPorIsbn(isbn);
+        List<LibroResponseDTO> librosEncontrados = libroServiceExternal.encontrarLibroPorIsbn(isbn);
 
-        return ResponseEntity.ok(libroEncontrado);
+        return ResponseEntity.ok(librosEncontrados);
     }
 
     @GetMapping("/categoria/{categoria}")
