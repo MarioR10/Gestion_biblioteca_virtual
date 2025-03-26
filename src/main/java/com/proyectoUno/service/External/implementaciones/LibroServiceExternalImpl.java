@@ -68,7 +68,7 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
         //Obtenemos la entidad parcial (al crearla solo le asignamos los campos del DTO), esta no se agurda en la BD
         Libro datosActualizacion= libroRequestMapper.actualizarEntidadDesdeDTO(requestDTO);
 
-        //Pasamosos la entidad parcial con sus datos, a la propia entidad, para signarle los nuevos valores de dihcos campos
+        //Pasamosla entidad parcial con sus datos, a la propia entidad, para signarle los nuevos valores de dihcos campos
         Libro libroActualizado = libroServiceInternal.actualizarLibro(id,datosActualizacion);
 
         //Retonornamos el reponse ya con los datos actualizados
@@ -107,13 +107,13 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
     }
 
     @Override
-    public  LibroResponseDTO encontrarLibroPorIsbn(String isbn) {
+    public  List<LibroResponseDTO> encontrarLibroPorIsbn(String isbn) {
 
         //Encuentra el libro
-            Libro libro = libroServiceInternal.encontrarLibroPorIsbn(isbn);
+            List<Libro> libro = libroServiceInternal.encontrarLibroPorIsbn(isbn);
 
         //Convierte a DTO
-        return libroResponseMapper.convertirAResponseDTO(libro);
+        return libroResponseMapper.convertirAListaResponseDTO(libro);
 
     }
     @Override

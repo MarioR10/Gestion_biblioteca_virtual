@@ -22,7 +22,7 @@ public interface LibroServiceExternal {
 
     List<LibroResponseDTO> encontrarLibroPorAutor(String autor);
 
-    LibroResponseDTO encontrarLibroPorIsbn(String isbn);
+    List<LibroResponseDTO> encontrarLibroPorIsbn(String isbn);
 
     List<LibroResponseDTO> encontrarLibroPorCategoria(String categoria);
 
