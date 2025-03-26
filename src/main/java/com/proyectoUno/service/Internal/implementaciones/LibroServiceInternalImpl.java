@@ -89,12 +89,6 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     @Transactional
     public void guardarLibro(Libro libro) {
 
-        //Encontramos el Optional con el isbn
-        Optional<Libro> libroExistente = libroRepository.findLibroByIsbn(libro.getIsbn());
-
-        // Validamos que no exista un Libro con el mismo isbn
-        libroValidacionService.validarLibroNoDuplicado(libroExistente,libro.getIsbn());
-
         //Guardamos el libro
         libroRepository.save(libro);
 
@@ -125,15 +119,15 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     }
 
     @Override
-    public Libro encontrarLibroPorIsbn(String isbn) {
+    public List<Libro> encontrarLibroPorIsbn(String isbn) {
 
         //Encontrar la lista de libros
-        Optional <Libro> libroOptional = libroRepository.findLibroByIsbn(isbn);
+        List<Libro> libros =libroRepository.findLibroByIsbn(isbn);
 
         //verificacion que exista libro
-       Libro libro = libroValidacionService.validarLibroExistencia(libroOptional);
+        libroValidacionService.validarListaDeLibrosNoVacia(libros);
 
-        return libro;
+        return libros;
     }
 
     @Override

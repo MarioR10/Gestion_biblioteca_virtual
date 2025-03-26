@@ -24,7 +24,7 @@ public interface LibroServiceInternal {
 
     List<Libro> encontrarLibroPorAutor(String autor);
 
-    Libro encontrarLibroPorIsbn(String isbn);
+    List<Libro> encontrarLibroPorIsbn(String isbn);
 
     List<Libro> encontrarLibroPorCategoria(String categoria);
 
