@@ -20,7 +20,7 @@ public interface LibroRepository  extends JpaRepository<Libro, UUID> {
     List<Libro> findAllByAutorContaining(String autor);
 
     // Encontrar por ISBN
-    Optional<Libro> findLibroByIsbn(String isbn);
+    List<Libro> findLibroByIsbn(String isbn);
 
     //Encontrar por categoria
 
