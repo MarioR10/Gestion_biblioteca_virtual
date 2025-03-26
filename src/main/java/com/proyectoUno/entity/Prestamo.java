@@ -23,7 +23,7 @@ public class Prestamo {
     private LocalDateTime fechaPrestamo;
 
 
-    @Column(name = "fecha_devolucion", insertable = false)
+    @Column(name = "fecha_devolucion")
     private LocalDateTime fechaDevolucion;
 
     @Column( name="estado",insertable = false)
