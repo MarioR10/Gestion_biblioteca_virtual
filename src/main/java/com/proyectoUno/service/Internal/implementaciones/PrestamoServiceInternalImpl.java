@@ -46,13 +46,9 @@ public class PrestamoServiceInternalImpl implements PrestamoServiceIternal {
     }
 
     @Override
-    public List<Prestamo> encontrarPrestamosActivosPorIdUsuario(UUID id, String estado) {
+    public List<Prestamo> encontrarPrestamosActivosPorIdUsuario(UUID id) {
 
-
-        //Validamos que el estado sea "activo"
-        prestamoValidacionService.validarEstadoDelPrestamo(estado);
-
-        List <Prestamo> prestamos = prestamoRepository.findPrestamoByUsuarioIdAndEstado(id,estado);
+        List <Prestamo> prestamos = prestamoRepository.findPrestamoByUsuarioIdAndEstado(id,"activo");
 
         //Verificamos la lista
 
@@ -90,6 +86,6 @@ public class PrestamoServiceInternalImpl implements PrestamoServiceIternal {
     @Transactional
     public void marcarPrestamoComoDevuelto(Prestamo prestamo) {
 
-        prestamo.setEstado("devuelto");
+        prestamo.setEstado("finalizado");
     }
 }

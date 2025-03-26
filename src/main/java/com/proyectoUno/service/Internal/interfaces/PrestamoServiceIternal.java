@@ -11,7 +11,7 @@ public interface PrestamoServiceIternal {
 
     void crearPrestamo(Libro libro, Usuario usuario);
 
-    List<Prestamo> encontrarPrestamosActivosPorIdUsuario(UUID id, String estado);
+    List<Prestamo> encontrarPrestamosActivosPorIdUsuario(UUID id);
 
     Prestamo encontrarPrestamoPorId(UUID id);
 
