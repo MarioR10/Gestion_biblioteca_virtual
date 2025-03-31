@@ -15,7 +15,7 @@ public interface UsuarioServiceExternal {
      UsuarioResponseDTO encontrarUsuarioPorId (UUID theid);
      void eliminarUsuarioPorId (UUID theid);
      UsuarioResponseDTO actualizarUsuario(UUID id, UsuarioActualizarDTO usuarioActualizar);
-     void guardarUsuario(UsuarioCrearRequestDTO usuarioDTO);
+     void guardarUsuario(List<UsuarioCrearRequestDTO> usuarioDTO);
 
 }
 

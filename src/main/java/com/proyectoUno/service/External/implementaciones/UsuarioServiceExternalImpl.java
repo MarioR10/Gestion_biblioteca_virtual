@@ -82,13 +82,13 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
     }
 
     @Override
-    public void guardarUsuario(UsuarioCrearRequestDTO usuarioDTO) {
+    public void guardarUsuario(List<UsuarioCrearRequestDTO> usuarioDTO) {
 
-        //convertir DTO a Entidad:
-        Usuario usuario= usuarioRequestMapper.crearEntidadDesdeDTO(usuarioDTO);
+        //convertir lista DTO a entidad
+        List<Usuario> usuarios= usuarioRequestMapper.convertirAListaEntidad(usuarioDTO);
 
         //Guardar Usuario
-        usuarioServiceInternal.guardarUsuario(usuario);
+        usuarioServiceInternal.guardarUsuario(usuarios);
     }
 
 
