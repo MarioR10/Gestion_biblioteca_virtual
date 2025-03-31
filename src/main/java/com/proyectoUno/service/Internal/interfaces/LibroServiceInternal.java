@@ -16,7 +16,7 @@ public interface LibroServiceInternal {
     void eliminarLibroPorId (UUID theid);
 
     Libro actualizarLibro(UUID id , Libro libro);
-    void guardarLibro(Libro libro);
+    void guardarLibro(List<Libro> libro);
 
     //metodos adicionales
 
