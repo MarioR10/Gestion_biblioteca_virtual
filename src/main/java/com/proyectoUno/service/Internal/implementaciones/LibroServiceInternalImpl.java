@@ -87,10 +87,10 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
 
     @Override
     @Transactional
-    public void guardarLibro(Libro libro) {
+    public void guardarLibro(List<Libro> libros) {
 
         //Guardamos el libro
-        libroRepository.save(libro);
+        libroRepository.saveAll(libros);
 
     }
 
