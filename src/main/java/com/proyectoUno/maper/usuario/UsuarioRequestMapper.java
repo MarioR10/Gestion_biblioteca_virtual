@@ -1,9 +1,14 @@
 package com.proyectoUno.maper.usuario;
 
+import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioCrearRequestDTO;
+import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Usuario;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UsuarioRequestMapper {
@@ -54,4 +59,16 @@ public class UsuarioRequestMapper {
         return usuario;
 
     }
+
+    //Metodo para convertir a lista de Entidades
+    public List<Usuario> convertirAListaEntidad(List<UsuarioCrearRequestDTO> usuarios){
+
+        return usuarios.stream()
+                .map(this::crearEntidadDesdeDTO)// Convierte cada Uusario a un DTO (nuestro metodo anterior)
+                .collect(Collectors.toList()); //  Recolecta los resultados en una lista ahora de tipo Entidad
+    }
+
+
+
+
 }
