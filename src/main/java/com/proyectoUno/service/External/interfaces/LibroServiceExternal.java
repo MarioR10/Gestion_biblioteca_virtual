@@ -14,7 +14,7 @@ public interface LibroServiceExternal {
     LibroResponseDTO encontrarLibroPorId (UUID theid);
     void eliminarLibroPorId (UUID theid);
     LibroResponseDTO actualizarLibro(UUID id, LibroActualizarRequestDTO libroActualizar);
-    void guardarLibro(LibroCrearRequestDTO libroCrearRequestDTO);
+    void guardarLibro(List<LibroCrearRequestDTO> libroCrearRequestDTO);
 
     //metodos adicionales
 

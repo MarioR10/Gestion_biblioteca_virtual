@@ -77,13 +77,13 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
     }
     @Override
 
-    public void guardarLibro(LibroCrearRequestDTO libroCrearRequestDTO) {
+    public void guardarLibro(List<LibroCrearRequestDTO> libroCrearRequestDTO) {
 
-        //Convertir DTO en entidad
-        Libro libro= libroRequestMapper.crearEntidadDesdeDTO(libroCrearRequestDTO);
+        //Convertir  lista DTO en entidad
+        List<Libro> libros = libroRequestMapper.convertirAListaEntidad(libroCrearRequestDTO);
 
         //Guardamos la entidad
-         libroServiceInternal.guardarLibro(libro);
+         libroServiceInternal.guardarLibro(libros);
     }
 
     @Override
