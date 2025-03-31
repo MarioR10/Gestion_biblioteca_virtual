@@ -61,9 +61,9 @@ public class UsuarioController {
 
     @PostMapping("/crear")
     @ResponseStatus(HttpStatus.CREATED)
-    public void crearUsuario(@Valid @RequestBody UsuarioCrearRequestDTO request){
+    public void crearUsuario(@Valid @RequestBody List<UsuarioCrearRequestDTO> requests){
 
-        usuarioServiceExternal.guardarUsuario(request);
+        usuarioServiceExternal.guardarUsuario(requests);
     }
 
 }
