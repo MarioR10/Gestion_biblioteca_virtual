@@ -1,6 +1,5 @@
 package com.proyectoUno.service.Internal.implementaciones;
 
-import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Usuario;
 import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.repository.UsuarioRepository;
@@ -13,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioServiceInternalImpl implements UsuarioServiceInternal {
@@ -86,17 +86,24 @@ public class UsuarioServiceInternalImpl implements UsuarioServiceInternal {
     }
     @Override
     @Transactional
-    public void guardarUsuario(Usuario usuario){
+    public void guardarUsuario(List<Usuario> usuarios){
 
-        //Encontrmaos usuario por email
-        Optional <Usuario> usuarioEncontrado = usuarioRepository.findByEmail(usuario.getEmail());
+       //Obtenemos la lista de emails nuevos
+        List<String> emailsNuevos = usuarios.stream()
+                .map(Usuario::getEmail)
+                        .collect(Collectors.toList());
 
-        // Validamos que no exista un Libro con el mismo
-        usuarioValidacionService.validarUsuarioNoDuplicado(usuarioEncontrado,usuario.getEmail());
+        // Validamos que no estén duplicados los emails dentro de la lista
+        usuarioValidacionService.validarDuplicadosListaEntrada(emailsNuevos);
 
-        //Gaurdamos
-        usuarioRepository.save(usuario);
+        // Validamos que los emails no existan en la base de datos
+        List<Usuario> usuariosExistentes = usuarioRepository.findByEmailIn(emailsNuevos);
+        usuarioValidacionService.validarDuplicadosBaseDeDatos(usuariosExistentes);
+
+        // Guardamos los nuevos usuarios verificados
+        usuarioRepository.saveAll(usuarios);
     }
+
     @Override
     public Usuario encontrarUsuarioPorEmail(String email){
 

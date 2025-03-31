@@ -16,7 +16,7 @@ public interface UsuarioServiceInternal {
 
    Usuario actualizarUsuario(UUID id,Usuario usuario );
 
-   void guardarUsuario(Usuario usuario);
+   void guardarUsuario(List<Usuario> usuarios);
 
    Usuario encontrarUsuarioPorEmail(String email);
 
