@@ -13,7 +13,8 @@ public interface UsuarioValidacionService {
 
     void validarDatosActualizacion(Usuario datosActualizacion);
 
-    void validarUsuarioNoDuplicado(Optional <Usuario> usuario, String email);
+    void validarDuplicadosListaEntrada( List<String> emailsNuevos);
+    void validarDuplicadosBaseDeDatos(List<Usuario> usuarios);
 
 
 

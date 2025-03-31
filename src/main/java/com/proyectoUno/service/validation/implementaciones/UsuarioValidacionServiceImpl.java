@@ -9,9 +9,8 @@ import com.proyectoUno.service.validation.interfaces.UsuarioValidacionService;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -51,12 +50,33 @@ public class UsuarioValidacionServiceImpl implements UsuarioValidacionService {
     }
 
     @Override
-    public void validarUsuarioNoDuplicado(Optional<Usuario> usuario, String email) {
+    public void validarDuplicadosListaEntrada(List<String> emailsNuevos) {
 
-        if (usuario.isPresent()){
+        // Convertimos la lista en un Set para eliminar duplicados automáticamente
+        Set<String> emailsUnicos = new HashSet<>(emailsNuevos);
 
-            throw new EntidadDuplicadaException("Ya existe un usuario con email: "+ email);
-        }
+        // Si el tamaño del Set es menor que el de la lista original, significa que había duplicados
+        if (emailsUnicos.size() < emailsNuevos.size())
+            throw new IllegalArgumentException("La lista contiene emails duplicados.");
     }
+
+    @Override
+    public void validarDuplicadosBaseDeDatos(List<Usuario> usuariosExistentes) {
+
+        /* Usar un Set asegura que, incluso en un caso hipotético donde usuariosExistentes tenga duplicados
+         (por un error externo, quiten UNIQUE DE LA DB), no reportemos el mismo email varias veces en el mensaje de error. */
+
+        if( !usuariosExistentes.isEmpty()){
+
+            Set<String> emailsDuplicados = usuariosExistentes.stream()
+                    .map(Usuario::getEmail)
+                    .collect(Collectors.toSet());
+
+            throw new IllegalArgumentException("Los siguientes emails ya están registrados: " + emailsDuplicados);
+        }
+
+
+    }
+
 
 }
