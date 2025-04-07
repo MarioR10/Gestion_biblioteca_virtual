@@ -11,6 +11,10 @@ import java.util.UUID;
 public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     Optional <Usuario> findByEmail(String email);
 
+
+    /*
+    Usa la cláusula IN para filtrar directamente: "Dame los usuarios cuyos emails estén en esta lista específica"
+     */
     List <Usuario> findByEmailIn(List<String> emails);
 
 
