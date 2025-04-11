@@ -27,4 +27,11 @@ public class GlobalExceptionHandler {
 
         return  new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(PaginaDeEntidadesVaciaException.class)
+    public ResponseEntity<String> manejarPaginaVacia( PaginaDeEntidadesVaciaException ex){
+
+        return  new ResponseEntity<>(ex.getMessage(), HttpStatus.NO_CONTENT);
+
+
+    }
 }
