@@ -2,6 +2,7 @@ package com.proyectoUno.maper.libro;
 
 import com.proyectoUno.dto.reponse.LibroResponseDTO;
 import com.proyectoUno.entity.Libro;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,14 +12,13 @@ import java.util.stream.Collectors;
 public class LibroResponseMapper {
 
 
-
     //DTO RESPONSE
 
     // Convertir una entidad en un DTO de respuesta
-    public LibroResponseDTO convertirAResponseDTO(Libro libro){
+    public LibroResponseDTO convertirAResponseDTO(Libro libro) {
 
         //DTO
-        LibroResponseDTO libroResponseDTO= new LibroResponseDTO();
+        LibroResponseDTO libroResponseDTO = new LibroResponseDTO();
 
 
         //Entidad a DTO
@@ -31,16 +31,23 @@ public class LibroResponseMapper {
         libroResponseDTO.setEstado(libro.getEstado());
 
         //Retorna el DTO
-        return  libroResponseDTO;
+        return libroResponseDTO;
     }
 
     // Convertir una lista de entidades en una lista de DTOs de respuesta
-    public List<LibroResponseDTO> convertirAListaResponseDTO(List<Libro> libros){
+    public List<LibroResponseDTO> convertirAListaResponseDTO(List<Libro> libros) {
 
 
-       return libros.stream()
-                .map(this::convertirAResponseDTO)// Convierte cada Libro a un DTO (nuestro metodo anterior)
+        return libros.stream()
+                .map(this::convertirAResponseDTO) // Convierte cada Libro a un DTO (nuestro metodo anterior)
                 .collect(Collectors.toList()); //  Recolecta los resultados en una lista ahora de tipo DTO
     }
 
+
+    // Convertir una pagina de entidades en una pagina de DTOs de respuesta
+
+    public Page<LibroResponseDTO> convertirAPageResponseDTO(Page<Libro> libros) {
+
+        return libros.map(this::convertirAResponseDTO);
+    }
 }
