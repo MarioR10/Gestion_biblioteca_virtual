@@ -4,8 +4,12 @@ import com.proyectoUno.dto.reponse.LibroResponseDTO;
 
 import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
 import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
+import com.proyectoUno.entity.Libro;
 import com.proyectoUno.service.External.interfaces.LibroServiceExternal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,93 +25,97 @@ public class LibroController {
     private final LibroServiceExternal libroServiceExternal;
 
 
+    //Endpoints actuales
+
     @Autowired
     public LibroController(LibroServiceExternal libroServiceExternal) {
-
         this.libroServiceExternal = libroServiceExternal;
-
     }
 
-
-    @GetMapping("/libros")
-    public ResponseEntity<List<LibroResponseDTO>> obtenerLibros(){
-
-        List<LibroResponseDTO> libros = libroServiceExternal.encontrarLibros();
-
-        return ResponseEntity.ok(libros);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<LibroResponseDTO> obtenerLibroPorId(@PathVariable UUID id){
-
         LibroResponseDTO libro = libroServiceExternal.encontrarLibroPorId(id);
-
         return ResponseEntity.ok(libro);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminarLibroPorId(@PathVariable UUID id){
-
         libroServiceExternal.eliminarLibroPorId(id);
     }
 
-    @PutMapping("/actualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<LibroResponseDTO> actualizarLibro(@PathVariable UUID id, @Valid @RequestBody LibroActualizarRequestDTO request){
-
         LibroResponseDTO libroActualizado = libroServiceExternal.actualizarLibro(id,request);
-
         return ResponseEntity.ok(libroActualizado);
     }
 
-    @PostMapping("/crear")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void crearLibro(@Valid @RequestBody List<LibroCrearRequestDTO> requests){
-
         libroServiceExternal.guardarLibro(requests);
     }
 
+
+    //metodos paginados
+
+    @GetMapping()
+    public ResponseEntity<Page<LibroResponseDTO>> obtenerLibros(
+            @PageableDefault(page = 0, size = 8)Pageable pageable){
+
+        Page<LibroResponseDTO> libros =libroServiceExternal.encontrarLibros(pageable);
+        return ResponseEntity.ok(libros);
+
+    }
     @GetMapping("/titulo/{titulo}")
-    public ResponseEntity<List<LibroResponseDTO>> encontrarPorTitulo(@PathVariable String titulo){
+    public ResponseEntity<Page<LibroResponseDTO>> encontrarPorTitulo(
+            @PathVariable String titulo,
+            @PageableDefault(page = 0, size = 8) Pageable pageable){
 
-        List<LibroResponseDTO> librosEncontrados = libroServiceExternal.encontrarLibroPorTitulo(titulo);
-
-        return ResponseEntity.ok(librosEncontrados);
+        Page<LibroResponseDTO> libros = libroServiceExternal.encontrarLibroPorTitulo(titulo, pageable);
+        return ResponseEntity.ok(libros);
 
     }
 
     @GetMapping("/autor/{autor}")
-    public ResponseEntity<List<LibroResponseDTO>> encontrarPorAutor(@PathVariable String autor){
+    public ResponseEntity<Page<LibroResponseDTO>> encontrarPorAutor(
+            @PathVariable String autor,
+            @PageableDefault(page=0,size = 8) Pageable pageable){
 
-        List<LibroResponseDTO> librosEncontrados = libroServiceExternal.encontrarLibroPorAutor(autor);
-
-        return ResponseEntity.ok(librosEncontrados);
-
+        Page<LibroResponseDTO> libros= libroServiceExternal.encontrarLibroPorAutor(autor,pageable);
+        return  ResponseEntity.ok(libros);
     }
 
     @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<List<LibroResponseDTO>> encontrarPorIsbn(@PathVariable String isbn){
+    public ResponseEntity<Page<LibroResponseDTO>> encontrarPorIsbn(
+            @PathVariable String isbn,
+            @PageableDefault(page = 0, size = 8) Pageable pageable){
 
-        List<LibroResponseDTO> librosEncontrados = libroServiceExternal.encontrarLibroPorIsbn(isbn);
-
-        return ResponseEntity.ok(librosEncontrados);
+        Page<LibroResponseDTO> libros = libroServiceExternal.encontrarLibroPorIsbn(isbn,pageable);
+        return ResponseEntity.ok(libros);
     }
 
     @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<List<LibroResponseDTO>> encontrarPorCategoria(@PathVariable String categoria){
+    public ResponseEntity<Page<LibroResponseDTO>> encontrarPorCategoria(
+            @PathVariable String categoria,
+            @PageableDefault( page = 0, size = 8) Pageable pageable){
 
-        List<LibroResponseDTO> librosEncontrados = libroServiceExternal.encontrarLibroPorCategoria(categoria);
-
-        return ResponseEntity.ok(librosEncontrados);
-
+        Page<LibroResponseDTO> libros = libroServiceExternal.encontrarLibroPorCategoria(categoria,pageable);
+        return ResponseEntity.ok(libros);
     }
 
     @GetMapping("/estado/{estado}")
-    public ResponseEntity<List<LibroResponseDTO>> encontarPorCategoria(@PathVariable String estado){
-
-        List<LibroResponseDTO> librosEncontrados = libroServiceExternal.encontrarLibroPorEstado(estado);
-
-        return ResponseEntity.ok(librosEncontrados);
+    public ResponseEntity<Page<LibroResponseDTO>> encontarPorCategoria(
+            @PathVariable String estado,
+            @PageableDefault(page = 0,size = 8) Pageable pageable){
+        Page <LibroResponseDTO> libros = libroServiceExternal.encontrarLibroPorEstado(estado, pageable);
+        return ResponseEntity.ok(libros);
     }
 
 }
+
+
+
+
+
