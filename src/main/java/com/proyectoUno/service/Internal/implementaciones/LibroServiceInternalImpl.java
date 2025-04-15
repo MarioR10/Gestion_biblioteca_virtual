@@ -77,7 +77,7 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
 
     @Override
     @Transactional
-    public void guardarLibro(List<Libro> libros) {
+    public void crearLibro(List<Libro> libros) {
         //Guardamos el libro
         libroRepository.saveAll(libros);
     }
