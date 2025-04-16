@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface UsuarioServiceExternal {
 
     //CRUD para Usuario
-     List<UsuarioResponseDTO> encontrarUsuarios ();
+
      UsuarioResponseDTO encontrarUsuarioPorId (UUID theid);
      void eliminarUsuarioPorId (UUID theid);
      UsuarioResponseDTO actualizarUsuario(UUID id, UsuarioActualizarDTO usuarioActualizar);

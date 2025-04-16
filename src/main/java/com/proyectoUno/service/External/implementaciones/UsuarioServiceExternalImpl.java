@@ -34,15 +34,6 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
         this.usuarioRequestMapper = usuarioRequestMapper;
     }
 
-    @Override
-    public List<UsuarioResponseDTO> encontrarUsuarios() {
-
-        //Obtiene la lista de Usuarios
-        List<Usuario> usuarios= usuarioServiceInternal.encontrarUsuarios();
-
-        //Convierte a DTO
-            return usuarioResponseMapper.convertirAListaResponseDTO(usuarios);
-    }
 
     @Override
     public UsuarioResponseDTO  encontrarUsuarioPorId(UUID id) {

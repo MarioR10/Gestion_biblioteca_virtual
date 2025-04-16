@@ -34,14 +34,6 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
     }
 
     @Override
-    public List<LibroResponseDTO> encontrarLibros() {
-        //Obtener la lista de libros
-        List<Libro> libros=libroServiceInternal.encontrarLibros();
-        //Convertimos lista Libros a DTO
-        return  libroResponseMapper.convertirAListaResponseDTO(libros);
-    }
-
-    @Override
     public LibroResponseDTO  encontrarLibroPorId(UUID id) {
         //Encontramos libro
         Libro libro = libroServiceInternal.encontrarLibroPorId(id);
@@ -71,46 +63,6 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
         List<Libro> libros = libroRequestMapper.convertirAListaEntidad(libroCrearRequestDTO);
         //Guardamos la entidad
          libroServiceInternal.crearLibro(libros);
-    }
-
-    @Override
-    public List<LibroResponseDTO> encontrarLibroPorTitulo(String titulo) {
-        //Lista de Entidad Libro
-        List<Libro> libros= libroServiceInternal.encontrarLibroPorTitulo(titulo);
-        //Convertimos a lista de tipo LibroResponseDTO
-        return libroResponseMapper.convertirAListaResponseDTO(libros);
-    }
-
-    @Override
-    public List<LibroResponseDTO> encontrarLibroPorAutor(String autor) {
-        //Lista de Entidad Libro
-        List <Libro> libros = libroServiceInternal.encontrarLibroPorAutor(autor);
-        //Convertimos a lista de tipo LibroResponseDTO
-        return libroResponseMapper.convertirAListaResponseDTO(libros);
-    }
-
-    @Override
-    public  List<LibroResponseDTO> encontrarLibroPorIsbn(String isbn) {
-        //Encuentra el libro
-            List<Libro> libro = libroServiceInternal.encontrarLibroPorIsbn(isbn);
-        //Convierte a DTO
-        return libroResponseMapper.convertirAListaResponseDTO(libro);
-
-    }
-    @Override
-    public List<LibroResponseDTO> encontrarLibroPorCategoria(String categoria) {
-        //Encuentra  lista de libros (Entidad)
-        List <Libro> libros = libroServiceInternal.encontrarLibroPorCategoria(categoria);
-        //Convierte Lista Libro a Lista DTO
-        return libroResponseMapper.convertirAListaResponseDTO(libros);
-
-    }
-    @Override
-    public List<LibroResponseDTO> encontrarLibroPorEstado(String estado) {
-        //Encuentra  lista de libros
-        List<Libro> libros = libroServiceInternal.encontrarLibroPorEstado(estado);
-        //Convierte Lista Libro a Lista DTO
-        return libroResponseMapper.convertirAListaResponseDTO(libros);
     }
 
     @Override

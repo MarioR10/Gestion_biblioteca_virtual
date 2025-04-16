@@ -69,15 +69,6 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
         libroServicesInternal.marcarLibroComoPrestado(libro);
 
     }
-    @Override
-    public List<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId) {
-
-      //Encontramos prestamos
-        List <Prestamo> prestamos= prestamoServiceIternal.encontrarPrestamosActivosPorIdUsuario(usuarioId);
-
-     //Convertimos a DTO
-       return prestamoResponseMapper.convertirAListaResponseDTO(prestamos);
-    }
 
     @Override
 
@@ -105,15 +96,6 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
         //Actualizamos el estado del libro a disponible
         libroServicesInternal.marcarLibroComoDisponible(prestamo.getLibro());
 
-    }
-    @Override
-    public List<PrestamoResponseDTO> encontrarHistorialDePrestamoPorUsuario(UUID usuarioId) {
-
-        //Encontrar el historial de prestamos
-        List<Prestamo> prestamos = prestamoServiceIternal.encontrarPrestamosPorIdUsuario(usuarioId);
-
-        //Convertir a DTO
-        return prestamoResponseMapper.convertirAListaResponseDTO(prestamos);
     }
 
     @Override
@@ -146,5 +128,13 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
         Page<Prestamo> prestamosActivos = prestamoServiceIternal.encontrarPrestamosActivos(pageable);
 
         return prestamoResponseMapper.convertirAPageResponseDTO(prestamosActivos);
+    }
+
+    @Override
+    public Page<PrestamoResponseDTO> encontrarPrestamosConLibroYUsuarioAnidados(Pageable pageable) {
+
+        Page<Prestamo> prestamos = prestamoServiceIternal.encontrarPrestamosConLibroYUsuarioAnidado(pageable);
+
+        return prestamoResponseMapper.convertirAPageResponseDTO(prestamos);
     }
 }
