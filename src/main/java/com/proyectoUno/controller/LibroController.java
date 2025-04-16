@@ -4,7 +4,6 @@ import com.proyectoUno.dto.reponse.LibroResponseDTO;
 
 import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
 import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
-import com.proyectoUno.entity.Libro;
 import com.proyectoUno.service.External.interfaces.LibroServiceExternal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -54,7 +53,7 @@ public class LibroController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void crearLibro(@Valid @RequestBody List<LibroCrearRequestDTO> requests){
-        libroServiceExternal.guardarLibro(requests);
+        libroServiceExternal.crearLibro(requests);
     }
 
 
