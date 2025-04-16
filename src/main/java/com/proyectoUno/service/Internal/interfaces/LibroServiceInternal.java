@@ -18,16 +18,6 @@ public interface LibroServiceInternal {
     void marcarLibroComoDisponible(Libro libro);
 
 
-    //metodos atuales sin paginacion
-    List<Libro> encontrarLibros ();
-    List<Libro> encontrarLibroPorTitulo(String titulo);
-    List<Libro> encontrarLibroPorAutor(String autor);
-    List<Libro> encontrarLibroPorIsbn(String isbn);
-    List<Libro> encontrarLibroPorCategoria(String categoria);
-    List<Libro> encontrarLibroPorEstado(String estado);
-
-    //metodos paginados
-
     Page<Libro> encontrarLibros (Pageable pageable);
     Page<Libro> encontrarLibroPorTitulo(String titulo, Pageable pageable);
     Page<Libro> encontrarLibroPorAutor(String autor,Pageable pageable);

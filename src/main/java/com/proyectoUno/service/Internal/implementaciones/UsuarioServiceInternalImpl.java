@@ -34,14 +34,6 @@ public class UsuarioServiceInternalImpl implements UsuarioServiceInternal {
     }
 
     //Metodos actuales
-    @Override
-    public List <Usuario> encontrarUsuarios(){
-        //Encontramos los usuarios
-        List <Usuario> usuarios = usuarioRepository.findAll();
-        //Verificamos la lista
-        usuarioValidacionService.validarListaDeUsuariossNoVacia(usuarios);
-        return usuarios;
-    }
 
     @Override
     public Usuario encontrarUsuarioPorId(UUID id){

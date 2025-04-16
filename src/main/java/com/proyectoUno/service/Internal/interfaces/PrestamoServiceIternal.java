@@ -13,16 +13,13 @@ public interface PrestamoServiceIternal {
 
     //Metodos actuales
     void crearPrestamo(Libro libro, Usuario usuario);
-    List<Prestamo> encontrarPrestamosActivosPorIdUsuario(UUID id);
     Prestamo encontrarPrestamoPorId(UUID id);
-    List<Prestamo> encontrarPrestamosPorIdUsuario(UUID id);
     void marcarPrestamoComoDevuelto(Prestamo prestamo);
-
-    //metodos paginados
 
     Page<Prestamo> encontrarPrestamos(Pageable pageable);
     Page<Prestamo> encontrarPrestamosPorIdUsuario(UUID id, Pageable pageable);
     Page<Prestamo> encontrarPrestamosActivosPorIdUsuario(UUID id, Pageable pageable);
     Page<Prestamo> encontrarPrestamosActivos(Pageable pageable);
+    Page<Prestamo> encontrarPrestamosConLibroYUsuarioAnidado(Pageable pageable);
 
 }

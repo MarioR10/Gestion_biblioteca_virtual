@@ -45,13 +45,6 @@ public class PrestamoServiceInternalImpl implements PrestamoServiceIternal {
         prestamoRepository.save(prestamo);
     }
 
-    @Override
-    public List<Prestamo> encontrarPrestamosActivosPorIdUsuario(UUID id) {
-        List <Prestamo> prestamos = prestamoRepository.findPrestamoByUsuarioIdAndEstado(id,"activo");
-        //Verificamos la lista
-        prestamoValidacionService.validarListaDePrestamosNoVacia(prestamos);
-        return prestamos;
-    }
 
     @Override
     public Prestamo encontrarPrestamoPorId(UUID id) {
@@ -61,14 +54,6 @@ public class PrestamoServiceInternalImpl implements PrestamoServiceIternal {
         Prestamo prestamo= prestamoValidacionService.validarPrestamoExistencia(prestamoOptional);
        //retornamos
         return prestamo;
-    }
-
-    @Override
-    public List<Prestamo> encontrarPrestamosPorIdUsuario(UUID id) {
-        List < Prestamo> prestamos = prestamoRepository.findByUsuarioId(id);
-        //validados la lista de prestamos
-        prestamoValidacionService.validarListaDePrestamosNoVacia(prestamos);
-        return prestamos;
     }
 
     @Override
@@ -104,6 +89,14 @@ public class PrestamoServiceInternalImpl implements PrestamoServiceIternal {
         validacionService.validarPaginaNoVacia(prestamosActivos, "Prestamos");
 
         return prestamosActivos;
+    }
+
+    @Override
+    public Page<Prestamo> encontrarPrestamosConLibroYUsuarioAnidado(Pageable pageable) {
+
+        Page<Prestamo> prestamos= prestamoRepository.findAll(pageable);
+        validacionService.validarPaginaNoVacia(prestamos, "Prestamos");
+        return prestamos;
     }
 
 

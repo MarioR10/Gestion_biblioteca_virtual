@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface UsuarioServiceInternal {
 
    //Metodos actuales
-   List<Usuario> encontrarUsuarios();
+
    Usuario encontrarUsuarioPorId(UUID id);
    void eliminarUsuarioPorId(UUID id);
    Usuario actualizarUsuario(UUID id,Usuario usuario );

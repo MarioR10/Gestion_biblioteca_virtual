@@ -33,15 +33,6 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     //metodos actuales
 
     @Override
-    public List<Libro> encontrarLibros() {
-        //Buscamos Libros en el repository
-        List<Libro> librosEncontrados= libroRepository.findAll();
-        //Llamamos la servicio de validaciones
-       validacionService.validarListaDeLibrosNoVacia(librosEncontrados, "libros");
-        return librosEncontrados;
-    }
-
-    @Override
     public Libro encontrarLibroPorId(UUID id) {
         //Encontrar El Optional en la base de datos
         Optional<Libro> libroOptional = libroRepository.findById(id);
@@ -80,52 +71,6 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     public void crearLibro(List<Libro> libros) {
         //Guardamos el libro
         libroRepository.saveAll(libros);
-    }
-
-    @Override
-    public List<Libro> encontrarLibroPorTitulo(String titulo) {
-        //Encontrar la lista de libros
-        List <Libro> libros = libroRepository.findLibroByTituloContaining(titulo);
-
-        //Llamamos la servicio de validaciones
-        validacionService.validarListaDeLibrosNoVacia(libros, "libros");
-        return libros;
-    }
-
-    @Override
-    public List<Libro> encontrarLibroPorAutor(String autor) {
-        //Encontrar la lista de libros
-        List <Libro> libros = libroRepository.findAllByAutorContaining(autor);
-        //Llamamos la servicio de validaciones
-        validacionService.validarListaDeLibrosNoVacia(libros, "libros");
-        return libros;
-    }
-
-    @Override
-    public List<Libro> encontrarLibroPorIsbn(String isbn) {
-        //Encontrar la lista de libros
-        List<Libro> libros =libroRepository.findLibroByIsbn(isbn);
-        //Llamamos la servicio de validaciones
-        validacionService.validarListaDeLibrosNoVacia(libros, "libros");
-        return libros;
-    }
-
-    @Override
-    public List<Libro> encontrarLibroPorCategoria(String categoria) {
-        //Encontrar la lista de libros
-        List <Libro> libros = libroRepository.findLibroByCategoriaContaining(categoria);
-        //Llamamos la servicio de validaciones
-        validacionService.validarListaDeLibrosNoVacia(libros, "libros");
-        return libros;
-    }
-
-    @Override
-    public List<Libro> encontrarLibroPorEstado(String estado) {
-        //Encontrar la lista de libros
-        List <Libro> libros = libroRepository.findByEstado(estado);
-        //Llamamos la servicio de validaciones
-        validacionService.validarListaDeLibrosNoVacia(libros, "libros");
-        return libros;
     }
 
     @Override
