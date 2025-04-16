@@ -2,6 +2,7 @@ package com.proyectoUno.maper.usuario;
 
 import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.entity.Usuario;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -36,6 +37,13 @@ public class UsuarioResponseMapper {
         return usuarios.stream()
                 .map(this::convertirAResponseDTO)// Convierte cada usuario a un DTO (nuestro metodo anterior)
                 .collect(Collectors.toList()); //  Recolecta los resultados en una lista ahora de tipo DTO
+    }
+
+    //pasa de Page<Usuario> a Page<UsuarioResponseDTO>
+
+    public Page<UsuarioResponseDTO> convertirAPageResponseDTO(Page<Usuario> usuarios){
+
+        return usuarios.map(this::convertirAResponseDTO);
     }
 
 }
