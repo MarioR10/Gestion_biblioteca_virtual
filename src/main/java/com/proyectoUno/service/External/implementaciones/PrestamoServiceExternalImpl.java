@@ -5,26 +5,20 @@ import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Prestamo;
 import com.proyectoUno.entity.Usuario;
-import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.maper.prestamo.PrestamoResponseMapper;
-import com.proyectoUno.repository.PrestamoRepository;
-import com.proyectoUno.service.External.interfaces.LibroServiceExternal;
 import com.proyectoUno.service.External.interfaces.PrestamoServiceExternal;
-import com.proyectoUno.service.External.interfaces.UsuarioServiceExternal;
 import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
 import com.proyectoUno.service.Internal.interfaces.PrestamoServiceIternal;
 import com.proyectoUno.service.Internal.interfaces.UsuarioServiceInternal;
 import com.proyectoUno.service.validation.interfaces.LibroValidacionService;
 import com.proyectoUno.service.validation.interfaces.PrestamoValidacionService;
 import com.proyectoUno.service.validation.interfaces.ValidacionService;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @Service
 public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
@@ -98,13 +92,7 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
     }
 
-    @Override
-    public Page<PrestamoResponseDTO> encontrarPrestamos(Pageable pageable) {
 
-        Page<Prestamo> prestamos= prestamoServiceIternal.encontrarPrestamos(pageable);
-
-        return prestamoResponseMapper.convertirAPageResponseDTO(prestamos);
-    }
 
     //Metodos paginados
     @Override
@@ -131,9 +119,9 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
     }
 
     @Override
-    public Page<PrestamoResponseDTO> encontrarPrestamosConLibroYUsuarioAnidados(Pageable pageable) {
+    public Page<PrestamoResponseDTO> encontrarPrestamos(Pageable pageable) {
 
-        Page<Prestamo> prestamos = prestamoServiceIternal.encontrarPrestamosConLibroYUsuarioAnidado(pageable);
+        Page<Prestamo> prestamos = prestamoServiceIternal.encontrarPrestamos(pageable);
 
         return prestamoResponseMapper.convertirAPageResponseDTO(prestamos);
     }

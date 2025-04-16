@@ -5,7 +5,6 @@ import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface PrestamoServiceExternal {
@@ -19,9 +18,8 @@ public interface PrestamoServiceExternal {
     void registrarDevolucion(UUID prestamo);
 
     //metodos paginados
-    Page<PrestamoResponseDTO> encontrarPrestamos(Pageable pageable);
     Page<PrestamoResponseDTO>encontrarPrestamosActivosPorUsuarios(UUID usuarioId, Pageable pageable);
     Page<PrestamoResponseDTO> encontrarHistorialDePrestamoPorUsuario(UUID usuarioId, Pageable pageable);
     Page<PrestamoResponseDTO> encontrarPrestamosActivos(Pageable pageable);
-    Page<PrestamoResponseDTO> encontrarPrestamosConLibroYUsuarioAnidados(Pageable pageable);
+    Page<PrestamoResponseDTO> encontrarPrestamos(Pageable pageable);
 }

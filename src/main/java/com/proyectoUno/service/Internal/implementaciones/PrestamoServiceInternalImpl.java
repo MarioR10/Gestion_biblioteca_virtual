@@ -1,5 +1,6 @@
 package com.proyectoUno.service.Internal.implementaciones;
 
+import com.proyectoUno.dto.reponse.PrestamoResponseDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Prestamo;
 import com.proyectoUno.entity.Usuario;
@@ -63,12 +64,6 @@ public class PrestamoServiceInternalImpl implements PrestamoServiceIternal {
     }
 
     @Override
-    public Page<Prestamo> encontrarPrestamos(Pageable pageable) {
-        Page<Prestamo> prestamos = prestamoRepository.findAll(pageable);
-        validacionService.validarPaginaNoVacia(prestamos, "Prestamos");
-        return prestamos;
-    }
-    @Override
     public Page<Prestamo> encontrarPrestamosPorIdUsuario(UUID id, Pageable pageable) {
 
         Page<Prestamo> prestamosUsuario = prestamoRepository.findByUsuarioId(id,pageable);
@@ -92,7 +87,7 @@ public class PrestamoServiceInternalImpl implements PrestamoServiceIternal {
     }
 
     @Override
-    public Page<Prestamo> encontrarPrestamosConLibroYUsuarioAnidado(Pageable pageable) {
+    public Page<Prestamo> encontrarPrestamos(Pageable pageable) {
 
         Page<Prestamo> prestamos= prestamoRepository.findAll(pageable);
         validacionService.validarPaginaNoVacia(prestamos, "Prestamos");
