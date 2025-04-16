@@ -32,11 +32,11 @@ public class Prestamo {
 
     //Campos que ayudan a las relaciones
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "id_usuario", referencedColumnName = "id")
     private Usuario usuario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn( name= "id_libro", referencedColumnName = "id")
     private Libro libro;
 
