@@ -6,10 +6,8 @@ import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.maper.libro.LibroRequestMapper;
 import com.proyectoUno.maper.libro.LibroResponseMapper;
-import com.proyectoUno.repository.LibroRepository;
 import com.proyectoUno.service.External.interfaces.LibroServiceExternal;
 import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @Service
 public class LibroServiceExternalImpl implements LibroServiceExternal {
@@ -69,11 +66,11 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
     }
     @Override
 
-    public void guardarLibro(List<LibroCrearRequestDTO> libroCrearRequestDTO) {
+    public void crearLibro(List<LibroCrearRequestDTO> libroCrearRequestDTO) {
         //Convertir  lista DTO en entidad
         List<Libro> libros = libroRequestMapper.convertirAListaEntidad(libroCrearRequestDTO);
         //Guardamos la entidad
-         libroServiceInternal.guardarLibro(libros);
+         libroServiceInternal.crearLibro(libros);
     }
 
     @Override

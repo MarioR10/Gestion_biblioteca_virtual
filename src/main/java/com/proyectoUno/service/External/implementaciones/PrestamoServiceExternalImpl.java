@@ -16,8 +16,11 @@ import com.proyectoUno.service.Internal.interfaces.PrestamoServiceIternal;
 import com.proyectoUno.service.Internal.interfaces.UsuarioServiceInternal;
 import com.proyectoUno.service.validation.interfaces.LibroValidacionService;
 import com.proyectoUno.service.validation.interfaces.PrestamoValidacionService;
+import com.proyectoUno.service.validation.interfaces.ValidacionService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
@@ -31,12 +34,13 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
     private final LibroValidacionService libroValidacionService;
     private final PrestamoServiceIternal prestamoServiceIternal;
     private final PrestamoValidacionService prestamoValidacionService;
+    private final ValidacionService validacionService;
     private LibroServiceInternal libroServicesInternal;
 
 
 
     @Autowired
-    public PrestamoServiceExternalImpl(LibroServiceInternal libroServicesInternal, UsuarioServiceInternal usuarioServiceInternal, PrestamoResponseMapper prestamoResponseMapper, LibroValidacionService libroValidacionService, PrestamoServiceIternal prestamoServiceIternal, PrestamoValidacionService prestamoValidacionService){
+    public PrestamoServiceExternalImpl(LibroServiceInternal libroServicesInternal, UsuarioServiceInternal usuarioServiceInternal, PrestamoResponseMapper prestamoResponseMapper, LibroValidacionService libroValidacionService, PrestamoServiceIternal prestamoServiceIternal, PrestamoValidacionService prestamoValidacionService, ValidacionService validacionService){
 
         this.libroServicesInternal=libroServicesInternal;
         this.usuarioServiceInternal = usuarioServiceInternal;
@@ -44,9 +48,10 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
         this.libroValidacionService = libroValidacionService;
         this.prestamoServiceIternal = prestamoServiceIternal;
         this.prestamoValidacionService = prestamoValidacionService;
+        this.validacionService = validacionService;
     }
     @Override
-    public void guardarPrestamo(PrestamoCrearRequestDTO prestamoCrearRequestDTO) {
+    public void crearPrestamo(PrestamoCrearRequestDTO prestamoCrearRequestDTO) {
 
         //Encontramos el usuario
         Usuario usuario = usuarioServiceInternal.encontrarUsuarioPorId(prestamoCrearRequestDTO.getIdUsuario());
@@ -102,12 +107,44 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
     }
     @Override
-    public List<PrestamoResponseDTO> obtenerHistorialDePrestamoPorUsuario(UUID usuarioId) {
+    public List<PrestamoResponseDTO> encontrarHistorialDePrestamoPorUsuario(UUID usuarioId) {
 
         //Encontrar el historial de prestamos
         List<Prestamo> prestamos = prestamoServiceIternal.encontrarPrestamosPorIdUsuario(usuarioId);
 
         //Convertir a DTO
         return prestamoResponseMapper.convertirAListaResponseDTO(prestamos);
+    }
+
+    @Override
+    public Page<PrestamoResponseDTO> encontrarPrestamos(Pageable pageable) {
+
+        Page<Prestamo> prestamos= prestamoServiceIternal.encontrarPrestamos(pageable);
+
+        return prestamoResponseMapper.convertirAPageResponseDTO(prestamos);
+    }
+
+    //Metodos paginados
+    @Override
+    public Page<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId, Pageable pageable) {
+
+        Page<Prestamo> prestamosActivos = prestamoServiceIternal.encontrarPrestamosActivosPorIdUsuario(usuarioId, pageable);
+        validacionService.validarPaginaNoVacia(prestamosActivos, "Prestamos");
+        return prestamoResponseMapper.convertirAPageResponseDTO(prestamosActivos);
+    }
+
+    @Override
+    public Page<PrestamoResponseDTO> encontrarHistorialDePrestamoPorUsuario(UUID usuarioId, Pageable pageable) {
+        Page<Prestamo> prestamosPorUsuario= prestamoServiceIternal.encontrarPrestamosPorIdUsuario(usuarioId,pageable);
+        validacionService.validarPaginaNoVacia(prestamosPorUsuario, "Prestamos");
+        return prestamoResponseMapper.convertirAPageResponseDTO(prestamosPorUsuario);
+    }
+
+    @Override
+    public Page<PrestamoResponseDTO> encontrarPrestamosActivos(Pageable pageable) {
+
+        Page<Prestamo> prestamosActivos = prestamoServiceIternal.encontrarPrestamosActivos(pageable);
+
+        return prestamoResponseMapper.convertirAPageResponseDTO(prestamosActivos);
     }
 }

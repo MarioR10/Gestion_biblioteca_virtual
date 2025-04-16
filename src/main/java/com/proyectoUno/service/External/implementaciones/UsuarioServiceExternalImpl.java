@@ -3,15 +3,14 @@ package com.proyectoUno.service.External.implementaciones;
 import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioCrearRequestDTO;
-import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Usuario;
-import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.maper.usuario.UsuarioRequestMapper;
 import com.proyectoUno.maper.usuario.UsuarioResponseMapper;
-import com.proyectoUno.repository.UsuarioRepository;
 import com.proyectoUno.service.External.interfaces.UsuarioServiceExternal;
 import com.proyectoUno.service.Internal.interfaces.UsuarioServiceInternal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -27,13 +26,9 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
     private final UsuarioRequestMapper usuarioRequestMapper;
 
 
-
-
     //Inyeccion de dependencias
     @Autowired
-    public UsuarioServiceExternalImpl( UsuarioResponseMapper usuarioResponseMapper, UsuarioServiceInternal usuarioServiceInternal, UsuarioRequestMapper usuarioRequestMapper){
-
-
+    public UsuarioServiceExternalImpl(UsuarioResponseMapper usuarioResponseMapper, UsuarioServiceInternal usuarioServiceInternal, UsuarioRequestMapper usuarioRequestMapper){
         this.usuarioResponseMapper = usuarioResponseMapper;
         this.usuarioServiceInternal = usuarioServiceInternal;
         this.usuarioRequestMapper = usuarioRequestMapper;
@@ -82,13 +77,19 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
     }
 
     @Override
-    public void guardarUsuario(List<UsuarioCrearRequestDTO> usuarioDTO) {
+    public void crearUsuario(List<UsuarioCrearRequestDTO> usuarioDTO) {
 
         //convertir lista DTO a entidad
         List<Usuario> usuarios= usuarioRequestMapper.convertirAListaEntidad(usuarioDTO);
 
         //Guardar Usuario
-        usuarioServiceInternal.guardarUsuario(usuarios);
+        usuarioServiceInternal.crearUsuario(usuarios);
+    }
+
+    @Override
+    public Page<UsuarioResponseDTO> encontrarUsuarios(Pageable pageable) {
+        Page<Usuario> usuarios = usuarioServiceInternal.encontrarUsuarios(pageable);
+        return usuarioResponseMapper.convertirAPageResponseDTO(usuarios);
     }
 
 
