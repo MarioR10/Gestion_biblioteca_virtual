@@ -49,15 +49,6 @@ public class PrestamoController {
 
     //Metodos paginados
 
-    @GetMapping()
-    public ResponseEntity<Page<PrestamoResponseDTO>> encontrarPrestamos(
-            @PageableDefault(page = 0, size = 8) Pageable pageable
-    ){
-
-        Page<PrestamoResponseDTO> prestamos = prestamoServiceExternal.encontrarPrestamos(pageable);
-
-        return  ResponseEntity.ok(prestamos);
-    }
 
 
     @GetMapping("/historial/{id}")
@@ -92,4 +83,12 @@ public class PrestamoController {
         return  ResponseEntity.ok(prestamosActivos);
     }
 
+    @GetMapping()
+    public ResponseEntity<Page<PrestamoResponseDTO>> enconctrarPrestamos(
+            @PageableDefault(page = 0, size = 8) Pageable pageable
+    ){
+
+        Page<PrestamoResponseDTO> prestamos= prestamoServiceExternal.encontrarPrestamosConLibroYUsuarioAnidados(pageable);
+        return ResponseEntity.ok(prestamos);
+    }
 }

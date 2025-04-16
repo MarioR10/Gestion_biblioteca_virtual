@@ -29,11 +29,6 @@ public class UsuarioController {
     }
 
 
-    @GetMapping("/usuarios")
-    public ResponseEntity<List<UsuarioResponseDTO>> obtenerUsuarios(){
-        List<UsuarioResponseDTO> usuarios = usuarioServiceExternal.encontrarUsuarios();
-        return ResponseEntity.ok(usuarios);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> obtenerUsuarioPorId(@PathVariable UUID id){
