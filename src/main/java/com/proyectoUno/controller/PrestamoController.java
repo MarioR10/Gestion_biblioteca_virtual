@@ -88,7 +88,7 @@ public class PrestamoController {
             @PageableDefault(page = 0, size = 8) Pageable pageable
     ){
 
-        Page<PrestamoResponseDTO> prestamos= prestamoServiceExternal.encontrarPrestamosConLibroYUsuarioAnidados(pageable);
+        Page<PrestamoResponseDTO> prestamos= prestamoServiceExternal.encontrarPrestamos(pageable);
         return ResponseEntity.ok(prestamos);
     }
 }
