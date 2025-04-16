@@ -4,6 +4,7 @@ import com.proyectoUno.dto.reponse.LibroResponseDTO;
 import com.proyectoUno.dto.reponse.PrestamoResponseDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Prestamo;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,4 +38,10 @@ public class PrestamoResponseMapper {
                 .collect(Collectors.toList()); //  Recolecta los resultados en una lista ahora de tipo DTO
     }
 
+
+    //Convertir a una pagina de prestamoResponseDTO
+    public Page<PrestamoResponseDTO> convertirAPageResponseDTO( Page<Prestamo> prestamos){
+
+       return prestamos.map(this::convertirAresponseDTO);
+    }
 }
