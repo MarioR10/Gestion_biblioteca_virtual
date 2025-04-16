@@ -20,6 +20,7 @@ public class UsuarioResponseMapper {
         UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
 
         //Entidad a DTO
+        usuarioResponseDTO.setId(usuario.getId());
         usuarioResponseDTO.setNombre(usuario.getNombre());
         usuarioResponseDTO.setApellido(usuario.getApellido());
         usuarioResponseDTO.setEmail(usuario.getEmail());
