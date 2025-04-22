@@ -4,8 +4,8 @@ import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioCrearRequestDTO;
 import com.proyectoUno.entity.Usuario;
-import com.proyectoUno.maper.usuario.UsuarioRequestMapper;
-import com.proyectoUno.maper.usuario.UsuarioResponseMapper;
+import com.proyectoUno.maper.usuario.UsuarioRequestMapperStruct;
+import com.proyectoUno.maper.usuario.UsuarioResponseMapperStruct;
 import com.proyectoUno.service.External.interfaces.UsuarioServiceExternal;
 import com.proyectoUno.service.Internal.interfaces.UsuarioServiceInternal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +21,14 @@ import java.util.UUID;
 public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
 
 
-    private final UsuarioResponseMapper usuarioResponseMapper;
+    private final UsuarioResponseMapperStruct usuarioResponseMapper;
     private final UsuarioServiceInternal usuarioServiceInternal;
-    private final UsuarioRequestMapper usuarioRequestMapper;
+    private final UsuarioRequestMapperStruct usuarioRequestMapper;
 
 
     //Inyeccion de dependencias
     @Autowired
-    public UsuarioServiceExternalImpl(UsuarioResponseMapper usuarioResponseMapper, UsuarioServiceInternal usuarioServiceInternal, UsuarioRequestMapper usuarioRequestMapper){
+    public UsuarioServiceExternalImpl(UsuarioResponseMapperStruct usuarioResponseMapper, UsuarioServiceInternal usuarioServiceInternal, UsuarioRequestMapperStruct usuarioRequestMapper){
         this.usuarioResponseMapper = usuarioResponseMapper;
         this.usuarioServiceInternal = usuarioServiceInternal;
         this.usuarioRequestMapper = usuarioRequestMapper;
@@ -42,7 +42,7 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
         Usuario usuario = usuarioServiceInternal.encontrarUsuarioPorId(id);
 
         //Convertimos a DTO
-        return usuarioResponseMapper.convertirAResponseDTO(usuario);
+        return usuarioResponseMapper.toResponseDTO(usuario);
     }
 
     @Override
@@ -56,13 +56,13 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
     public UsuarioResponseDTO actualizarUsuario(UUID id,UsuarioActualizarDTO usuarioActualizar) {
 
         //Obtenemos la entidad parcial (al crearla solo le asignamos los campos del DTO), esta no se agurda en la BD
-        Usuario datosActualizar= usuarioRequestMapper.actualizarEntidadDesdeDTO(usuarioActualizar);
+        Usuario datosActualizar= usuarioRequestMapper.toEntity(usuarioActualizar);
 
         //Pasamos la entidad parcial a nuestro servicio interno para que actualice los datos
         Usuario usuarioActualizado= usuarioServiceInternal.actualizarUsuario(id, datosActualizar);
 
         //guarda el usuario actualizado
-        return usuarioResponseMapper.convertirAResponseDTO(usuarioActualizado); // JPA actualizará automáticamente por @Transactional
+        return usuarioResponseMapper.toResponseDTO(usuarioActualizado); // JPA actualizará automáticamente por @Transactional
 
 
     }
@@ -71,7 +71,7 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
     public void crearUsuario(List<UsuarioCrearRequestDTO> usuarioDTO) {
 
         //convertir lista DTO a entidad
-        List<Usuario> usuarios= usuarioRequestMapper.convertirAListaEntidad(usuarioDTO);
+        List<Usuario> usuarios= usuarioRequestMapper.toEntityList(usuarioDTO);
 
         //Guardar Usuario
         usuarioServiceInternal.crearUsuario(usuarios);
@@ -80,7 +80,7 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
     @Override
     public Page<UsuarioResponseDTO> encontrarUsuarios(Pageable pageable) {
         Page<Usuario> usuarios = usuarioServiceInternal.encontrarUsuarios(pageable);
-        return usuarioResponseMapper.convertirAPageResponseDTO(usuarios);
+        return usuarioResponseMapper.toResponsePageDTO(usuarios);
     }
 
 
