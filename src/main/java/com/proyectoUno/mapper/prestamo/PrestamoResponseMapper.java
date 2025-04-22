@@ -3,7 +3,7 @@ package com.proyectoUno.maper.prestamo;
 import com.proyectoUno.dto.reponse.PrestamoResponseDTO;
 import com.proyectoUno.entity.Prestamo;
 import com.proyectoUno.maper.libro.LibroResponseMapperStruct;
-import com.proyectoUno.maper.usuario.UsuarioResponseMapper;
+import com.proyectoUno.maper.usuario.UsuarioResponseMapperStruct;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 @Component
 public class PrestamoResponseMapper {
     private final LibroResponseMapperStruct libroResponseMapper;
-    private final UsuarioResponseMapper usuarioResponseMapper;
+    private final UsuarioResponseMapperStruct usuarioResponseMapper;
 
-    public PrestamoResponseMapper(LibroResponseMapperStruct libroResponseMapper, UsuarioResponseMapper usuarioResponseMapper) {
+    public PrestamoResponseMapper(LibroResponseMapperStruct libroResponseMapper, UsuarioResponseMapperStruct usuarioResponseMapper) {
         this.libroResponseMapper = libroResponseMapper;
         this.usuarioResponseMapper = usuarioResponseMapper;
     }
@@ -33,7 +33,7 @@ public class PrestamoResponseMapper {
         prestamoResponseDTO.setEstado(prestamo.getEstado());
         //anidados
         prestamoResponseDTO.setLibroAsociado(libroResponseMapper.toResponseDTO(prestamo.getLibro()));
-        prestamoResponseDTO.setUsuarioAsociado(usuarioResponseMapper.convertirAResponseDTO(prestamo.getUsuario()));
+        prestamoResponseDTO.setUsuarioAsociado(usuarioResponseMapper.toResponseDTO(prestamo.getUsuario()));
         return prestamoResponseDTO;
 
     }
