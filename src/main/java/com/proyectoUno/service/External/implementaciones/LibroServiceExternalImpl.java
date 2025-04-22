@@ -26,6 +26,7 @@ public class LibroServiceExternalImpl implements LibroServiceExternal {
     private final LibroServiceInternal libroServiceInternal;
 
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     public LibroServiceExternalImpl(LibroResponseMapperStruct libroResponseMapper, LibroRequestMapperStruct libroRequestMapper, LibroServiceInternal libroServiceInternal){
         this.libroResponseMapper = libroResponseMapper;

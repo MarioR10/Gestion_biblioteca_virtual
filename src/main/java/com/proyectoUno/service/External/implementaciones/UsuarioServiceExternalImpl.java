@@ -27,6 +27,7 @@ public class UsuarioServiceExternalImpl implements UsuarioServiceExternal {
 
 
     //Inyeccion de dependencias
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     public UsuarioServiceExternalImpl(UsuarioResponseMapperStruct usuarioResponseMapper, UsuarioServiceInternal usuarioServiceInternal, UsuarioRequestMapperStruct usuarioRequestMapper){
         this.usuarioResponseMapper = usuarioResponseMapper;
