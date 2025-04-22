@@ -1,4 +1,4 @@
-package com.proyectoUno.mapper.usuario;
+package com.proyectoUno.maper.usuario;
 
 import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.entity.Usuario;

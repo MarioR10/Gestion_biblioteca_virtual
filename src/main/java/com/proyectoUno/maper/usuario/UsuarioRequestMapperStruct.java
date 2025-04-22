@@ -1,4 +1,4 @@
-package com.proyectoUno.mapper.usuario;
+package com.proyectoUno.maper.usuario;
 
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioCrearRequestDTO;
