@@ -5,7 +5,7 @@ import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Prestamo;
 import com.proyectoUno.entity.Usuario;
-import com.proyectoUno.maper.prestamo.PrestamoResponseMapper;
+import com.proyectoUno.maper.prestamo.PrestamoResponseMapperStruct;
 import com.proyectoUno.service.External.interfaces.PrestamoServiceExternal;
 import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
 import com.proyectoUno.service.Internal.interfaces.PrestamoServiceIternal;
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
     private final UsuarioServiceInternal usuarioServiceInternal;
-    private final PrestamoResponseMapper prestamoResponseMapper;
+    private final PrestamoResponseMapperStruct prestamoResponseMapper;
     private final LibroValidacionService libroValidacionService;
     private final PrestamoServiceIternal prestamoServiceIternal;
     private final PrestamoValidacionService prestamoValidacionService;
@@ -34,7 +34,7 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
 
     @Autowired
-    public PrestamoServiceExternalImpl(LibroServiceInternal libroServicesInternal, UsuarioServiceInternal usuarioServiceInternal, PrestamoResponseMapper prestamoResponseMapper, LibroValidacionService libroValidacionService, PrestamoServiceIternal prestamoServiceIternal, PrestamoValidacionService prestamoValidacionService, ValidacionService validacionService){
+    public PrestamoServiceExternalImpl(LibroServiceInternal libroServicesInternal, UsuarioServiceInternal usuarioServiceInternal, PrestamoResponseMapperStruct prestamoResponseMapper, LibroValidacionService libroValidacionService, PrestamoServiceIternal prestamoServiceIternal, PrestamoValidacionService prestamoValidacionService, ValidacionService validacionService){
 
         this.libroServicesInternal=libroServicesInternal;
         this.usuarioServiceInternal = usuarioServiceInternal;
@@ -72,7 +72,7 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
         Prestamo prestamo = prestamoServiceIternal.encontrarPrestamoPorId(id);
 
         //converitmos a DTO
-        return prestamoResponseMapper.convertirAresponseDTO(prestamo);
+        return prestamoResponseMapper.toResponseDTO(prestamo);
     }
     @Override
     public void registrarDevolucion(UUID prestamoId) {
@@ -100,14 +100,14 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
         Page<Prestamo> prestamosActivos = prestamoServiceIternal.encontrarPrestamosActivosPorIdUsuario(usuarioId, pageable);
         validacionService.validarPaginaNoVacia(prestamosActivos, "Prestamos");
-        return prestamoResponseMapper.convertirAPageResponseDTO(prestamosActivos);
+        return prestamoResponseMapper.toResponseDTOPage(prestamosActivos);
     }
 
     @Override
     public Page<PrestamoResponseDTO> encontrarHistorialDePrestamoPorUsuario(UUID usuarioId, Pageable pageable) {
         Page<Prestamo> prestamosPorUsuario= prestamoServiceIternal.encontrarPrestamosPorIdUsuario(usuarioId,pageable);
         validacionService.validarPaginaNoVacia(prestamosPorUsuario, "Prestamos");
-        return prestamoResponseMapper.convertirAPageResponseDTO(prestamosPorUsuario);
+        return prestamoResponseMapper.toResponseDTOPage(prestamosPorUsuario);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
         Page<Prestamo> prestamosActivos = prestamoServiceIternal.encontrarPrestamosActivos(pageable);
 
-        return prestamoResponseMapper.convertirAPageResponseDTO(prestamosActivos);
+        return prestamoResponseMapper.toResponseDTOPage(prestamosActivos);
     }
 
     @Override
@@ -123,6 +123,6 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
         Page<Prestamo> prestamos = prestamoServiceIternal.encontrarPrestamos(pageable);
 
-        return prestamoResponseMapper.convertirAPageResponseDTO(prestamos);
+        return prestamoResponseMapper.toResponseDTOPage(prestamos);
     }
 }
