@@ -44,11 +44,10 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     @Override
     @Transactional
     public void eliminarLibroPorId(UUID id) {
-        try {
-            libroRepository.deleteById(id);
-        } catch(EntidadNoEncontradaException e){
-            throw new EntidadNoEncontradaException("Libro no encontrado, no puede ser eliminado");
-        }
+
+       Libro libro = encontrarLibroPorId(id);
+
+       libroRepository.delete(libro);
     }
 
     @Override
