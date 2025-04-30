@@ -49,10 +49,10 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
     public void crearPrestamo(PrestamoCrearRequestDTO prestamoCrearRequestDTO) {
 
         //Encontramos el usuario
-        Usuario usuario = usuarioServiceInternal.encontrarUsuarioPorId(prestamoCrearRequestDTO.getIdUsuario());
+        Usuario usuario = usuarioServiceInternal.encontrarUsuarioPorId(prestamoCrearRequestDTO.idUsuario());
 
         //Encontramos el libro
-        Libro libro = libroServicesInternal.encontrarLibroPorId(prestamoCrearRequestDTO.getIdLibro());
+        Libro libro = libroServicesInternal.encontrarLibroPorId(prestamoCrearRequestDTO.idLibro());
 
         //verificar si el libro esta disponible
         libroValidacionService.validarDisponibilidadDelLibro(libro);
