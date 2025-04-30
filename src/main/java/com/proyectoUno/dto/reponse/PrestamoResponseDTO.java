@@ -7,6 +7,8 @@ public record PrestamoResponseDTO(
         UUID id,
         LocalDateTime fechaPrestamo,
         LocalDateTime fechaDevolucion,
-        String estado
+        String estado,
+        UsuarioResponseDTO usuario,
+        LibroResponseDTO libro
 
         ) { }
