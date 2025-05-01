@@ -5,6 +5,7 @@ import com.proyectoUno.entity.Usuario;
 import com.proyectoUno.exception.EntidadDuplicadaException;
 import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.exception.ListaDeEntidadesVaciaException;
+import com.proyectoUno.exception.ListaDeEntradaConDuplicadosException;
 import com.proyectoUno.service.validation.interfaces.UsuarioValidacionService;
 import org.springframework.stereotype.Service;
 
@@ -15,23 +16,6 @@ import java.util.stream.Stream;
 
 @Service
 public class UsuarioValidacionServiceImpl implements UsuarioValidacionService {
-    @Override
-    public void validarListaDeUsuariossNoVacia(List<Usuario> usuarios) {
-
-        if (usuarios== null || usuarios.isEmpty()){
-             throw new ListaDeEntidadesVaciaException("No se encontraron usuarios en la base de datos");
-        }
-    }
-
-    @Override
-    public Usuario validarUsuarioExistencia(Optional<Usuario> usuarioOptional) {
-
-       Usuario usuario = usuarioOptional.orElseThrow(
-
-                () ->  new EntidadNoEncontradaException( "El usuario buscado no ha sido encontrado"));
-
-       return usuario;
-    }
 
     @Override
     public void validarDatosActualizacion(Usuario datosActualizacion) {
@@ -57,7 +41,7 @@ public class UsuarioValidacionServiceImpl implements UsuarioValidacionService {
 
         // Si el tamaño del Set es menor que el de la lista original, significa que había duplicados
         if (emailsUnicos.size() < emailsNuevos.size())
-            throw new IllegalArgumentException("La lista contiene emails duplicados.");
+            throw new ListaDeEntradaConDuplicadosException("La lista contiene emails duplicados.");
     }
 
     @Override
@@ -72,9 +56,8 @@ public class UsuarioValidacionServiceImpl implements UsuarioValidacionService {
                     .map(Usuario::getEmail)
                     .collect(Collectors.toSet());
 
-            throw new IllegalArgumentException("Los siguientes emails ya están registrados: " + emailsDuplicados);
+            throw new EntidadDuplicadaException("Los siguientes emails ya están registrados: " + emailsDuplicados);
         }
-
 
     }
 

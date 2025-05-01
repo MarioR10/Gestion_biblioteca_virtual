@@ -12,23 +12,8 @@ import java.util.Optional;
 
 @Service
 public class PrestamoValidacionServiceImpl implements PrestamoValidacionService {
-    @Override
-    public void validarListaDePrestamosNoVacia(List<Prestamo> prestamos) {
 
-        if (prestamos== null || prestamos.isEmpty()){
-            throw new ListaDeEntidadesVaciaException("No se encontraron prestamos en la base de datos");
-        }
 
-    }
-
-    @Override
-    public Prestamo validarPrestamoExistencia(Optional<Prestamo> prestamoOptional) {
-
-        Prestamo prestamo= prestamoOptional.orElseThrow(
-                () -> new EntidadNoEncontradaException("El Prestamo buscado no ha sido encontrado"));
-
-        return prestamo;
-    }
     @Override
     public void validarEstadoDelPrestamo(String estado){
 
