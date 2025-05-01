@@ -7,9 +7,6 @@ import java.util.Optional;
 
 public interface UsuarioValidacionService {
 
-    void validarListaDeUsuariossNoVacia(List<Usuario> usuarios);
-
-    Usuario validarUsuarioExistencia(Optional<Usuario>usuario);
 
     void validarDatosActualizacion(Usuario datosActualizacion);
 
