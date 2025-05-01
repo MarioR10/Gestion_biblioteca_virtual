@@ -18,7 +18,6 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NO_CONTENT); //Devuelve un mensaje de error y un codigo 204
 
-
     }
 
     @ExceptionHandler(EntidadDuplicadaException.class)
@@ -32,6 +31,14 @@ public class GlobalExceptionHandler {
 
         return  new ResponseEntity<>(ex.getMessage(), HttpStatus.NO_CONTENT);
 
+    }
+
+    @ExceptionHandler(ListaDeEntradaConDuplicadosException.class)
+    public ResponseEntity<String> manejarDuplicadosEnListaEntrante( ListaDeEntradaConDuplicadosException ex){
+
+        return  new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+    }
+
 
     }
-}
+
