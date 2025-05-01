@@ -8,10 +8,6 @@ import java.util.Optional;
 
 public interface PrestamoValidacionService {
 
-    void validarListaDePrestamosNoVacia(List<Prestamo> prestamos);
-
-    Prestamo validarPrestamoExistencia(Optional<Prestamo> prestamos);
-
     void validarEstadoDelPrestamo(String estado);
 
 
