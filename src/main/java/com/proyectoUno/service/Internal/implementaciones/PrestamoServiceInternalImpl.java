@@ -52,7 +52,7 @@ public class PrestamoServiceInternalImpl implements PrestamoServiceIternal {
         //Encontramos el OptionalPrestamo
         Optional<Prestamo> prestamoOptional = prestamoRepository.findById(id);
         //Validamos el prestamo
-        Prestamo prestamo= prestamoValidacionService.validarPrestamoExistencia(prestamoOptional);
+        Prestamo prestamo= validacionService.validarExistencia(prestamoOptional, "Prestamo");
        //retornamos
         return prestamo;
     }

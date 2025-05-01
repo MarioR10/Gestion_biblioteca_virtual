@@ -40,7 +40,7 @@ public class UsuarioServiceInternalImpl implements UsuarioServiceInternal {
         //Encontramos el optional
         Optional <Usuario> usuarioOptional= usuarioRepository.findById(id);
         //Validamos el usuario
-        Usuario usuario= usuarioValidacionService.validarUsuarioExistencia(usuarioOptional);
+        Usuario usuario= validacionService.validarExistencia(usuarioOptional, "usuario");
         return usuario;
     }
     @Override
@@ -90,7 +90,7 @@ public class UsuarioServiceInternalImpl implements UsuarioServiceInternal {
         //Encontramos el usuario por email
         Optional<Usuario> usuarioEncontrado = usuarioRepository.findByEmail(email);
         //Verificamos que este presente en la abse de datos
-        Usuario usuario=  usuarioValidacionService.validarUsuarioExistencia(usuarioEncontrado);
+        Usuario usuario=  validacionService.validarExistencia(usuarioEncontrado, "usuario");
         return usuario;
     }
 

@@ -37,7 +37,7 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
         //Encontrar El Optional en la base de datos
         Optional<Libro> libroOptional = libroRepository.findById(id);
         //Validar si existe o no
-        Libro libro = libroValidacionService.validarLibroExistencia(libroOptional);
+        Libro libro = validacionService.validarExistencia(libroOptional, "Libro");
         return libro;
     }
 
