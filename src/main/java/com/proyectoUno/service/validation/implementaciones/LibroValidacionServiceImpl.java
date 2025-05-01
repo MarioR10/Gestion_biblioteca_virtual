@@ -16,23 +16,6 @@ import java.util.stream.Stream;
 @Service
 public class LibroValidacionServiceImpl implements LibroValidacionService {
 
-    @Override
-    public void validarListaDeLibrosNoVacia(List<Libro> libros){
-
-        if (libros== null || libros.isEmpty()){
-
-            throw new ListaDeEntidadesVaciaException("No se encontraron libros en la base de datos");
-        }
-    }
-
-    @Override
-    public Libro validarLibroExistencia(Optional<Libro> libroOptional) {
-        Libro libro= libroOptional.orElseThrow(
-                () -> new EntidadNoEncontradaException("El libro buscado no ha sido encontrado"));
-
-        return libro;
-
-    }
 
     @Override
     public void validarDatosActualizacion(Libro datosActualizacion) {
@@ -48,14 +31,7 @@ public class LibroValidacionServiceImpl implements LibroValidacionService {
         }
 
     }
-    @Override
-    public void validarLibroNoDuplicado(Optional<Libro> libro, String isbn) {
-        if (libro.isPresent()){
 
-           throw new EntidadDuplicadaException("Ya existe un libro con isbn: "+ isbn);
-        }
-
-    }
 
     @Override
     public void validarDisponibilidadDelLibro(Libro libro){
