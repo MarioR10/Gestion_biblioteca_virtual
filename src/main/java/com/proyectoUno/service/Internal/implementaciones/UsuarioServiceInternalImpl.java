@@ -9,6 +9,7 @@ import com.proyectoUno.service.validation.interfaces.ValidacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ public class UsuarioServiceInternalImpl implements UsuarioServiceInternal {
     private final ValidacionService validacionService;
     private UsuarioRepository usuarioRepository;
     private UsuarioValidacionService usuarioValidacionService;
+
 
     @Autowired
     public UsuarioServiceInternalImpl(UsuarioRepository usuarioRepository, UsuarioValidacionService usuarioValidacionService, ValidacionService validacionService){
@@ -66,11 +68,14 @@ public class UsuarioServiceInternalImpl implements UsuarioServiceInternal {
         usuarioEncontrado.setEmail(datosValidar.getEmail());
         usuarioEncontrado.setRol(datosValidar.getRol());
         usuarioEncontrado.setActivo(datosValidar.getActivo());
+
+
         return  usuarioEncontrado;
     }
     @Override
     @Transactional
     public void crearUsuario(List<Usuario> usuarios){
+
        //Obtenemos la lista de emails nuevos
         List<String> emailsNuevos = usuarios.stream()
                 .map(Usuario::getEmail)
@@ -81,6 +86,7 @@ public class UsuarioServiceInternalImpl implements UsuarioServiceInternal {
         // Validamos que los emails no existan en la base de datos
         List<Usuario> usuariosExistentes = usuarioRepository.findByEmailIn(emailsNuevos);
         usuarioValidacionService.validarDuplicadosBaseDeDatos(usuariosExistentes);
+
         // Guardamos los nuevos usuarios verificados
         usuarioRepository.saveAll(usuarios);
     }
