@@ -1,9 +1,7 @@
 package com.proyectoUno.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.jsonwebtoken.security.Message;
 import org.springframework.http.HttpStatus;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -46,7 +44,7 @@ public class ErrorResponse {
     }
 
     /**
-     * Constructor con detalles adicionales
+     * Constructor con detalles adicionales a los predeterminados
      * @param status
      * @param message
      * @param path
