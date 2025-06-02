@@ -23,7 +23,7 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     private LibroValidacionService libroValidacionService;
     private ValidacionService validacionService;
 
-    @Autowired
+
     public LibroServiceInternalImpl(LibroRepository libroRepository, LibroValidacionService libroValidacionService, ValidacionService validacionService){
         this.libroRepository=libroRepository;
         this.libroValidacionService=libroValidacionService;

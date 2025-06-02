@@ -41,6 +41,7 @@ public class Libro {
     @OneToMany(mappedBy = "libro")
     private List<Prestamo> prestamo= new ArrayList<>();
 
+
     //Constructores
 
     public Libro() {
