@@ -26,7 +26,7 @@ public class EntidadNoEncontradaException extends  RuntimeException{
      * @param valorCampoBusqueda
      */
 
-    public EntidadNoEncontradaException(String entidadNombre, String campoBusqueda, String valorCampoBusqueda){
+    public EntidadNoEncontradaException(String entidadNombre, String campoBusqueda, Object valorCampoBusqueda){
         super(String.format("La entidad '%s' no fue encontrada con %s: '%s'",entidadNombre,campoBusqueda,valorCampoBusqueda));
         this.entidadNombre=entidadNombre;
         this.campoBusqueda=campoBusqueda;
