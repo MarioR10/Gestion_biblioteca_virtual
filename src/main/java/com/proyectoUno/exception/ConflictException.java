@@ -3,24 +3,24 @@ package com.proyectoUno.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
-public class LibroNoDisponibleException extends RuntimeException {
+public class ConflictException extends RuntimeException {
 
     //Logger que permite capturar excepciones en consola
-   private final Logger logger = LoggerFactory.getLogger(LibroNoDisponibleException.class);
+   private final Logger logger = LoggerFactory.getLogger(ConflictException.class);
 
     //ID de la excepcion
-   private final String internalCode = "LIBRO_NO_DISPONIBLE";
+   private final String internalCode = "CONFLICTO";
 
     //campos que proporciona detalles sobre la excepcion lanzada
+    private final String entidadNombre;
     private final String campoBusqueda;
     private final Object valorCampoBusqueda;
 
 
-    public LibroNoDisponibleException(String campoBusqueda, Object valorCampoBusqueda){
+    public ConflictException(String message, String entidadNombre, String campoBusqueda, Object valorCampoBusqueda){
 
-        super(String.format("El Libro no se encuentra disponible en este momento"));
+        super(message);
+        this.entidadNombre=entidadNombre;
         this.campoBusqueda=campoBusqueda;
         this.valorCampoBusqueda=valorCampoBusqueda;
     }
@@ -36,5 +36,9 @@ public class LibroNoDisponibleException extends RuntimeException {
 
     public Object getValorCampoBusqueda() {
         return valorCampoBusqueda;
+    }
+
+    public String getEntidadNombre() {
+        return entidadNombre;
     }
 }
