@@ -2,6 +2,7 @@ package com.proyectoUno.service.Internal.implementaciones;
 
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.exception.EntidadNoEncontradaException;
+import com.proyectoUno.exception.SolicitudActualizacionInvalidaException;
 import com.proyectoUno.repository.LibroRepository;
 import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
 import com.proyectoUno.service.validation.interfaces.LibroValidacionService;
@@ -12,9 +13,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ValidationException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 public class LibroServiceInternalImpl implements LibroServiceInternal {
@@ -34,10 +38,15 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
 
     @Override
     public Libro encontrarLibroPorId(UUID id) {
-        //Encontrar El Optional en la base de datos
-        Optional<Libro> libroOptional = libroRepository.findById(id);
-        //Validar si existe o no
-        Libro libro = validacionService.validarExistencia(libroOptional, "Libro");
+
+        //Encontrar El Optional en la base de datos o lanzar excepcion
+        Libro libro = libroRepository.findById(id)
+                .orElseThrow(() ->  new EntidadNoEncontradaException(
+                        "Libro",
+                        "id",
+                        id
+                ));
+
         return libro;
     }
 
@@ -45,18 +54,37 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     @Transactional
     public void eliminarLibroPorId(UUID id) {
 
+        //Encontrmos libro por su Id o lanzamos excepcion
        Libro libro = encontrarLibroPorId(id);
 
+       // Eliminamos libro si existe
        libroRepository.delete(libro);
     }
 
     @Override
     @Transactional
     public Libro actualizarLibro(UUID id, Libro datosActualizacion) {
-        //Obtenemos y validamos los campos de la entidad parcial (estos datos asignaremos a la entidad existente)
-        libroValidacionService.validarDatosActualizacion(datosActualizacion);
+
+        // Validar que al menos un campo viene para actualizar
+
+        /* Stream.of(..) crea un flujo de datos, .all, allMatch(...)
+        Resvisa cada uno de los elementos del flujo de datos, devuelve true si
+        todos los elementos son nulll, y false si al menos un elemento del flujo
+        no es null
+         */
+
+        if (Stream.of(
+                        datosActualizacion.getTitulo(),
+                        datosActualizacion.getAutor(),
+                        datosActualizacion.getCategoria(),
+                        datosActualizacion.getAnioDePublicacion())
+                .allMatch(Objects::isNull)) {
+            throw new SolicitudActualizacionInvalidaException("Libro");
+        }
+
         //Encontramos (buscamos) la entidad que si esta presente en la base de datos con todos sus campos
         Libro libroExistente= encontrarLibroPorId(id);
+
         //Actualizar la entidad existente con la entidad parcial
         libroExistente.setTitulo(datosActualizacion.getTitulo());
         libroExistente.setAutor(datosActualizacion.getAutor());
@@ -68,6 +96,7 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     @Override
     @Transactional
     public void crearLibro(List<Libro> libros) {
+
         //Guardamos el libro
         libroRepository.saveAll(libros);
     }
@@ -93,9 +122,6 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
 
         //Buscamos en la base de datos
         Page<Libro> libros = libroRepository.findAll(pageable);
-
-        //Validamos la pagina
-        validacionService.validarPaginaNoVacia(libros, "libro");
         return libros;
     }
 
@@ -103,17 +129,13 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     public Page<Libro> encontrarLibroPorTitulo(String titulo, Pageable pageable) {
         //Buscamos en la base de datos
         Page<Libro> libros = libroRepository.findByTituloContaining(titulo, pageable);
-        //Validamos la pagina
-        validacionService.validarPaginaNoVacia(libros, "libro");
-        return libros;
+        return  libros;
     }
 
     @Override
     public Page<Libro> encontrarLibroPorAutor(String autor, Pageable pageable) {
         //Buscamos en la base de datos
         Page<Libro> libros = libroRepository.findAllByAutorContaining(autor, pageable);
-        //Validamos la pagina
-        validacionService.validarPaginaNoVacia(libros, "libro");
         return libros;
     }
 
@@ -121,8 +143,6 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     public Page<Libro> encontrarLibroPorIsbn(String isbn, Pageable pageable) {
         //Buscamos en la base de datos
         Page<Libro> libros = libroRepository.findLibroByIsbnContaining(isbn, pageable);
-        //Validamos la pagina
-        validacionService.validarPaginaNoVacia(libros, "libro");
         return libros;
     }
 
@@ -130,8 +150,6 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     public Page<Libro> encontrarLibroPorCategoria(String categoria, Pageable pageable) {
         //Buscamos en la base de datos
         Page<Libro> libros = libroRepository.findLibroByCategoriaContaining(categoria, pageable);
-        //Validamos la pagina
-        validacionService.validarPaginaNoVacia(libros, "libro");
         return libros;
     }
 
@@ -139,8 +157,6 @@ public class LibroServiceInternalImpl implements LibroServiceInternal {
     public Page<Libro> encontrarLibroPorEstado(String estado, Pageable pageable) {
         //Buscamos en la base de datos
         Page<Libro> libros = libroRepository.findLibroByEstadoContaining(estado,pageable);
-        //Validamos la pagina
-        validacionService.validarPaginaNoVacia(libros, "libro");
         return libros;
     }
 
