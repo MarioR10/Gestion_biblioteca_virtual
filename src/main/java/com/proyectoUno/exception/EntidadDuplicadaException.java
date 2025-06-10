@@ -15,7 +15,7 @@ public class EntidadDuplicadaException extends  RuntimeException{
     //campos que proporciona detalles sobre la excepcion lanzada
     private final String entidadNombre; //Nombre de la entidad que esta duplicada
     private final String campoBusqueda; //Campo con el que se busco la entidad en la DB
-    private final String valorCampoBusqueda; // Valor del campo con que se realizo la busqueda en la DB
+    private final Object valorCampoBusqueda; // Valor del campo con que se realizo la busqueda en la DB
 
 
     /**
@@ -49,7 +49,7 @@ public class EntidadDuplicadaException extends  RuntimeException{
         return entidadNombre;
     }
 
-    public String getValorCampoBusqueda() {
+    public Object getValorCampoBusqueda() {
         return valorCampoBusqueda;
     }
 }

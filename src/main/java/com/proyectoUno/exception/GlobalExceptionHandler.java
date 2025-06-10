@@ -97,5 +97,28 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
 
     }
+
+    @ExceptionHandler(LibroNoDisponibleException.class)
+    public ResponseEntity<ErrorResponse> manejadorLibroNoDisponible(LibroNoDisponibleException ex, WebRequest request){
+
+        //Obtenemos la URL donde se origino la excepcion
+        String path = ((ServletWebRequest) request).getRequest().getRequestURI();
+
+        //Detalles adicionales de la excepcion
+        Map<String, String> details = new HashMap<>();
+        if( ex.getCampoBusqueda() != null) details.put("CAMPO_BUSQUEDA", ex.getCampoBusqueda());
+        if( ex.getValorCampoBusqueda() != null) details.put("VALOR_CAMPO", ex.getValorCampoBusqueda().toString());
+
+        //Creamos un error estandar
+        ErrorResponse errorResponse= new ErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage(),
+                path,
+                ex.getInternalCode(),
+                details
+        );
+
+        return  new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
 }
 
