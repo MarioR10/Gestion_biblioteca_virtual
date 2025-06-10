@@ -5,6 +5,7 @@ import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Prestamo;
 import com.proyectoUno.entity.Usuario;
+import com.proyectoUno.exception.LibroNoDisponibleException;
 import com.proyectoUno.maper.prestamo.PrestamoResponseMapperStruct;
 import com.proyectoUno.service.External.interfaces.PrestamoServiceExternal;
 import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
@@ -55,7 +56,11 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
         Libro libro = libroServicesInternal.encontrarLibroPorId(prestamoCrearRequestDTO.idLibro());
 
         //verificar si el libro esta disponible
-        libroValidacionService.validarDisponibilidadDelLibro(libro);
+
+        if (!libro.getEstado().equals("disponible")) {
+
+            throw new LibroNoDisponibleException( "ID",libro.getId());
+        }
 
         //Crear Prestamo
         prestamoServiceIternal.crearPrestamo(libro,usuario);
