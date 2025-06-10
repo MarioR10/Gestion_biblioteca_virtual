@@ -5,7 +5,7 @@ import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
 import com.proyectoUno.entity.Libro;
 import com.proyectoUno.entity.Prestamo;
 import com.proyectoUno.entity.Usuario;
-import com.proyectoUno.exception.LibroNoDisponibleException;
+import com.proyectoUno.exception.ConflictException;
 import com.proyectoUno.maper.prestamo.PrestamoResponseMapperStruct;
 import com.proyectoUno.service.External.interfaces.PrestamoServiceExternal;
 import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
@@ -59,7 +59,7 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
         if (!libro.getEstado().equals("disponible")) {
 
-            throw new LibroNoDisponibleException( "ID",libro.getId());
+            throw new ConflictException("El libro no se encuentra disponible","Libro","ID", libro.getId());
         }
 
         //Crear Prestamo
@@ -87,7 +87,10 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
         Prestamo prestamo = prestamoServiceIternal.encontrarPrestamoPorId(prestamoId);
 
         //Validamos que el prestamo este activo aun
-        prestamoValidacionService.validarEstadoDelPrestamo(prestamo.getEstado());
+        if(!prestamo.getEstado().equals("activo")) {
+            throw new RuntimeException("Estado no válido: " + prestamo.getEstado());
+        }
+
 
         //Actualizamos el estado del prestamo a devuelto
         prestamoServiceIternal.marcarPrestamoComoDevuelto(prestamo);
