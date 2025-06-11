@@ -11,9 +11,6 @@ import com.proyectoUno.service.External.interfaces.PrestamoServiceExternal;
 import com.proyectoUno.service.Internal.interfaces.LibroServiceInternal;
 import com.proyectoUno.service.Internal.interfaces.PrestamoServiceIternal;
 import com.proyectoUno.service.Internal.interfaces.UsuarioServiceInternal;
-import com.proyectoUno.service.validation.interfaces.LibroValidacionService;
-import com.proyectoUno.service.validation.interfaces.PrestamoValidacionService;
-import com.proyectoUno.service.validation.interfaces.ValidacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,25 +23,20 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
     private final UsuarioServiceInternal usuarioServiceInternal;
     private final PrestamoResponseMapperStruct prestamoResponseMapper;
-    private final LibroValidacionService libroValidacionService;
     private final PrestamoServiceIternal prestamoServiceIternal;
-    private final PrestamoValidacionService prestamoValidacionService;
-    private final ValidacionService validacionService;
     private LibroServiceInternal libroServicesInternal;
 
 
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    public PrestamoServiceExternalImpl(LibroServiceInternal libroServicesInternal, UsuarioServiceInternal usuarioServiceInternal, PrestamoResponseMapperStruct prestamoResponseMapper, LibroValidacionService libroValidacionService, PrestamoServiceIternal prestamoServiceIternal, PrestamoValidacionService prestamoValidacionService, ValidacionService validacionService){
+    public PrestamoServiceExternalImpl(LibroServiceInternal libroServicesInternal, UsuarioServiceInternal usuarioServiceInternal,
+                                       PrestamoResponseMapperStruct prestamoResponseMapper, PrestamoServiceIternal prestamoServiceIternal){
 
         this.libroServicesInternal=libroServicesInternal;
         this.usuarioServiceInternal = usuarioServiceInternal;
         this.prestamoResponseMapper = prestamoResponseMapper;
-        this.libroValidacionService = libroValidacionService;
         this.prestamoServiceIternal = prestamoServiceIternal;
-        this.prestamoValidacionService = prestamoValidacionService;
-        this.validacionService = validacionService;
     }
     @Override
     public void crearPrestamo(PrestamoCrearRequestDTO prestamoCrearRequestDTO) {
@@ -88,7 +80,7 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
 
         //Validamos que el prestamo este activo aun
         if(!prestamo.getEstado().equals("activo")) {
-            throw new RuntimeException("Estado no válido: " + prestamo.getEstado());
+            throw new ConflictException("El prestamo no se encuentra activo", "Libro", "ID", prestamo.getId());
         }
 
 
@@ -108,14 +100,12 @@ public class PrestamoServiceExternalImpl implements PrestamoServiceExternal {
     public Page<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId, Pageable pageable) {
 
         Page<Prestamo> prestamosActivos = prestamoServiceIternal.encontrarPrestamosActivosPorIdUsuario(usuarioId, pageable);
-        validacionService.validarPaginaNoVacia(prestamosActivos, "Prestamos");
         return prestamoResponseMapper.toResponseDTOPage(prestamosActivos);
     }
 
     @Override
     public Page<PrestamoResponseDTO> encontrarHistorialDePrestamoPorUsuario(UUID usuarioId, Pageable pageable) {
         Page<Prestamo> prestamosPorUsuario= prestamoServiceIternal.encontrarPrestamosPorIdUsuario(usuarioId,pageable);
-        validacionService.validarPaginaNoVacia(prestamosPorUsuario, "Prestamos");
         return prestamoResponseMapper.toResponseDTOPage(prestamosPorUsuario);
     }
 
