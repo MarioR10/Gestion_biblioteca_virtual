@@ -15,6 +15,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
 
     //Metodos actuales
     Optional <Usuario> findByEmail(String email);
+    //Busca y devuelve todos los usuarios cuyo email se encuentre en la lista proporcionada
     List <Usuario> findByEmailIn(List<String> emails);
 
     //metodos paginados
