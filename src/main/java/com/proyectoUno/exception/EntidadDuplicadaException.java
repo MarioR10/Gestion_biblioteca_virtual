@@ -4,6 +4,8 @@ package com.proyectoUno.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class EntidadDuplicadaException extends  RuntimeException{
 
     //Loggers permiten registrar mensajes en consola, nos ayuda a la depuracion y monitoreo
@@ -15,7 +17,7 @@ public class EntidadDuplicadaException extends  RuntimeException{
     //campos que proporciona detalles sobre la excepcion lanzada
     private final String entidadNombre; //Nombre de la entidad que esta duplicada
     private final String campoBusqueda; //Campo con el que se busco la entidad en la DB
-    private final Object valorCampoBusqueda; // Valor del campo con que se realizo la busqueda en la DB
+    private final List<String> valorCampoBusqueda; // Valor del campo con que se realizo la busqueda en la DB
 
 
     /**
@@ -24,7 +26,7 @@ public class EntidadDuplicadaException extends  RuntimeException{
      * @param campoBusqueda
      * @param valorCampoBusqueda
      */
-    public EntidadDuplicadaException(String entidadNombre, String campoBusqueda,String valorCampoBusqueda){
+    public EntidadDuplicadaException(String entidadNombre, String campoBusqueda,List<String> valorCampoBusqueda){
 
         super(String.format("Entidad '%s' duplicada, con %s: '%s'",entidadNombre,campoBusqueda,valorCampoBusqueda));
         this.entidadNombre=entidadNombre;
