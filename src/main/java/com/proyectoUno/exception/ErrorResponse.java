@@ -64,4 +64,34 @@ public class ErrorResponse {
     public void setDetails(Map<String, String> details) {
         this.details = details;
     }
+
+    //getters
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getInternalCode() {
+        return internalCode;
+    }
+
+    public Map<String, String> getDetails() {
+        return details;
+    }
 }
