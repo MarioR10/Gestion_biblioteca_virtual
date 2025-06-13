@@ -5,7 +5,7 @@ public record UsuarioCrearRequestDTO(
         String nombre,
         String apellido,
         String email,
-        String contraseña,
+        String contrasena,
         String rol
 
 
