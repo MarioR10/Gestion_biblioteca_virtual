@@ -36,6 +36,7 @@ public class GlobalExceptionHandler {
         return  new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(EntidadDuplicadaException.class)
     public ResponseEntity<ErrorResponse> manejadorEntidadDuplicada ( EntidadDuplicadaException ex, WebRequest request){
 
         //Obtenemos la URL donde ocurrio la excepcion
