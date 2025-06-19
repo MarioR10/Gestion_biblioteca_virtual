@@ -8,26 +8,18 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
-public interface PrestamoServiceIternal {
+public interface PrestamoService {
 
 
-    void crearPrestamo(PrestamoCrearRequestDTO prestamoCrearRequestDTO);
-
-    //Encontrar prestamo por Id
     PrestamoResponseDTO encontrarPrestamoPorId(UUID id);
-    //registrar devolucion de un libro
-    void registrarDevolucion(UUID prestamo);
-
-    //metodos paginados
-    Page<PrestamoResponseDTO>encontrarPrestamosActivosPorUsuarios(UUID usuarioId, Pageable pageable);
+    void marcarPrestamoComoDevuelto(Prestamo prestamo);
+    void crearPrestamo(PrestamoCrearRequestDTO prestamoCrearRequestDTO);
+    void registrarDevolucion(UUID prestamoId);
+    Prestamo encontrarPrestamoPorIdInternal(UUID id);
+    Page<PrestamoResponseDTO> encontrarPrestamosActivosPorUsuarios(UUID usuarioId, Pageable pageable);
     Page<PrestamoResponseDTO> encontrarHistorialDePrestamoPorUsuario(UUID usuarioId, Pageable pageable);
     Page<PrestamoResponseDTO> encontrarPrestamosActivos(Pageable pageable);
     Page<PrestamoResponseDTO> encontrarPrestamos(Pageable pageable);
-
-
-    //Metodos actuales
-    Prestamo encontrarPrestamoPorIdInternal(UUID id);
-    void marcarPrestamoComoDevuelto(Prestamo prestamo);
 
 
 }
