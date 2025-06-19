@@ -3,7 +3,7 @@ package com.proyectoUno.controller;
 import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioCrearRequestDTO;
-import com.proyectoUno.service.External.interfaces.UsuarioServiceExternal;
+import com.proyectoUno.service.Internal.interfaces.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,19 +20,19 @@ import java.util.UUID;
 @RequestMapping("/usuario")
 public class UsuarioController {
 
-    private final UsuarioServiceExternal usuarioServiceExternal;
+    private final UsuarioService usuarioService;
 
     @Autowired
-    public UsuarioController(UsuarioServiceExternal usuarioServiceExternal){
+    public UsuarioController(UsuarioService usuarioService){
 
-        this.usuarioServiceExternal=usuarioServiceExternal;
+        this.usuarioService = usuarioService;
     }
 
 
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> obtenerUsuarioPorId(@PathVariable UUID id){
-        UsuarioResponseDTO usuario= usuarioServiceExternal.encontrarUsuarioPorId(id);
+        UsuarioResponseDTO usuario= usuarioService.encontrarUsuarioPorId(id);
         return  ResponseEntity.ok(usuario);
 
     }
@@ -40,12 +40,12 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminarUsuarioPorId(@PathVariable UUID id){
-        usuarioServiceExternal.eliminarUsuarioPorId(id);
+        usuarioService.eliminarUsuarioPorId(id);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(@PathVariable UUID id, @Valid @RequestBody UsuarioActualizarDTO request){
-        UsuarioResponseDTO usuarioActualizado = usuarioServiceExternal.actualizarUsuario(id,request);
+        UsuarioResponseDTO usuarioActualizado = usuarioService.actualizarUsuario(id,request);
         return  ResponseEntity.ok(usuarioActualizado);
 
     }
@@ -53,7 +53,7 @@ public class UsuarioController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void crearUsuario(@Valid @RequestBody List<UsuarioCrearRequestDTO> requests){
-        usuarioServiceExternal.crearUsuario(requests);
+        usuarioService.crearUsuario(requests);
     }
 
     @GetMapping()
@@ -61,7 +61,7 @@ public class UsuarioController {
             @PageableDefault(page = 0, size = 8) Pageable pageable
             ){
 
-         Page<UsuarioResponseDTO> usuarios = usuarioServiceExternal.encontrarUsuarios(pageable);
+         Page<UsuarioResponseDTO> usuarios = usuarioService.encontrarUsuarios(pageable);
          return  ResponseEntity.ok(usuarios);
 
     }

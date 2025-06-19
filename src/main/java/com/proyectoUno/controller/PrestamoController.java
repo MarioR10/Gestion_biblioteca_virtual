@@ -2,7 +2,7 @@ package com.proyectoUno.controller;
 
 import com.proyectoUno.dto.reponse.PrestamoResponseDTO;
 import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
-import com.proyectoUno.service.External.interfaces.PrestamoServiceExternal;
+import com.proyectoUno.service.Internal.interfaces.PrestamoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,32 +18,32 @@ import java.util.UUID;
 public class PrestamoController {
 
 
-    private final PrestamoServiceExternal prestamoServiceExternal;
+    private final PrestamoService prestamoService;
 
 
-    public PrestamoController(PrestamoServiceExternal prestamoServiceExternal){
+    public PrestamoController(PrestamoService prestamoService){
 
-        this.prestamoServiceExternal=prestamoServiceExternal;
+        this.prestamoService=prestamoService;
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void crearPrestamo(@Valid @RequestBody PrestamoCrearRequestDTO request){
-        prestamoServiceExternal.crearPrestamo(request);
+        prestamoService.crearPrestamo(request);
     }
 
 
 
     @GetMapping("/{id}")
     public ResponseEntity<PrestamoResponseDTO> obtenerPrestamoPorId(@PathVariable UUID id){
-        PrestamoResponseDTO prestamo = prestamoServiceExternal.encontrarPrestamoPorId(id);
+        PrestamoResponseDTO prestamo = prestamoService.encontrarPrestamoPorId(id);
         return ResponseEntity.ok(prestamo);
     }
 
     @PutMapping("/devolucion/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void registrarDevolucion(@PathVariable UUID id){
-        prestamoServiceExternal.registrarDevolucion(id);
+        prestamoService.registrarDevolucion(id);
     }
 
 
@@ -56,7 +56,7 @@ public class PrestamoController {
             @PathVariable UUID id,
             @PageableDefault( page = 0, size = 8) Pageable pageable){
 
-        Page<PrestamoResponseDTO> historialDePrestamos = prestamoServiceExternal.encontrarHistorialDePrestamoPorUsuario(id, pageable);
+        Page<PrestamoResponseDTO> historialDePrestamos = prestamoService.encontrarHistorialDePrestamoPorUsuario(id, pageable);
 
         return ResponseEntity.ok(historialDePrestamos);
 
@@ -67,7 +67,7 @@ public class PrestamoController {
             @PathVariable UUID id,
             @PageableDefault(page = 0, size = 8)Pageable pageable){
 
-        Page<PrestamoResponseDTO> prestamosPorUsuario = prestamoServiceExternal.encontrarPrestamosActivosPorUsuarios(id,pageable);
+        Page<PrestamoResponseDTO> prestamosPorUsuario = prestamoService.encontrarPrestamosActivosPorUsuarios(id,pageable);
         return ResponseEntity.ok(prestamosPorUsuario);
     }
 
@@ -78,7 +78,7 @@ public class PrestamoController {
             @PageableDefault(page = 0, size = 8) Pageable pageable
     ){
 
-        Page<PrestamoResponseDTO> prestamosActivos = prestamoServiceExternal.encontrarPrestamosActivos(pageable);
+        Page<PrestamoResponseDTO> prestamosActivos = prestamoService.encontrarPrestamosActivos(pageable);
 
         return  ResponseEntity.ok(prestamosActivos);
     }
@@ -88,7 +88,7 @@ public class PrestamoController {
             @PageableDefault(page = 0, size = 8) Pageable pageable
     ){
 
-        Page<PrestamoResponseDTO> prestamos= prestamoServiceExternal.encontrarPrestamos(pageable);
+        Page<PrestamoResponseDTO> prestamos= prestamoService.encontrarPrestamos(pageable);
         return ResponseEntity.ok(prestamos);
     }
 }
