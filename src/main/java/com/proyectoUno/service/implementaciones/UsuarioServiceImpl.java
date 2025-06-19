@@ -1,4 +1,4 @@
-package com.proyectoUno.service.Internal.implementaciones;
+package com.proyectoUno.service.implementaciones;
 
 import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
@@ -10,7 +10,7 @@ import com.proyectoUno.exception.SolicitudConDuplicadosException;
 import com.proyectoUno.maper.usuario.UsuarioRequestMapperStruct;
 import com.proyectoUno.maper.usuario.UsuarioResponseMapperStruct;
 import com.proyectoUno.repository.UsuarioRepository;
-import com.proyectoUno.service.Internal.interfaces.UsuarioService;
+import com.proyectoUno.service.interfaces.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

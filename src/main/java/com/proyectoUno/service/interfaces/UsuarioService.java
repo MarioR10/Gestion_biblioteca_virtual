@@ -1,4 +1,4 @@
-package com.proyectoUno.service.Internal.interfaces;
+package com.proyectoUno.service.interfaces;
 
 import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;

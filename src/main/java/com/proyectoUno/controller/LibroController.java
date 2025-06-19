@@ -4,7 +4,7 @@ import com.proyectoUno.dto.reponse.LibroResponseDTO;
 
 import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
 import com.proyectoUno.dto.request.libro.LibroCrearRequestDTO;
-import com.proyectoUno.service.Internal.interfaces.LibroService;
+import com.proyectoUno.service.interfaces.LibroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

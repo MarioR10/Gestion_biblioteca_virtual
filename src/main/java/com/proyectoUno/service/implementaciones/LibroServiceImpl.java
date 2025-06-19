@@ -1,4 +1,4 @@
-package com.proyectoUno.service.Internal.implementaciones;
+package com.proyectoUno.service.implementaciones;
 
 import com.proyectoUno.dto.reponse.LibroResponseDTO;
 import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
@@ -8,7 +8,7 @@ import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.maper.libro.LibroRequestMapperStruct;
 import com.proyectoUno.maper.libro.LibroResponseMapperStruct;
 import com.proyectoUno.repository.LibroRepository;
-import com.proyectoUno.service.Internal.interfaces.LibroService;
+import com.proyectoUno.service.interfaces.LibroService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

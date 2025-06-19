@@ -3,7 +3,7 @@ package com.proyectoUno.controller;
 import com.proyectoUno.dto.reponse.UsuarioResponseDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioActualizarDTO;
 import com.proyectoUno.dto.request.usuario.UsuarioCrearRequestDTO;
-import com.proyectoUno.service.Internal.interfaces.UsuarioService;
+import com.proyectoUno.service.interfaces.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -2,7 +2,7 @@ package com.proyectoUno.controller;
 
 import com.proyectoUno.dto.reponse.PrestamoResponseDTO;
 import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
-import com.proyectoUno.service.Internal.interfaces.PrestamoService;
+import com.proyectoUno.service.interfaces.PrestamoService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

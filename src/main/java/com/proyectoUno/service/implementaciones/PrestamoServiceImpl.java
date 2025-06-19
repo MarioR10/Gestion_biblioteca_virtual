@@ -1,4 +1,4 @@
-package com.proyectoUno.service.Internal.implementaciones;
+package com.proyectoUno.service.implementaciones;
 
 import com.proyectoUno.dto.reponse.PrestamoResponseDTO;
 import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
@@ -9,13 +9,12 @@ import com.proyectoUno.exception.ConflictException;
 import com.proyectoUno.exception.EntidadNoEncontradaException;
 import com.proyectoUno.maper.prestamo.PrestamoResponseMapperStruct;
 import com.proyectoUno.repository.PrestamoRepository;
-import com.proyectoUno.service.Internal.interfaces.LibroService;
-import com.proyectoUno.service.Internal.interfaces.PrestamoService;
-import com.proyectoUno.service.Internal.interfaces.UsuarioService;
+import com.proyectoUno.service.interfaces.LibroService;
+import com.proyectoUno.service.interfaces.PrestamoService;
+import com.proyectoUno.service.interfaces.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
