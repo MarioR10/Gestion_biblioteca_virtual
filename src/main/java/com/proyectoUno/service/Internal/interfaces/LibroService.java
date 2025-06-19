@@ -1,5 +1,7 @@
 package com.proyectoUno.service.Internal.interfaces;
 
+import com.proyectoUno.dto.reponse.LibroResponseDTO;
+import com.proyectoUno.dto.request.libro.LibroActualizarRequestDTO;
 import com.proyectoUno.entity.Libro;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,14 +11,19 @@ import java.util.UUID;
 
 public interface LibroServiceInternal {
 
+    LibroResponseDTO encontrarLibroPorId(UUID id);
+    LibroResponseDTO actualizarLibro(UUID id, LibroActualizarRequestDTO libroActualizar);
+
+
+
+
+
     //metodos actuales
-    Libro encontrarLibroPorId (UUID theid);
+    Libro encontrarLibroPorIdInternal(UUID theid);
     void eliminarLibroPorId (UUID theid);
-    Libro actualizarLibro(UUID id , Libro libro);
     void crearLibro(List<Libro> libro);
     void marcarLibroComoPrestado(Libro libro);
     void marcarLibroComoDisponible(Libro libro);
-
 
     Page<Libro> encontrarLibros (Pageable pageable);
     Page<Libro> encontrarLibroPorTitulo(String titulo, Pageable pageable);

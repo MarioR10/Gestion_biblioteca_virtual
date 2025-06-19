@@ -1,16 +1,17 @@
-package com.proyectoUno.service.External.interfaces;
+package com.proyectoUno.service.Internal.interfaces;
 
 import com.proyectoUno.dto.reponse.PrestamoResponseDTO;
 import com.proyectoUno.dto.request.prestamo.PrestamoCrearRequestDTO;
+import com.proyectoUno.entity.Prestamo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
-public interface PrestamoServiceExternal {
+public interface PrestamoServiceIternal {
 
-    // Crear prestamo
-    void crearPrestamo(PrestamoCrearRequestDTO  prestamoCrearRequestDTO);
+
+    void crearPrestamo(PrestamoCrearRequestDTO prestamoCrearRequestDTO);
 
     //Encontrar prestamo por Id
     PrestamoResponseDTO encontrarPrestamoPorId(UUID id);
@@ -22,4 +23,11 @@ public interface PrestamoServiceExternal {
     Page<PrestamoResponseDTO> encontrarHistorialDePrestamoPorUsuario(UUID usuarioId, Pageable pageable);
     Page<PrestamoResponseDTO> encontrarPrestamosActivos(Pageable pageable);
     Page<PrestamoResponseDTO> encontrarPrestamos(Pageable pageable);
+
+
+    //Metodos actuales
+    Prestamo encontrarPrestamoPorIdInternal(UUID id);
+    void marcarPrestamoComoDevuelto(Prestamo prestamo);
+
+
 }
