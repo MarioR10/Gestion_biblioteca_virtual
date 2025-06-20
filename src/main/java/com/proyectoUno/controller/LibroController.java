@@ -44,7 +44,7 @@ public class LibroController {
         libroService.eliminarLibroPorId(id);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<LibroResponseDTO> actualizarLibro(@PathVariable UUID id, @Valid @RequestBody LibroActualizarRequestDTO request){
         LibroResponseDTO libroActualizado = libroService.actualizarLibro(id,request);
         return ResponseEntity.ok(libroActualizado);

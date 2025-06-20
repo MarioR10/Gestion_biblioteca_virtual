@@ -43,7 +43,7 @@ public class UsuarioController {
         usuarioService.eliminarUsuarioPorId(id);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(@PathVariable UUID id, @Valid @RequestBody UsuarioActualizarDTO request){
         UsuarioResponseDTO usuarioActualizado = usuarioService.actualizarUsuario(id,request);
         return  ResponseEntity.ok(usuarioActualizado);
