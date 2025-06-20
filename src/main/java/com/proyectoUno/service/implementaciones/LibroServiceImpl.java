@@ -66,7 +66,17 @@ public class LibroServiceImpl implements LibroService {
     @Transactional
     public LibroResponseDTO actualizarLibro(UUID id, LibroActualizarRequestDTO libroActualizar) {
 
-        return null;
+        //1. Buscamos el libro en la base de datos
+        Libro libro = encontrarLibroPorIdInternal(id);
+
+        //2. Usar MapStruct para actualizar los campos no null del DTO, en la entidad ya existente
+        libroRequestMapper.toUpdateEntity(libroActualizar, libro);
+
+        //3. Persistimos en la base de datos la entidad actualizada
+       Libro libroGuardado= libroRepository.save(libro);
+
+        //convertimos
+        return  libroResponseMapper.toResponseDTO(libroGuardado);
     }
 
     @Override

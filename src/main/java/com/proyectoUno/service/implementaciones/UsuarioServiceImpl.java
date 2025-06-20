@@ -66,7 +66,17 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public UsuarioResponseDTO actualizarUsuario(UUID id, UsuarioActualizarDTO usuarioActualizar){
 
-        return null;
+        //1. Buscamos el usuario existente en la base de datos
+        Usuario usuario = encontrarUsuarioPorIdInterno(id);
+
+        //2. Usar MapStruct para actualizar los campos no null del DTO, en la entidad ya existente
+        usuarioRequestMapper.toUpdateEntity(usuarioActualizar,usuario);
+
+        //3. Persistir la entidad actualizada
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        //4. Convertir a DTO
+        return  usuarioResponseMapper.toResponseDTO(usuarioGuardado);
     }
 
 
