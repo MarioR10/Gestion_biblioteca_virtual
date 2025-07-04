@@ -1,11 +1,5 @@
 package com.proyectoUno.security.model;
 
-/*
-  Implementación concreta de UserDetails.
-  Representa al usuario autenticado con sus permisos y estado.
-  DEBE implementar la interfaz UserDetails.
-  datos. Es como el "perfil" del usuario que Spring Security usa internamente.*/
-
 import com.proyectoUno.entity.Usuario;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,41 +7,64 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 
+/**
+ * Esta clase adapta la entidad de dominio `Usuario` para proporcionar los datos mínimos que Spring Security necesita
+ * para los procesos de autenticación y autorización.Spring utiliza esta clase para obtener esos datos.
+ */
 public class CustomUserDetails implements UserDetails {
 
-    private final UUID id;
-    private final String email;
-    private final String contrasena;
-    private final String rol;
-    private final boolean activo;
 
-    //Inicializamos las variables desde la entidad Usuario
-    public CustomUserDetails(Usuario usuario) {
-        this.id = usuario.getId();
-        this.email = usuario.getEmail();
-        this.contrasena = usuario.getContrasena();
-        this.rol = usuario.getRol();
-        this.activo = usuario.getActivo();
+    private final Usuario usuario;
+
+    public CustomUserDetails(Usuario usuario){
+        this.usuario=usuario;
     }
 
-    //metodo que devuelve las autoridades, o roles en nuestro caso asinados al usuario
+    /*
+     *Informacion necesaria/requerida por Spring Security
+     * 1.Role/roles
+     * 2.Username/(puede ser mediante email tambien)
+     * 3.Contraseñra
+     * otros
+     */
+
+    /**
+     * Metodo importante para la autorización basada en roles.
+     * Spring Security lo utiliza para obtener las autoridades (roles y/o permisos) que tiene el usuario.
+     * @return Una colección genérica que puede contener cualquier tipo de objeto (?) que sea GrantedAuthority
+     * (o cualquier subclase que la implemente, como SimpleGrantedAuthority).
+     * Esta colección representará los roles del usuario.
+     * Comúnmente, los objetos dentro de esta colección serán instancias de SimpleGrantedAuthority,
+     * cada una conteniendo la cadena del rol (ej., "ROLE_ADMIN").
+     */
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection <? extends GrantedAuthority> getAuthorities(){
 
-        //Logica para mapear el campo rol a una autoridad que comprenda spring security
-        return Collections.singletonList( new SimpleGrantedAuthority(" ROLE_"+ rol.toUpperCase()));
+        return
+                //Crea una lista inmutable que contiene un solo elemento.
+                // Util cuando sabemos que el usuario solo tendra un ROL
+                Collections.singletonList(
+                        //Mapea el Rol de la entidad usuario a una autoridad de Spring Security. Crea el Objeto el cual almacena el ROL
+                        //El prefijo ROLE es una convencion para que spring reconozca el rol
+                        new SimpleGrantedAuthority("ROLE_"+usuario.getRol()));
+}
+    @Override
+    public  String getUsername(){
+
+        return usuario.getEmail();
     }
 
     @Override
-    public String getPassword() {
-        return "";
+    public String getPassword(){
+        return usuario.getContrasena();
     }
 
+    //ESTADO DE LA CUENTA
     @Override
-    public String getUsername() {
-        return "";
+    public boolean isEnabled(){
+        return usuario.getActivo();
     }
+
+    //otros que vienen por default en la interfaz
 }
