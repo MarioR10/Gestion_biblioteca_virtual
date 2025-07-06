@@ -1,6 +1,5 @@
 package com.proyectoUno.security.jwt;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,7 +8,6 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
@@ -24,7 +22,6 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-
     /**
      * La clave secreta utilizada para firmar y verificar los tokens JWT.
      * Esta es una medida de seguridad  para asegurar que los tokens no sean alterados.
@@ -38,31 +35,60 @@ public class JwtService {
      * Tiempo de expiracion del JWT
      */
     @Value("${jwt.expiration}")
-    private Long EXPIRATION_TOKEN;
+    private Long EXPIRATION_ACCESS_TOKEN;
+
+    /**
+     * Refresh token
+     */
+    @Value("${jwt.refresh-expiration=604800000}")
+    private Long EXPIRATION_REFRESH_TOKEN;
+
 
     // --- MÉTODOS PÚBLICOS PRINCIPALES ---
 
 
     /**
-     * Genera un nuevo token JWT para un usuario específico.
+     * Genera un nuevo token de acceso para un usuario específico.
      * @param userDetails Los detalles del usuario (proporcionados por Spring Security) para quien se genera el token.
      * @return Un String que representa el JWT compacto y firmado.
      */
-    public String generateToken(UserDetails userDetails){
 
+    public String generateAccessToken(UserDetails userDetails) {
+
+        // Patrón de diseño Builder: Utilizamos el objeto JwtBuilder para construir un JWT (String) paso a paso.
         return
-                Jwts.builder() // Inicia la construcción de un nuevo JWT.
-                 // Los "claims" son la información (payload) contenida en el token.  Claims estándar:
+                Jwts.builder() //Inicia la construcción de un nuevo JWT, obteniendo una instancia de JwtBuilder.
+                               //Este builder permite configurar las diferentes partes del token.
 
-                .setSubject(userDetails.getUsername()) // 'sub' (Subject): Identificador del usuario (username)
-                .setIssuedAt( new Date(System.currentTimeMillis())) // 'iat' (Issued At): Fecha de creación del token.
-                .setExpiration( new Date( System.currentTimeMillis() + EXPIRATION_TOKEN)) // 'exp' (Expiration): Fecha de expiración
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256) //Firma el toke. se especifica que llave secreta  y que algoritmo utilizar
-                .compact(); //Finaliza la construcción y serializa el token a su formato String (header.payload.signature).
+                // Los "claims" son la información (payload) contenida en el token.
+                .setSubject(userDetails.getUsername()) //'sub' (Subject): Establece el identificador principal del token,
+                .setIssuedAt(new Date(System.currentTimeMillis())) //'iat' (Issued At): Establece la fecha y hora de creación del token.
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_ACCESS_TOKEN)) // 'exp' (Expiration): Establece la fecha y hora de expiración del token.
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // Firma el token. Se especifica la clave secreta (getSigningKey())
+                                                                     //el algoritmo de firma (HS256) a utilizar.
+                                                                     //Esta firma garantiza la integridad y autenticidad del token.
+                .compact(); //Finaliza la construcción del JWT. Este metodo es el equivalente a 'build()'.
+                            //Toma toda la configuración ensambla el JWT en su formato compacto (Header.Payload.Signature)
+                            // y lo serializa a una cadena de texto (String) lista para ser utilizada.
     }
 
     /**
-     * Valida si un token JWT es válido para un usuario determinado.
+     * Genera un refresh token, permite obtener un nuevo token de acceso sin que el usuario deba iniciar sesion nuevamente
+     * util cuando el token prinicipal expira.
+     */
+    public  String generateRefreshToken(UserDetails userDetails){
+        return
+                Jwts.builder()
+                        .setSubject(userDetails.getUsername())
+                        .setIssuedAt( new Date(System.currentTimeMillis()))
+                        .setExpiration( new Date(System.currentTimeMillis() + EXPIRATION_REFRESH_TOKEN))
+                        .claim("type", "REFRESH_TOKEN")
+                        .signWith(getSigningKey(),SignatureAlgorithm.HS256)
+                        .compact();
+    }
+
+    /**
+     * Valida si un JWT es válido para un usuario determinado.
      * Un token se considera válido si:
      * 1. El identificador del usuario en el token, coincide con el identificador del UserDetails.
      * 2. El token no ha expirado.
@@ -90,12 +116,12 @@ public class JwtService {
     public  String getUsernameFromToken(String token){
 
         return
-                // Usa el metodo genérico getClaim para obtener específicamente el "subject".
+                // Usa el metodo genérico getClaim para extraer específicamente el 'subject' del token.
                 getClaim(
                         //pasamos el token como parametro, donde buscara el claim
                         token,
-                        //Expresion lambda,forma abreviada de Function<Claims,String>, esta lambda indica que se transforma
-                        // el tipo Claims al tipo String del claim especifico Subject
+                        //Expresion lambda,forma abreviada de Function<Claims,String>, a indica que se transforma
+                        // el tipo Claims a tipo String utilizando el metodo getSubject() del objeto claims
                         (claims -> claims.getSubject())
                 );
     }
@@ -127,14 +153,14 @@ public class JwtService {
         return getClaim(
                 //pasamos el token como parametro, donde buscara el claim
                 token,
-                //Expresion lambda,forma abreviada de Function<Claims,Date>, esta lambda indica que se transforma el tipo
-                //Claims al tipo Date del clains especifico Expiration
+                //Expresion lambda,forma abreviada de Function<Claims,Date>, indica que se transforma el tipo
+                //Claims al tipo Date utilizando el metodo getExpiration() del objeto claims
                 (claims -> claims.getExpiration()));
 
     }
 
     /**
-     * Método genérico para extraer cualquier claim de un token.
+     * Metodo genérico para extraer cualquier claim de un token.
      * Utiliza una función (claimsResolver) para determinar qué claim específico extraer.
      *
      * @param token          El JWT del cual se extraerá el claim.
@@ -150,29 +176,43 @@ public class JwtService {
             Function<Claims,T> claimsResolver){
 
         // Primero, obtiene todos los claims del token.
+        // El resultado es un objeto 'Claims' con toda la información.
         final Claims claims = getAllClaims(token);
 
         return
-                // Luego, aplica la función resolver para obtener y devolver el claim específico.
+                // Ejecuta la lógica definida en 'claimsResolver', pasándole el objeto 'Claims' completo, medainte el metodo apply
+                // La lambda procesa este 'Claims' y devuelve el dato específico de tipo 'T' que se buscaba.
+
                 claimsResolver.apply(claims);
     }
 
     /**
-     * Parsea el token JWT para extraer todo su cuerpo (payload), que contiene todos los claims.
-     * Este método verifica la firma del token usando la clave secreta al parsearlo.
-     * Si la firma es inválida, lanzará una excepción.
+     * Metodo que toma un token, valida su firma con la clave secreta y devuelve el contenido (claims)
+     * Este flujo se hace asi porque no se puede confiar en el contenido de un JWT sin primero verificar la firma secreta
      *
-     * @param token El JWT a parsear.
-     * @return Un objeto {@link Claims} que contiene todos los datos del payload del token.
      */
     private Claims getAllClaims(String token){
 
-        return Jwts
-                .parser()
-                .setSigningKey(getSigningKey()) // Establece la clave para verificar la firma.
-                .build()
-                .parseClaimsJws(token) // Parsea y valida el token.
-                .getBody(); // Devuelve el cuerpo (payload) del token.
+        // Patrón de diseño Builder: Ocupamos un objeto Builder para crear paso a paso un objeto JwtParser.
+
+        return
+                Jwts.parser()  // Inicia la construcción de un JwtParserBuilder para configurar la validación y extracción del token.
+                               // Nota: Jwts.parser() devuelve un builder que permite encadenar configuraciones y luego crear un objeto JwtParser.
+
+                        .setSigningKey(getSigningKey()) // Asigna la clave secreta que se usará para verificar la firma del token.
+                                                        // La firma del JWT se valida contra esta clave.
+
+                        .build() // Finaliza la configuración y construye una instancia inmutable de JwtParser.
+                                 // El JwtParser ya está listo para procesar tokens. (este objeto se crea para poder leer, dividir en partes,
+                                 // decodificarlo, validar, convertitlo en un objeto que java entiend. Brinda herramientas y funcionalidades para esto
+
+                        .parseClaimsJws(token)  // Usa el JwtParser para:
+                                                // 1. Validar la firma del token con la clave secreta (lanzará excepción si falla).
+                                                // 2. Separar y decodificar las partes del JWT (header, payload, firma). Esto nos devuelve un
+                                                // Jwt<Claims> que java entiende
+
+                        .getBody(); // Devuelve el objeto Claims extraído del payload del token.
+
     }
 
     /**
