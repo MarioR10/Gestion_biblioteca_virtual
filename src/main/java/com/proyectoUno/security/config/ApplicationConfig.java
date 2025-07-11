@@ -81,6 +81,20 @@ public class ApplicationConfig {
 
     */
 
+        /*
+    NOTA: Configuración del AuthenticationManager: Cuando Spring Security construye el 'AuthenticationManager'
+          (que obtenemos a través de 'configuration.getAuthenticationManager()'), internamente utiliza un
+          'AuthenticationManagerBuilder'. Este 'builder' ESPECÍFICAMENTE ESCANEA el contenedor de Spring
+          y descubre AUTOMÁTICAMENTE TODOS los beans de tipo 'AuthenticationProvider' que hemos definido.
+          'DaoAuthenticationProvider' es uno de ellos, por eso sin especificarlo nosotros sabe a que provider delega las tareas.
+          Por lo tanto, cuando luego llamas a 'authenticationManager.authenticate(token)',
+          no  pasamos el 'Provider'. El 'AuthenticationManager' simplemente itera sobre su lista
+          interna de 'AuthenticationProvider's, preguntando a cada uno si 'soporta' (puede manejar) el tipo de
+          'Authentication' que le pasamos (ej. UsernamePasswordAuthenticationToken). Una vez que encuentra uno que
+          lo soporta (tu DaoAuthenticationProvider), le DELEGA la tarea de autenticación real.
+
+         */
+
         return  configuration.getAuthenticationManager();
 
     }
