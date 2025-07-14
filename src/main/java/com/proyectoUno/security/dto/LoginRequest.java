@@ -1,4 +1,7 @@
 package com.proyectoUno.security.dto;
 
-public class LoginRequest {
-}
+//DTO que encapsula las credenciales del usuasrio, utilizada para iniciar sesion
+public record LoginRequest(
+        String email,
+        String contrasena
+) {}

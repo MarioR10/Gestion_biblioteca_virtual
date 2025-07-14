@@ -1,4 +1,5 @@
 package com.proyectoUno.security.dto;
 
-public class AuthResponse {
+//Un DTO de respuesta, una vez registrados o logeados
+public record AuthResponse( String token ,String refeeshToken){
 }
