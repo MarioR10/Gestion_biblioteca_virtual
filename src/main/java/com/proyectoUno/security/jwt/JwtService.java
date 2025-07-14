@@ -40,7 +40,7 @@ public class JwtService {
     /**
      * Refresh token
      */
-    @Value("${jwt.refresh-expiration=604800000}")
+    @Value("${jwt.refresh-expiration}")
     private Long EXPIRATION_REFRESH_TOKEN;
 
     // --- MÉTODOS PÚBLICOS PRINCIPALES ---
