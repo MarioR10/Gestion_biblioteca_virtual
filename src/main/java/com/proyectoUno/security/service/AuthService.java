@@ -2,6 +2,7 @@ package com.proyectoUno.security.service;
 
 import com.proyectoUno.entity.Usuario;
 import com.proyectoUno.exception.EntidadDuplicadaException;
+import com.proyectoUno.exception.InvalidToken;
 import com.proyectoUno.maper.usuario.UsuarioRegisterMapper;
 import com.proyectoUno.repository.UsuarioRepository;
 import com.proyectoUno.security.dto.AuthResponse;
@@ -119,6 +120,6 @@ public class AuthService {
             String newJwtToken = jwtService.generateAccessToken(userDetails);
             return new AuthResponse(newJwtToken,refreshToken);
         }
-        throw new RuntimeException("Refresh token invalido");
+        throw new InvalidToken("Refresh token invalido");
     }
 }
