@@ -2,8 +2,6 @@ package com.proyectoUno.security.service;
 
 import com.proyectoUno.entity.Usuario;
 import com.proyectoUno.exception.EntidadDuplicadaException;
-import com.proyectoUno.exception.InvalidToken;
-import com.proyectoUno.maper.usuario.UsuarioRegisterMapper;
 import com.proyectoUno.repository.UsuarioRepository;
 import com.proyectoUno.security.dto.AuthResponse;
 import com.proyectoUno.security.dto.LoginRequest;
@@ -34,17 +32,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-    private final UsuarioRegisterMapper usuarioRegisterMapper;
 
     @Autowired
     public AuthService(UsuarioRepository usuarioRepository, JwtService jwtService, PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager,UserDetailsService userDetailsService, UsuarioRegisterMapper usuarioRegisterMapper) {
+                       AuthenticationManager authenticationManager,UserDetailsService userDetailsService) {
         this.usuarioRepository = usuarioRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.userDetailsService= userDetailsService;
-        this.usuarioRegisterMapper=usuarioRegisterMapper;
+
     }
 
     /**
@@ -86,9 +83,16 @@ public class AuthService {
             throw new EntidadDuplicadaException("Email ya esta asociado a una cuenta", "email", emailDuplicado);
         }
 
-        // Usamos el mapper para convertir el RegisterRequest a un Usuario.
-        //Tambien se encargara internamente de codificar la contraseña que viene en el DTO
-        Usuario usuario = usuarioRegisterMapper.toEntity(request,this.passwordEncoder);
+        // Convertimos el RegisterRequest a un Usuario.
+        Usuario usuario = new Usuario();
+
+        usuario.setEmail(request.email());
+        usuario.setContrasena(passwordEncoder.encode(request.contrasena()));
+        usuario.setNombre(request.nombre());
+        usuario.setApellido(request.apellido());
+        usuario.setRol("User");
+
+        System.out.println("Usuario antes de guardar: " + usuario); // Depuración
         usuarioRepository.save(usuario);
 
         //Creamos el perfil en el contexto de Spring Security
@@ -116,10 +120,13 @@ public class AuthService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         //Validamos que aun sea valido el refresh token que nos mandan, para poder generar un nuevo access token
-        if(jwtService.isTokenValid(refreshToken, userDetails)){
-            String newJwtToken = jwtService.generateAccessToken(userDetails);
-            return new AuthResponse(newJwtToken,refreshToken);
-        }
-        throw new InvalidToken("Refresh token invalido");
+        jwtService.isTokenValid(refreshToken, userDetails);
+
+        //Creamos el token
+        String newJwtToken = jwtService.generateAccessToken(userDetails);
+
+        return new AuthResponse(newJwtToken,refreshToken);
+
+
     }
 }
