@@ -7,6 +7,7 @@ import com.proyectoUno.security.dto.AuthResponse;
 import com.proyectoUno.security.dto.LoginRequest;
 import com.proyectoUno.security.dto.RegisterRequest;
 import com.proyectoUno.security.jwt.JwtService;
+import com.proyectoUno.security.mapper.UsuarioRegisterMapper;
 import com.proyectoUno.security.model.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,16 +33,18 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
+    private final UsuarioRegisterMapper usuarioRegisterMapper;
 
     @Autowired
     public AuthService(UsuarioRepository usuarioRepository, JwtService jwtService, PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager,UserDetailsService userDetailsService) {
+                       AuthenticationManager authenticationManager, UserDetailsService userDetailsService, UsuarioRegisterMapper usuarioRegisterMapper) {
         this.usuarioRepository = usuarioRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.userDetailsService= userDetailsService;
 
+        this.usuarioRegisterMapper = usuarioRegisterMapper;
     }
 
     /**
@@ -83,14 +86,9 @@ public class AuthService {
             throw new EntidadDuplicadaException("Email ya esta asociado a una cuenta", "email", emailDuplicado);
         }
 
-        // Convertimos el RegisterRequest a un Usuario.
-        Usuario usuario = new Usuario();
 
-        usuario.setEmail(request.email());
-        usuario.setContrasena(passwordEncoder.encode(request.contrasena()));
-        usuario.setNombre(request.nombre());
-        usuario.setApellido(request.apellido());
-        usuario.setRol("User");
+        //Convertimos el RegisterRequest a un Usuario.
+        Usuario usuario = usuarioRegisterMapper.toEntity(request, this.passwordEncoder);
 
         System.out.println("Usuario antes de guardar: " + usuario); // Depuración
         usuarioRepository.save(usuario);
