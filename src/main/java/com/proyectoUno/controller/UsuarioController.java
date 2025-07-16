@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,8 +29,6 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-
-
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> obtenerUsuarioPorId(@PathVariable UUID id){
         UsuarioResponseDTO usuario= usuarioService.encontrarUsuarioPorId(id);
@@ -37,12 +36,14 @@ public class UsuarioController {
 
     }
 
+    @PreAuthorize("hasRole('Admin')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminarUsuarioPorId(@PathVariable UUID id){
         usuarioService.eliminarUsuarioPorId(id);
     }
 
+    @PreAuthorize("hasRole('Admin')")
     @PatchMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(@PathVariable UUID id, @Valid @RequestBody UsuarioActualizarDTO request){
         UsuarioResponseDTO usuarioActualizado = usuarioService.actualizarUsuario(id,request);

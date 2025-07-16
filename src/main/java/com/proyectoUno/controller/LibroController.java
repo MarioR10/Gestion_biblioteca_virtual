@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,12 +39,14 @@ public class LibroController {
         return ResponseEntity.ok(libro);
     }
 
+    @PreAuthorize("hasRole('Admin')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminarLibroPorId(@PathVariable UUID id){
         libroService.eliminarLibroPorId(id);
     }
 
+    @PreAuthorize("hasRole('Admin')")
     @PatchMapping("/{id}")
     public ResponseEntity<LibroResponseDTO> actualizarLibro(@PathVariable UUID id, @Valid @RequestBody LibroActualizarRequestDTO request){
         LibroResponseDTO libroActualizado = libroService.actualizarLibro(id,request);

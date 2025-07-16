@@ -84,7 +84,7 @@ public class PrestamoController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<PrestamoResponseDTO>> enconctrarPrestamos(
+    public ResponseEntity<Page<PrestamoResponseDTO>> encontrarPrestamos(
             @PageableDefault(page = 0, size = 8) Pageable pageable
     ){
 
