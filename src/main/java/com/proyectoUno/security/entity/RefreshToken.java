@@ -24,21 +24,21 @@ public class RefreshToken {
 
     @CreationTimestamp
     @Column(name= "fecha_expiracion", nullable = false,updatable = false)
-    private Instant fechaEspiracion;
+    private Instant fechaExpiracion;
 
     @Column(name = "revoked")
     private  Boolean revoked;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     private Usuario usuario;
 
     public RefreshToken() {
     }
 
-    public RefreshToken(String token, Instant fechaEspiracion, Boolean revoked, Usuario usuario) {
+    public RefreshToken(String token, Instant fechaExpiracion, Boolean revoked, Usuario usuario) {
         this.token = token;
-        this.fechaEspiracion = fechaEspiracion;
+        this.fechaExpiracion = fechaExpiracion;
         this.revoked = revoked;
         this.usuario = usuario;
     }
@@ -59,12 +59,12 @@ public class RefreshToken {
         this.token = token;
     }
 
-    public Instant getFechaEspiracion() {
-        return fechaEspiracion;
+    public Instant getFechaExpiracion() {
+        return fechaExpiracion;
     }
 
-    public void setFechaEspiracion(Instant fechaEspiracion) {
-        this.fechaEspiracion = fechaEspiracion;
+    public void setFechaExpiracion(Instant fechaEspiracion) {
+        this.fechaExpiracion = fechaEspiracion;
     }
 
     public Boolean getRevoked() {
