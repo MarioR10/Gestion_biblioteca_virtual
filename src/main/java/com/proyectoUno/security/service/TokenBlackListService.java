@@ -27,7 +27,7 @@ public class TokenBlackListService {
         /*
         En Redis los datos se almacenan como un par clave- valor, y se hace la busqueda mediante la clave. La clave
         es un identificador unico por el cual se busca. De manera que definimos como clave el token (string) porque es el
-        identificador que nosotros queremos saber si esat presente en la lista, de esat manera la verificacion es rapida,
+        identificador que nosotros queremos saber si esta presente en la lista, de esat manera la verificacion es rapida,
         como valor podemos poner algo simbolico, pues lo que nos importa es el token.
          */
 
