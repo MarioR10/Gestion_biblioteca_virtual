@@ -66,5 +66,9 @@ public class CustomUserDetails implements UserDetails {
         return usuario.getActivo();
     }
 
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
     //otros que vienen por default en la interfaz
 }
