@@ -1,6 +1,7 @@
 package com.proyectoUno.security.filter;
 
 import com.proyectoUno.security.jwt.JwtService;
+import com.proyectoUno.security.service.TokenBlackListService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,12 +30,14 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final TokenBlackListService tokenBlackListService;
 
     @Autowired
-    public JwtAuthenticationFilter( JwtService jwtService, UserDetailsService userDetailsService){
+    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, TokenBlackListService tokenBlackListService){
 
         this.jwtService=jwtService;
         this.userDetailsService=userDetailsService;
+        this.tokenBlackListService = tokenBlackListService;
     }
 
     //Metodo principal, Spring Security lo llama automaticamente para cada solicitud HTTP. Aqui se define la logica
@@ -79,7 +82,15 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
         //3. Si el encabezado existe y comienza con el prefijo "Bearer", extraemos la cadena JWT.
         //substring(7) omite los primeros 7 caracteres "Bearer "  empieza directamente en el JWT indice (7) de la cadena
         jwt= authHeader.substring(7); // "Bearrer " tiene 7 caracteres
-        System.out.println("Token extraído: " + jwt);
+
+        // --- VERIFICAR SI EL TOKEN ESTÁ EN LA LISTA NEGRA DE REDIS ---
+
+        if (tokenBlackListService.isTokenBlackListed(jwt)){
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //401
+            response.getWriter().write("El token fue revocado o invalido");
+            return; //detiene el procesamiento posterior
+        }
 
         //4. Extrae el username del JWT
         username= jwtService.getUsernameFromToken(jwt);
