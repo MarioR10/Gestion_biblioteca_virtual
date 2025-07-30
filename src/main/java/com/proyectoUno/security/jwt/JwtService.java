@@ -2,14 +2,15 @@ package com.proyectoUno.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Function;
 
 /**
@@ -59,10 +60,11 @@ public class JwtService {
                                //Este builder permite configurar las diferentes partes del token.
 
                 // Los "claims" son la información (payload) contenida en el token.
-                .setSubject(userDetails.getUsername()) //'sub' (Subject): Establece el identificador principal del token,
-                .setIssuedAt(new Date(System.currentTimeMillis())) //'iat' (Issued At): Establece la fecha y hora de creación del token.
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_ACCESS_TOKEN)) // 'exp' (Expiration): Establece la fecha y hora de expiración del token.
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // Firma el token. Se especifica la clave secreta (getSigningKey())
+                .subject(userDetails.getUsername()) //'sub' (Subject): Establece el identificador principal del token,
+                .issuedAt(new Date(System.currentTimeMillis())) //'iat' (Issued At): Establece la fecha y hora de creación del token. (toma la actual)
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_ACCESS_TOKEN)) // 'exp' (Expiration): Establece la fecha y hora de expiración del token.
+                                                                                            //toma la actual y le suma lo que establecimos y crea la fecha.
+                .signWith(getSigningKey()) // Firma el token. Se especifica la clave secreta (getSigningKey())
                                                                      //el algoritmo de firma (HS256) a utilizar.
                                                                      //Esta firma garantiza la integridad y autenticidad del token.
                 .compact(); //Finaliza la construcción del JWT. Este metodo es el equivalente a 'build()'.
@@ -77,11 +79,11 @@ public class JwtService {
     public  String generateRefreshToken(UserDetails userDetails){
         return
                 Jwts.builder()
-                        .setSubject(userDetails.getUsername())
-                        .setIssuedAt( new Date(System.currentTimeMillis()))
-                        .setExpiration( new Date(System.currentTimeMillis() + EXPIRATION_REFRESH_TOKEN))
+                        .subject(userDetails.getUsername())
+                        .issuedAt( new Date(System.currentTimeMillis()))
+                        .expiration( new Date(System.currentTimeMillis() + EXPIRATION_REFRESH_TOKEN))
                         .claim("type", "REFRESH_TOKEN")
-                        .signWith(getSigningKey(),SignatureAlgorithm.HS256)
+                        .signWith(getSigningKey())
                         .compact();
     }
 
@@ -184,26 +186,56 @@ public class JwtService {
         return
                 Jwts.parser()  // Inicia la construcción de un JwtParserBuilder para configurar la validación y extracción del token.
                                // Nota: Jwts.parser() devuelve un builder que permite encadenar configuraciones y luego crear un objeto JwtParser.
-                        .setSigningKey(getSigningKey()) // Asigna la clave secreta que se usará para verificar la firma del token.
+                        .verifyWith(getSigningKey()) // Asigna la clave secreta que se usará para verificar la firma del token.
                                                         // La firma del JWT se valida contra esta clave.
                         .build() // Finaliza la configuración y construye una instancia inmutable de JwtParser.
                                  // El JwtParser ya está listo para procesar tokens. (este objeto se crea para poder leer, dividir en partes,
                                  // decodificarlo, validar, convertitlo en un objeto que java entiend. Brinda herramientas y funcionalidades para esto
-                        .parseClaimsJws(token)  // Usa el JwtParser para:
+                        .parseSignedClaims(token)  // Usa el JwtParser para:
                                                 // 1. Validar la firma del token con la clave secreta (lanzará excepción si falla).
                                                 // 2. Separar y decodificar las partes del JWT (header, payload, firma). Esto nos devuelve un
                                                 // Jwt<Claims> que java entiende
-                        .getBody(); // Devuelve el objeto Claims extraído del payload del token.
+                        .getPayload(); // Devuelve el objeto Claims extraído del payload del token.
     }
 
     /**
-     * Procesa la clave secreta (que está en formato String y codificada en Base64)
-     * y la convierte en un objeto {@link Key} apto para ser usado en algoritmos de firma HMAC-SHA.
-     * @return La clave de firma lista para usar.
+     * Decodifica la clave secreta desde formato base64 y la convierte en un objeto {@link SecretKey}
+     * apto para ser usado con el algoritmo de firma HMAC-SHA256.
+     * @return La clave de firma lista para usar con el método signWith.
      */
-    private Key getSigningKey(){
+    private SecretKey getSigningKey(){
+
+        // Decodificamos la clave secreta desde base64 a una matriz de bytes
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+
+        /* Preparamos la clave secreta decodificada para ser usada con el algoritmo HMAC-SHA256,
+           creando un SecretKey que se pasará al metodo signWith para firmar el token. */
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    //METODOS PUBLICOS
+
+    //Metodos para obtener los tiempos de duracion (Long) del token (y no la fecha)
+
+    public Long getEXPIRATION_REFRESH_TOKEN() {
+        return EXPIRATION_REFRESH_TOKEN;
+    }
+
+    public Long getEXPIRATION_ACCESS_TOKEN() {
+        return EXPIRATION_ACCESS_TOKEN;
+    }
+
+    //Metodo que calcula el tiempo restante de validez de un token
+    public Duration getRemainingTime(String token){
+
+        // obtenemos la fecha de expiracion del token
+        Date expirationDate = getExpiration(token);
+
+        //La convertimos a Instant
+        Instant expirationInstant = expirationDate.toInstant();
+
+        //Calculamos la duracion entre el momento actual y la expiracion
+
+        return Duration.between(Instant.now(), expirationInstant);
+    }
 }
