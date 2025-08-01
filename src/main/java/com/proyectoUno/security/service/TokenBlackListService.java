@@ -1,5 +1,7 @@
 package com.proyectoUno.security.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import java.time.Duration;
 public class TokenBlackListService {
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final Logger logger = LoggerFactory.getLogger(TokenBlackListService.class);
 
     @Autowired
     public TokenBlackListService( RedisTemplate<String, String> redisTemplate){
@@ -38,7 +41,7 @@ public class TokenBlackListService {
     }
 
     public boolean isTokenBlackListed(String token) {
-
+        logger.info("Verificando si el token {} está en la lista negra en Redis", token);
         /*
          * Consultamos la lista negra para confirmar si el token está presente o no.
          *
@@ -55,6 +58,7 @@ public class TokenBlackListService {
          */
         Boolean existe = redisTemplate.hasKey(token);
 
+        logger.info("Resultado de la verificación: {}", existe);
         /*
          * El valor obtenido es un objeto Boolean.
          * Como el metodo isTokenBlackListed devuelve un booleano primitivo,
