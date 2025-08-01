@@ -1,5 +1,6 @@
 package com.proyectoUno.security.filter;
 
+import com.proyectoUno.security.exception.RevokedTokenException;
 import com.proyectoUno.security.jwt.JwtService;
 import com.proyectoUno.security.service.TokenBlackListService;
 import jakarta.servlet.FilterChain;
@@ -14,7 +15,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.ServletException;
-
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
@@ -85,15 +85,13 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
 
         // --- VERIFICAR SI EL TOKEN ESTÁ EN LA LISTA NEGRA DE REDIS ---
 
-        if (tokenBlackListService.isTokenBlackListed(jwt)){
+            if (tokenBlackListService.isTokenBlackListed(jwt)){
+                logger.info("Token marcado como revocado");
+                throw  new RevokedTokenException("El token fue revocado o invalido");
 
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //401
-            response.getWriter().write("El token fue revocado o invalido");
-            return; //detiene el procesamiento posterior
-        }
-
-        //4. Extrae el username del JWT
-        username= jwtService.getUsernameFromToken(jwt);
+            }
+            //4. Extrae el username del JWT
+            username= jwtService.getUsernameFromToken(jwt);
 
         //5. Aca verificamos dos cosas
             //5.1 Que se haya extraido exitosamente el subject del JWT
