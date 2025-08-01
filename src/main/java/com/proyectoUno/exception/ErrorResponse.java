@@ -33,7 +33,7 @@ public class ErrorResponse {
      * @param path
      * @param internalCode
      */
-    ErrorResponse(HttpStatus status, String message, String path, String internalCode){
+    public ErrorResponse(HttpStatus status, String message, String path, String internalCode){
 
         this.timestamp=LocalDateTime.now();
         this.status=status.value();
@@ -52,7 +52,7 @@ public class ErrorResponse {
      * @param details
      */
 
-    ErrorResponse(HttpStatus status, String message, String path, String internalCode,Map<String,String> details){
+    public ErrorResponse(HttpStatus status, String message, String path, String internalCode,Map<String,String> details){
 
         this(status,message,path,internalCode);
         this.details =details;
