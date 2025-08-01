@@ -9,10 +9,10 @@ import com.proyectoUno.security.dto.LoginRequest;
 import com.proyectoUno.security.dto.RegisterRequest;
 import com.proyectoUno.security.entity.RefreshToken;
 import com.proyectoUno.security.jwt.JwtService;
-import com.proyectoUno.security.mapper.RefreshTokenMapper;
 import com.proyectoUno.security.mapper.UsuarioRegisterMapper;
 import com.proyectoUno.security.model.CustomUserDetails;
 import com.proyectoUno.security.repository.RefreshTokenRepository;
+import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +46,12 @@ public class AuthService {
     private final UsuarioRegisterMapper usuarioRegisterMapper;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenBlackListService tokenBlackListService;
-    private final RefreshTokenMapper refreshTokenMapper;
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     @Autowired
     public AuthService(UsuarioRepository usuarioRepository, JwtService jwtService, PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager, UserDetailsService userDetailsService, UsuarioRegisterMapper usuarioRegisterMapper,
-                       RefreshTokenRepository refreshTokenRepository, TokenBlackListService tokenBlackListService, RefreshTokenMapper refreshTokenMapper) {
+                       RefreshTokenRepository refreshTokenRepository, TokenBlackListService tokenBlackListService) {
         this.usuarioRepository = usuarioRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
@@ -61,8 +60,6 @@ public class AuthService {
         this.usuarioRegisterMapper = usuarioRegisterMapper;
         this.refreshTokenRepository =refreshTokenRepository;
         this.tokenBlackListService=tokenBlackListService;
-        this.refreshTokenMapper = refreshTokenMapper;
-
     }
 
     /**
@@ -104,7 +101,12 @@ public class AuthService {
 
 
         //Mapeamos a la entidad refreshToken para persistir en la base de datos
-         RefreshToken refreshTokenEntity = refreshTokenMapper.toEntity(refreshToken,usuario,this.jwtService);
+         RefreshToken refreshTokenEntity = new RefreshToken();
+         refreshTokenEntity.setToken(refreshToken);
+         refreshTokenEntity.setRevoked(false);
+         refreshTokenEntity.setUsuario(usuario);
+         refreshTokenEntity.setFechaExpiracion(Instant.now().plusMillis(jwtService.getEXPIRATION_REFRESH_TOKEN()));
+
          refreshTokenRepository.save(refreshTokenEntity);
          logger.info("Mapeo a entidad RefreshToken exitoso: {}", refreshToken);
 
@@ -142,8 +144,13 @@ public class AuthService {
         String jwtToken = jwtService.generateAccessToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
 
-        //creamos y persistimos el refresh token
-        RefreshToken refreshTokenEntity = refreshTokenMapper.toEntity(refreshToken,usuario, this.jwtService);
+        //Mapeamos a la entidad refreshToken para persistir en la base de datos
+        RefreshToken refreshTokenEntity = new RefreshToken();
+        refreshTokenEntity.setToken(refreshToken);
+        refreshTokenEntity.setRevoked(false);
+        refreshTokenEntity.setUsuario(usuario);
+        refreshTokenEntity.setFechaExpiracion(Instant.now().plusMillis(jwtService.getEXPIRATION_REFRESH_TOKEN()));
+
         refreshTokenRepository.save(refreshTokenEntity);
         logger.info("refresh token persistido correctamente {}",refreshTokenEntity);
         return new AuthResponse(jwtToken,refreshToken);
@@ -169,7 +176,7 @@ public class AuthService {
             //El token que nos pasan ya ha sido revocado (por logout o por rotacion de token)
             //o su fecha de expriacion paso
 
-            throw  new RuntimeException( "Refresh Token invalido o expirado");
+            throw  new JwtException( "Refresh Token invalido o expirado");
         }
 
         //Obtenemos el username (email) del refresh token que nos mandan
@@ -195,7 +202,13 @@ public class AuthService {
         String newRefreshToken = jwtService.generateRefreshToken(userDetails);
 
         //D. Guardamos el nuevo refresh token en la base de datos (este es el nuevo token que el usuario usara para las renovaciones)
-        RefreshToken newRefreshTokenEntity= refreshTokenMapper.toEntity(newRefreshToken, usuario, this.jwtService);
+        //Mapeamos a la entidad refreshToken para persistir en la base de datos
+        RefreshToken newRefreshTokenEntity = new RefreshToken();
+        newRefreshTokenEntity .setToken(newAccessToken);
+        newRefreshTokenEntity .setRevoked(false);
+        newRefreshTokenEntity .setUsuario(usuario);
+        newRefreshTokenEntity .setFechaExpiracion(Instant.now().plusMillis(jwtService.getEXPIRATION_REFRESH_TOKEN()));
+
 
         refreshTokenRepository.save(newRefreshTokenEntity);
 
@@ -209,7 +222,6 @@ public class AuthService {
         //1. Invalidar el accessToken actual en redis(TTL = tiempo restante)
         tokenBlackListService.blackListToken(accessToken, jwtService.getRemainingTime(accessToken));
         //2. invalidar el refreshToken en la base de datos y en Redis
-
         RefreshToken refreshTokenEntity = refreshTokenRepository.findRefreshTokenByToken(refreshToken)
                 .orElseThrow(()-> new EntidadNoEncontradaException("El token no ha sido encontrado"));
         refreshTokenEntity.setRevoked(true);
