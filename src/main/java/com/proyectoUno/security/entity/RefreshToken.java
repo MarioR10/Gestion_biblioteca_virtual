@@ -19,7 +19,7 @@ public class RefreshToken {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name= "token")
+    @Column(name = "token", columnDefinition = "TEXT")
     private String token;
 
     @CreationTimestamp
@@ -63,8 +63,8 @@ public class RefreshToken {
         return fechaExpiracion;
     }
 
-    public void setFechaExpiracion(Instant fechaEspiracion) {
-        this.fechaExpiracion = fechaEspiracion;
+    public void setFechaExpiracion(Instant fechaExpiracion) {
+        this.fechaExpiracion = fechaExpiracion;
     }
 
     public Boolean getRevoked() {
