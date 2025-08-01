@@ -2,6 +2,7 @@ package com.proyectoUno.security.controller;
 
 import com.proyectoUno.security.dto.AuthResponse;
 import com.proyectoUno.security.dto.LoginRequest;
+import com.proyectoUno.security.dto.Logout;
 import com.proyectoUno.security.dto.RegisterRequest;
 import com.proyectoUno.security.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +38,9 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(
-            @RequestParam("accessToken") String accessToken,
-            @RequestParam("refreshToken") String refreshToken){
+    public ResponseEntity<Void> logout(@RequestBody Logout request){
 
-        authService.logout(accessToken,refreshToken);
+        authService.logout(request.accessToken(),request.refreshToken());
         return ResponseEntity.ok().build();
     }
 
