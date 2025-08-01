@@ -1,4 +1,7 @@
 package com.proyectoUno.security.dto;
 
-public class Logout {
-}
+public record Logout(
+
+        String accessToken,
+        String refreshToken
+) { }
