@@ -27,7 +27,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 
@@ -99,16 +101,24 @@ public class AuthService {
             logger.info("Se elimaron los tokens de la base de datos asociados al usuario {} exitosamente", usuario);
         }
 
+        //fecha de expiracion del refresh Token
+        Date tokenExpiracion = jwtService.getExpiration(refreshToken);
+        Instant expiracion = tokenExpiracion.toInstant();
+
+        logger.debug("Fecha de expiración extraída del token: {}", expiracion.atZone(ZoneId.of("UTC")));
 
         //Mapeamos a la entidad refreshToken para persistir en la base de datos
          RefreshToken refreshTokenEntity = new RefreshToken();
          refreshTokenEntity.setToken(refreshToken);
          refreshTokenEntity.setRevoked(false);
          refreshTokenEntity.setUsuario(usuario);
-         refreshTokenEntity.setFechaExpiracion(Instant.now().plusMillis(jwtService.getEXPIRATION_REFRESH_TOKEN()));
+         refreshTokenEntity.setFechaExpiracion(expiracion);
+        logger.info("Fecha de expiracion del token de refresh: {}", refreshTokenEntity.getFechaExpiracion());
 
-         refreshTokenRepository.save(refreshTokenEntity);
+
+        refreshTokenRepository.save(refreshTokenEntity);
          logger.info("Mapeo a entidad RefreshToken exitoso: {}", refreshToken);
+        logger.info("Mapeo a entidad RefreshToken exitoso: {}, expiración guardada: {}", refreshToken, refreshTokenEntity.getFechaExpiracion().atZone(ZoneId.of("UTC")));
 
          return  new AuthResponse(jwtToken,refreshToken);
     }
