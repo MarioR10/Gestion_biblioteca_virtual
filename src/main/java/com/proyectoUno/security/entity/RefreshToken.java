@@ -22,7 +22,6 @@ public class RefreshToken {
     @Column(name = "token", columnDefinition = "TEXT")
     private String token;
 
-    @CreationTimestamp
     @Column(name= "fecha_expiracion", nullable = false,updatable = false)
     private Instant fechaExpiracion;
 
