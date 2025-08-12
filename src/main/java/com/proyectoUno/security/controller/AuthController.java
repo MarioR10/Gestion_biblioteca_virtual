@@ -1,9 +1,6 @@
 package com.proyectoUno.security.controller;
 
-import com.proyectoUno.security.dto.AuthResponse;
-import com.proyectoUno.security.dto.LoginRequest;
-import com.proyectoUno.security.dto.Logout;
-import com.proyectoUno.security.dto.RegisterRequest;
+import com.proyectoUno.security.dto.*;
 import com.proyectoUno.security.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +30,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refreshToken(@RequestParam String refreshToken){
-        return  ResponseEntity.ok(authService.refreshToken(refreshToken));
+    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest refreshToken){
+        return  ResponseEntity.ok(authService.refreshToken(refreshToken.refreshToken()));
     }
 
     @PostMapping("/logout")
