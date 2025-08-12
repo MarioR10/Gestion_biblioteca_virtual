@@ -1,9 +1,6 @@
 package com.proyectoUno.exception;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.MalformedKeyException;
-import io.jsonwebtoken.security.SignatureException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -18,7 +15,6 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> manejadorAutenticacionFallida( AuthenticationException ex, WebRequest request){
@@ -50,23 +46,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse,HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ErrorResponse> manejadorJwtExpirado(ExpiredJwtException ex, WebRequest request){
-
-        String path = ((ServletWebRequest) request).getRequest().getRequestURI();
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED,
-                ex.getMessage(),
-                path,
-                "TOKEN_EXPIRED"
-        );
-
-        return new ResponseEntity<>(errorResponse,HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler({SignatureException.class, MalformedKeyException.class, UnsupportedJwtException.class})
-    public ResponseEntity<ErrorResponse> manejadorJwtInvalido(Exception ex, WebRequest request){
+    @ExceptionHandler({JwtException.class})
+    public ResponseEntity<ErrorResponse> manejadorJwtInvalido(JwtException ex, WebRequest request){
 
         String path = ((ServletWebRequest) request).getRequest().getRequestURI();
 
@@ -94,10 +75,6 @@ public class GlobalExceptionHandler {
         );
         return  new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
-
-
 
 
     @ExceptionHandler(EntidadNoEncontradaException.class)
