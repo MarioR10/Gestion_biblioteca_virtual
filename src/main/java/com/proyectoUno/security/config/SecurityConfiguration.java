@@ -60,7 +60,7 @@ public class SecurityConfiguration {
 
                 .authorizeHttpRequests( auth -> auth
 
-                //Acceso publico a las rutas de autentificacion (Register, Login), no se necesita estar autenticado
+                //Acceso publico a las rutas de autentificacion (Register, Login, logout, refresh), no se necesita estar autenticado
                                 .requestMatchers("/auth/**").permitAll()
                 //Cualquier otra ruta requiere autentificacion del usuario
                                 .anyRequest().authenticated()
