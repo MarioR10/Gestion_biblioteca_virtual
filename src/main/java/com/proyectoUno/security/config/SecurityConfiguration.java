@@ -70,7 +70,7 @@ public class SecurityConfiguration {
                  // ya que usaremos JWT y no necesitamos sesiones HTTP para el estado de autenticación
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authenticationProvider(authenticationProvider) // Establece el proveedor de autentificacion personalizado
+                .authenticationProvider(authenticationProvider) // Establece el proveedor de autentificacion
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Añade nuestro filtro JWT
                                                                                                        // antes del filtro de autenticación por usuario/contraseña de Spring
 

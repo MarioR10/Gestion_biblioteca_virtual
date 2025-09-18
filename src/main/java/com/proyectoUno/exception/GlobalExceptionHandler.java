@@ -1,6 +1,5 @@
 package com.proyectoUno.exception;
 
-import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -31,36 +30,6 @@ public class GlobalExceptionHandler {
         return  new ResponseEntity<>(errorResponse,HttpStatus.UNAUTHORIZED);
 
     }
-    @ExceptionHandler( AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> manejadorAccesoDenegado( AccessDeniedException ex, WebRequest request){
-
-        String path = ((ServletWebRequest) request).getRequest().getRequestURI();
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.FORBIDDEN,
-                "Acceso denegado:" + ex.getMessage(),
-                path,
-                "ACCESS_DENIED"
-        );
-
-        return new ResponseEntity<>(errorResponse,HttpStatus.FORBIDDEN);
-    }
-
-    @ExceptionHandler({JwtException.class})
-    public ResponseEntity<ErrorResponse> manejadorJwtInvalido(JwtException ex, WebRequest request){
-
-        String path = ((ServletWebRequest) request).getRequest().getRequestURI();
-
-        ErrorResponse errorResponse = new ErrorResponse(
-
-                HttpStatus.UNAUTHORIZED,
-                "Token JWT inválido: " + ex.getMessage(),
-                path,
-                " INVALID_TOKEN"
-        );
-
-        return  new ResponseEntity<>(errorResponse,HttpStatus.UNAUTHORIZED);
-    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> manejadorExcepcionesGenericas( Exception ex, WebRequest request){
@@ -75,7 +44,6 @@ public class GlobalExceptionHandler {
         );
         return  new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 
     @ExceptionHandler(EntidadNoEncontradaException.class)
     public ResponseEntity<ErrorResponse> manejadorEntidadNoEncontrada(EntidadNoEncontradaException ex, WebRequest request){

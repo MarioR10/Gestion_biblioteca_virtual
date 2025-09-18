@@ -17,7 +17,7 @@ import java.io.IOException;
 @Component
 public class CustomAccessDeniedHandler  implements AccessDeniedHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(CustomAuthenticationEntryPoint.class);
+    private final Logger logger = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
     private final ObjectMapper objectMapper= new ObjectMapper();
 
 
@@ -37,7 +37,7 @@ public class CustomAccessDeniedHandler  implements AccessDeniedHandler {
 
         //Creamos la respuesta que le mandaremos al cliente
         //1. Definimos la cabecera HTTP de la respuesta ( Content-Type)
-        response.setContentType("aplication/json");
+        response.setContentType("application/json");
         //2. Definimos el estado http de la respuesta
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
