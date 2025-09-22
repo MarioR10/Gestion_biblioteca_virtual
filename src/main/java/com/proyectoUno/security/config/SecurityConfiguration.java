@@ -8,6 +8,7 @@ import com.proyectoUno.security.exception.CustomAuthenticationEntryPoint;
 import com.proyectoUno.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -60,10 +61,17 @@ public class SecurityConfiguration {
 
                 .authorizeHttpRequests( auth -> auth
 
-                //Acceso publico a las rutas de autentificacion (Register, Login, logout, refresh), no se necesita estar autenticado
+                //RUTAS DE ACCESO PUBLICO
                                 .requestMatchers("/auth/**").permitAll()
-                //Cualquier otra ruta requiere autentificacion del usuario
+                                .requestMatchers(HttpMethod.GET, "/api/libro/**").permitAll()
+                                .requestMatchers("/error").permitAll()
+
+                //RUTAS DE ACCESO PRIVADO
+                                .requestMatchers(HttpMethod.DELETE, "/api/libro/**").hasRole("Admin")
+                                .requestMatchers(HttpMethod.PUT, "/api/libro/**").hasRole("Admin")
+                                .requestMatchers(HttpMethod.POST, "/api/libro/**").hasRole("Admin")
                                 .anyRequest().authenticated()
+
                 )
                 .sessionManagement(session -> session
                  //Configura la politica de creacion de sesiones como STATELESS,
