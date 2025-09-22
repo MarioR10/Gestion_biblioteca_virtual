@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/libro") //Base path para todos los endpoints
+@RequestMapping("/api/libro") //Base path para todos los endpoints
 public class LibroController {
 
     private final LibroService libroService;
@@ -39,14 +39,12 @@ public class LibroController {
         return ResponseEntity.ok(libro);
     }
 
-    @PreAuthorize("hasRole('Admin')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminarLibroPorId(@PathVariable UUID id){
         libroService.eliminarLibroPorId(id);
     }
 
-    @PreAuthorize("hasRole('Admin')")
     @PatchMapping("/{id}")
     public ResponseEntity<LibroResponseDTO> actualizarLibro(@PathVariable UUID id, @Valid @RequestBody LibroActualizarRequestDTO request){
         LibroResponseDTO libroActualizado = libroService.actualizarLibro(id,request);

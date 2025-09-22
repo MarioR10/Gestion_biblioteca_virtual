@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/prestamo")
+@RequestMapping("/api/prestamo")
 public class PrestamoController {
 
 
