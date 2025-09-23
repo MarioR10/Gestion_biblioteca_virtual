@@ -1,5 +1,6 @@
 package com.proyectoUno.exception;
 
+import com.proyectoUno.security.exception.JwtRevokedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,6 +19,26 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+
+    /**
+     * Maneja errores de autenticación.
+     * Devuelve 401 Unauthorized con un mensaje detallado.
+     */
+    @ExceptionHandler(JwtRevokedException.class)
+    public ResponseEntity<ErrorResponse> manejadorAutenticacionFallida( JwtRevokedException ex, WebRequest request){
+
+        //Extraemos la URL de donde proviene la excepcion
+        String path = obtenerURL(request);
+        ErrorResponse errorResponse= new ErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                ex.getMessage(),
+                path,
+                "JWT_REVOKED"
+        );
+        return  new ResponseEntity<>(errorResponse,HttpStatus.UNAUTHORIZED);
+
+    }
+    
     /**
      * Maneja errores de autenticación.
      * Devuelve 401 Unauthorized con un mensaje detallado.
