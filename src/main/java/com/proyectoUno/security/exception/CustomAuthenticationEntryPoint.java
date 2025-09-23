@@ -3,6 +3,7 @@ package com.proyectoUno.security.exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.proyectoUno.exception.ErrorResponse;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -31,25 +33,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
 
-        //Obtenemos la excepcion que guardamos en el filtro
-        Exception exception = (Exception) request.getAttribute("excepcion");
         String path = request.getRequestURI();
-        String errorMesage;
-
-        logger.info("Entrando en CustomAuthenticationEntryPoint para path: {}, Excepción: {}", path, exception.getClass().getSimpleName()); // Depuración
-        logger.error("Error de Autenticación en {}: {}", path, exception.getMessage(), exception);
-
-        if (exception != null){
-            logger.info("Manjeando excepcion lanzada por el filtro JWT: {}", exception.getClass().getSimpleName());
-            errorMesage = exception.getMessage();
-        } else {
-
-            //Si no hay ninguna excepcion guardada ocupamos la que Spring security nos da
-            logger.info("Manejando excepción de Spring Security: {}", authException.getClass().getSimpleName());
-            errorMesage = authException.getMessage();
-        }
-
-
+        String errorMesage= authException.getMessage();
+        logger.info("Entrando en CustomAuthenticationEntryPoint para path: {}, Excepción: {}: {}", path, authException, errorMesage);
 
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.UNAUTHORIZED,
@@ -58,8 +44,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                 "AUTH_ERROR"
         );
 
+        //Creamos la respuesta que le mandaremos al cliente
+        //1. Definimos la cabecera HTTP de la respuesta ( Content-Type)
         response.setContentType("application/json");
+        //2. Definimos el estado http de la respuesta
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
         try (var writer = response.getWriter()) {
             String jsonResponse = objectMapper.writeValueAsString(errorResponse);
             logger.info("Respondiendo con JSON para {}: {}", path, jsonResponse); // Depuración
