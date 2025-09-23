@@ -18,20 +18,22 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Clase de configuracion donde definimos la cadena de filtros que debe de seguir la solicitud Http,
- * la clase se encarga de decirle a Spring security que rutas son publicas, requieren autenticacion , cuales requieren ciertos roles,
- * reglas de proteccion.
- * Esta clase es importante porque le indicamos:
- * 1. Las rutas publicas
- * 2. Las rutas que se necesitan autenticacion
- * 3. como se manejan las seciones ( o la ausencia de ellas)
- * 4. Filtros personalizados a ustilizar
- * 5.Como se autentican los usuarios
+ * Clase de configuración donde definimos la cadena de filtros de seguridad
+ * que debe seguir cada solicitud HTTP.
+ * Su objetivo es indicarle a Spring Security qué rutas son públicas,
+ * cuáles requieren autenticación, qué roles son necesarios en cada caso,
+ * cómo se gestionan las sesiones y qué filtros personalizados deben ejecutarse.
+ * En términos generales, aquí definimos:
+ * 1. Las rutas públicas (sin necesidad de autenticación).
+ * 2. Las rutas privadas que requieren autenticación.
+ * 3. Los roles necesarios para acceder a determinadas rutas.
+ * 4. La política de sesiones (en este caso, sin sesiones porque usamos JWT).
+ * 5. Los filtros personalizados que deben añadirse a la cadena de seguridad.
  */
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Habilita el soporte para @PreAuthorize
+@EnableMethodSecurity // Permite usar anotaciones como @PreAuthorize en los controladores o servicios
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -45,44 +47,53 @@ public class SecurityConfiguration {
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
     }
-//Configuracion de la cadena de filtros de Spring security, tomemos en cuenta que hay ciertos filtros que spring security
-// maneja por nosotros, de manera automatica en el orden correcto, como: ExceptionTranslationFilter, SecurityContextHolderFilter, LogoutFilter  y no hay necesidad de crearlos
 
-
-    //con addFilterBefore, addFilterAfter, o addFilterAt, insertas tus filtros personalizados en puntos específicos de esa cadena predefinida.
+    /**
+     * Configura la cadena de filtros de Spring Security.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
         http
-                .csrf(csrf-> csrf.disable()) // Deshabilita la protección CSRF (comúnmente para APIs REST sin sesiones)
+                // 1. Deshabilitamos CSRF ya que nuestra API es stateless y usa JWT
+                .csrf(csrf-> csrf.disable())
+
+                // 2. Definimos cómo manejar errores de autenticación y autorización
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
 
+                // 3. Definimos las reglas de autorización para las rutas
                 .authorizeHttpRequests( auth -> auth
 
-                //RUTAS DE ACCESO PUBLICO
+                                // --- Rutas públicas (no requieren autenticación) ---
                                 .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/libro/**").permitAll()
                                 .requestMatchers("/error").permitAll()
 
-                //RUTAS DE ACCESO PRIVADO
+                        // --- Rutas privadas (requieren autenticación + rol específico) ---
                                 .requestMatchers(HttpMethod.DELETE, "/api/libro/**").hasRole("Admin")
                                 .requestMatchers(HttpMethod.PUT, "/api/libro/**").hasRole("Admin")
                                 .requestMatchers(HttpMethod.POST, "/api/libro/**").hasRole("Admin")
-                                .anyRequest().authenticated()
 
+                                .requestMatchers("/api/prestamo/**").hasRole("Admin")
+                                .requestMatchers("/api/usuario/**").hasRole("Admin")
+
+                        // Cualquier otra ruta requiere autenticación
+                        .anyRequest().authenticated()
                 )
+                // 4. Configuración de sesiones: como usamos JWT, definimos STATELESS
                 .sessionManagement(session -> session
-                 //Configura la politica de creacion de sesiones como STATELESS,
-                 // ya que usaremos JWT y no necesitamos sesiones HTTP para el estado de autenticación
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authenticationProvider(authenticationProvider) // Establece el proveedor de autentificacion
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Añade nuestro filtro JWT
-                                                                                                       // antes del filtro de autenticación por usuario/contraseña de Spring
+                // 5. Registramos nuestro AuthenticationProvider
+                .authenticationProvider(authenticationProvider)
 
-        return http.build(); // Construye y devuelve el SecurityFilterChain configurado
+                // 6. Insertamos el filtro JWT antes del filtro estándar de login con usuario/contraseña
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Construimos y devolvemos el SecurityFilterChain configurado
+        return http.build();
     }
 
 
