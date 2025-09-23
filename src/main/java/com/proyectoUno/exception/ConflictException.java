@@ -3,20 +3,31 @@ package com.proyectoUno.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Excepción personalizada que se lanza cuando ocurre un conflicto
+ * de datos en la aplicación, por ejemplo, cuando un registro ya existe.
+ */
 public class ConflictException extends RuntimeException {
 
-    //Logger que permite capturar excepciones en consola
+    /** Logger para capturar detalles de la excepción en consola */
    private final Logger logger = LoggerFactory.getLogger(ConflictException.class);
 
-    //ID de la excepcion
+    /** Código interno de la excepción */
    private final String internalCode = "CONFLICTO";
 
-    //campos que proporciona detalles sobre la excepcion lanzada
+    /** Campos que proporciona detalles sobre la excepcion lanzada*/
     private final String entidadNombre;
     private final String campoBusqueda;
     private final Object valorCampoBusqueda;
 
 
+    /**
+     * Constructor principal de la excepción.
+     * @param message         Mensaje descriptivo de la excepción
+     * @param entidadNombre   Nombre de la entidad donde ocurrió el conflicto
+     * @param campoBusqueda   Nombre del campo que causó el conflicto
+     * @param valorCampoBusqueda Valor del campo conflictivo
+     */
     public ConflictException(String message, String entidadNombre, String campoBusqueda, Object valorCampoBusqueda){
 
         super(message);

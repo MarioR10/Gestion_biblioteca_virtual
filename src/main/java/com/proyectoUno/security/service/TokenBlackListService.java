@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
+/**
+ * Servicio encargado de manejar la lista negra de tokens en Redis.
+ * Permite invalidar access y refresh tokens antes de su expiración natural.
+ */
 @Service
 public class TokenBlackListService {
 
@@ -21,9 +25,9 @@ public class TokenBlackListService {
     }
 
     /**
-     * Metodo que agrega tokens a la lista negra de Redis
-     * @param token El token (Strin), de access o refresh que se quiere invalidar
-     * @param duration Tiempo que sera invalidado hasta su expiracion natural
+     * Agrega un token a la lista negra con un tiempo de expiración definido.
+     * @param token    Token de acceso o refresh que se quiere invalidar.
+     * @param duration Tiempo que permanecerá en la lista negra antes de ser eliminado automáticamente por Redis.
      */
     public void blackListToken(String token, Duration duration){
 
@@ -40,6 +44,11 @@ public class TokenBlackListService {
 
     }
 
+    /**
+     * Verifica si un token se encuentra en la lista negra.
+     * @param token Token a verificar.
+     * @return true si el token está en la lista negra, false en caso contrario.
+     */
     public boolean isTokenBlackListed(String token) {
         logger.info("Verificando si el token {} está en la lista negra en Redis", token);
         /*

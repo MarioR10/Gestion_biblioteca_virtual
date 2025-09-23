@@ -14,9 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 /**
- * Clase de configuracion, define beans necesarios para la autentificacion y autorizacion de usuarios
- * Define multiples metodos, como estan anotados con @Bean le dicen a Spring que el valor de retorno debe
- * ser registrado como un bean en el contenedor de spring. Estos beans puedne ser inyectados en otras partes de la aplicacion
+ * Configuración principal de seguridad para la aplicación.
+ * Define beans clave para autenticación y autorización de usuarios:
+ * - AuthenticationProvider: valida credenciales usando UserDetailsService.
+ * - AuthenticationManager: coordina el proceso de autenticación.
+ * - PasswordEncoder: codifica y verifica contraseñas de manera segura.
  */
 @Configuration
 public class ApplicationConfig {
@@ -29,13 +31,18 @@ public class ApplicationConfig {
         this.userDetailsService = userDetailsService;
     }
 
-    
+    /**
+     * Bean que define cómo Spring Security autentica usuarios.
+     * Utiliza DaoAuthenticationProvider, que compara username y password
+     * proporcionados con los almacenados en la base de datos.
+     */
     @Bean
     public AuthenticationProvider authenticationProvider(){
 
         /*
         DaoAuthenticationProvider es una de muchas implementaciones de AuthenticationProvider, su funcion es autentificar
-        al usuario con los datos obtenidos. verifica que la contraseña y username dados coinicidan con los almacenados en la base de datos
+        al usuario con los datos obtenidos. verifica que la contraseña y username dados coinicidan con los almacenados en
+        la base de datos
          */
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
@@ -58,6 +65,15 @@ public class ApplicationConfig {
         return authProvider;
     }
 
+    /**
+     * Bean que provee el AuthenticationManager de Spring Security.
+     * Es el coordinador de la autenticación: recibe credenciales,
+     * delega la validación a los AuthenticationProviders y devuelve
+     * un objeto Authentication con la información del usuario autenticado.
+     * @param configuration Configuración proporcionada por Spring Security
+     * @return AuthenticationManager ya configurado
+     * @throws Exception Si ocurre un error al obtener el manager
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws  Exception{
 
@@ -79,6 +95,12 @@ public class ApplicationConfig {
         return  configuration.getAuthenticationManager();
     }
 
+    /**
+     * Bean que define cómo se codifican y verifican las contraseñas.
+     * BCryptPasswordEncoder implementa PasswordEncoder y aplica un hash seguro
+     * para almacenar contraseñas, garantizando que no se guarden en texto plano.
+     * @return PasswordEncoder configurado
+     */
     @Bean
     public PasswordEncoder passwordEncoder(){
 

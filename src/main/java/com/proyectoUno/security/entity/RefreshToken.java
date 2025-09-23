@@ -9,6 +9,11 @@ import org.hibernate.annotations.GenericGenerator;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Entidad que representa un Refresh Token en la base de datos.
+ * Se utiliza para generar nuevos Access Tokens sin que el usuario vuelva a autenticarse.
+ * Cada token está asociado a un usuario específico.
+ */
 @Entity
 @Table(name = "refresh_token")
 public class RefreshToken {
@@ -17,20 +22,22 @@ public class RefreshToken {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name="UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id")
-    private UUID id;
+    private UUID id; // Identificador único del token
 
     @Column(name = "token", columnDefinition = "TEXT")
-    private String token;
+    private String token; // Valor del refresh token
+
 
     @Column(name= "fecha_expiracion", nullable = false,updatable = false)
-    private Instant fechaExpiracion;
+    private Instant fechaExpiracion; // Fecha de expiración del token
 
     @Column(name = "revoked")
-    private  Boolean revoked;
+    private  Boolean revoked; // Indica si el token fue revocado
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
-    private Usuario usuario;
+    private Usuario usuario; // Usuario asociado al token
 
     public RefreshToken() {
     }

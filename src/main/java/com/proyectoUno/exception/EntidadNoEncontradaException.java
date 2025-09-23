@@ -4,28 +4,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
-
+/**
+ * Excepción personalizada que se lanza cuando no se encuentra
+ * una entidad en la base de datos.
+ */
 public class EntidadNoEncontradaException extends  RuntimeException{
 
-  //Loggers permiten registrar mensajes en consola, nos ayuda a la depuracion y monitoreo
+    /** Logger para depuración y monitoreo */
     private static final Logger logger = LoggerFactory.getLogger(EntidadNoEncontradaException.class);
 
-    //ID para identificar el tipo de excepcion (internalCode)
+    /** Código interno de la excepción */
     private final String internalCode = "ENTITY_NOT_FOUND";
 
-    //Campos que proporcionan detalles sobre la excepcion lanzada
+    /**Campos que proporcionan detalles sobre la excepcion lanzada*/
     private final String entidadNombre; // Nombre de la entidad que se intento encontrar en la DB.
     private final String campoBusqueda; // Campo con el que se trato de encotnrar la entidad en la DB.
     private final Object valorCampoBusqueda; //Valor del campo con que se trato de encontrar la entidad en la DB.
 
     /**
-     * Constructor prinicipal, para crear una excepcion cuando la entidad no ha sido encontrada mediante un campo.
-     * Genera un mensaje de error predeterminado, con los valores obtenidos.
-     * @param entidadNombre
-     * @param campoBusqueda
-     * @param valorCampoBusqueda
+     * Constructor principal.
+     * @param entidadNombre Nombre de la entidad buscada
+     * @param campoBusqueda Campo usado para buscar la entidad
+     * @param valorCampoBusqueda Valor del campo que provocó la búsqueda fallida
      */
-
     public EntidadNoEncontradaException(String entidadNombre, String campoBusqueda, Object valorCampoBusqueda){
         super(String.format("La entidad '%s' no fue encontrada con %s: '%s'",entidadNombre,campoBusqueda,valorCampoBusqueda));
         this.entidadNombre=entidadNombre;
@@ -37,10 +38,8 @@ public class EntidadNoEncontradaException extends  RuntimeException{
     }
 
     /**
-     * Constructor secundario que permite crear la excepcion, unicamente con un mensaje personalizado.
-     * Util para cuando no se conocen detalles especificos.
-     *
-     * @param message
+     * Constructor secundario con mensaje personalizado.
+     * @param message Mensaje de error.
      */
     public EntidadNoEncontradaException(String message){
         super(message);

@@ -1,10 +1,5 @@
 package com.proyectoUno.security.service;
 
-/*
-   Servicio que carga los datos del usuario desde una fuente (BD, API, etc.).
-   DEBE implementar UserDetailsService.
-   una fuente externa (por ejemplo, tu base de datos). Solo tiene un metodo importante */
-
 import com.proyectoUno.repository.UsuarioRepository;
 import com.proyectoUno.security.model.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +8,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+
+/**
+ * Servicio encargado de cargar los datos del usuario desde la base de datos.
+ * Implementa UserDetailsService, que es requerido por Spring Security para la autenticación.
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -23,6 +23,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.usuarioRepository=usuarioRepository;
     }
 
+    /**
+     * Busca un usuario por su email y devuelve un UserDetails para Spring Security.
+     * @param username El email del usuario.
+     * @return UserDetails con la información necesaria para autenticación.
+     * @throws UsernameNotFoundException Si no se encuentra el usuario en la base de datos.
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
 

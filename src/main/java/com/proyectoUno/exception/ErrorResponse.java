@@ -7,12 +7,12 @@ import java.util.Map;
 
 /**
  * Representa una respuesta de error estandarizada para enviar a los clientes.
- * Proporciona un formato JSON consistente para las excepciones de la API
- *
- *
+ * Proporciona un formato JSON consistente para las excepciones de la API.
  */
 
 public class ErrorResponse {
+
+    /**campos de la respuesta */
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp; //Fecha y hora en que ocurrio la excepcion
@@ -22,16 +22,17 @@ public class ErrorResponse {
     private String path; //URL de la solicitud que origino la excepcion;
     private String internalCode; //Identificador de la ecepcion lanzada
 
-    //Mas detalles sobre la excepcion (opcional)
+    /** Detalles adicionales opcionales sobre la excepción */
     private Map<String, String> details ; //Detalles adicionales sobre la excepcion
 
 
     /**
-     * Constructor  base para las excepciones
-     * @param status
-     * @param message
-     * @param path
-     * @param internalCode
+     * Constructor base sin detalles adicionales.
+     *
+     * @param status Código HTTP
+     * @param message Mensaje descriptivo
+     * @param path URL de la solicitud
+     * @param internalCode Código interno de la excepción
      */
     public ErrorResponse(HttpStatus status, String message, String path, String internalCode){
 
@@ -44,14 +45,13 @@ public class ErrorResponse {
     }
 
     /**
-     * Constructor con detalles adicionales a los predeterminados
-     * @param status
-     * @param message
-     * @param path
-     * @param internalCode
-     * @param details
+     * Constructor con detalles adicionales.
+     * @param status Código HTTP
+     * @param message Mensaje descriptivo
+     * @param path URL de la solicitud
+     * @param internalCode Código interno de la excepción
+     * @param details Detalles adicionales sobre la excepción
      */
-
     public ErrorResponse(HttpStatus status, String message, String path, String internalCode,Map<String,String> details){
 
         this(status,message,path,internalCode);

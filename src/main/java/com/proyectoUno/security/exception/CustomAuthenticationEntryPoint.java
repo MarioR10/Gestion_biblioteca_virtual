@@ -17,17 +17,33 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Manejador personalizado de authentication en Spring Security.
+ * Esta clase se ejecuta cuando un usuario no autenticado intenta acceder a un recurso
+ * protegido que requiere autenticación.
+ * Funcionalidad principal:
+ * 1. Captura la excepción AuthenticationException.
+ * 2. Genera un ErrorResponse estandarizado con código HTTP 401 (UNAUTHORIZED).
+ * 3. Serializa la respuesta a JSON y la envía al cliente.
+ * 4. Registra en logs tanto la excepción como la respuesta enviada.
+ */
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final Logger logger = LoggerFactory.getLogger(CustomAuthenticationEntryPoint.class);
+
+    // Mapper de Jackson configurado para soportar fechas (JavaTimeModule)
     private final ObjectMapper objectMapper= new ObjectMapper().registerModule(new JavaTimeModule());
 
-    /*
-    El metodo recibe tres parametros importantes para su funcionamiento:
-        1. HttpServletRequest que representa la solicitud http que el cliente envio al servidor
-        2. HttpServletResponse representa la respuesta que nuestra aplicacion le mostrara al cliente.
-        3. es la excepcion que contiene los detalles del error de autenticacion que ocurrio.
+    /**
+     * Maneja la excepción de autenticación cuando un usuario no autenticado
+     * intenta acceder a un recurso protegido.
+     * @param request  Solicitud HTTP entrante del cliente
+     * @param response Respuesta HTTP que se enviará al cliente
+     * @param authException Excepción lanzada por Spring Security cuando
+     *                      el usuario no está autenticado
+     * @throws IOException si ocurre un error al escribir la respuesta
+     * @throws ServletException no usado, pero requerido por la firma
      */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
@@ -56,6 +72,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             writer.write(jsonResponse);
             writer.flush(); // Asegura que se envíe la respuesta
         } catch (IOException e) {
+            // Manejo de error al serializar o escribir la respuesta
             logger.error("Fallo al serializar o escribir la respuesta JSON: {}", e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al procesar la respuesta");
         }

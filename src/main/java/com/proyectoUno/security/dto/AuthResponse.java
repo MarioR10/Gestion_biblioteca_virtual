@@ -1,5 +1,8 @@
 package com.proyectoUno.security.dto;
 
-//Un DTO de respuesta, una vez registrados o logeados
+/**
+ * DTO de respuesta que devuelve los tokens generados
+ * después de un proceso de autenticación.
+ */
 public record AuthResponse( String accessToken ,String refreshToken){
 }

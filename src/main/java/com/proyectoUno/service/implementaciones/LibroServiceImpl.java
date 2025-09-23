@@ -17,6 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Servicio responsable de manejar todas las operaciones relacionadas con libros.
+ * Incluye:
+ * 1. CRUD básico (crear, leer, actualizar, eliminar).
+ * 2. Búsquedas con paginación por título, autor, ISBN, categoría y estado.
+ * 3. Gestión del estado de los libros (prestado o disponible).
+ */
 @Service
 public class LibroServiceImpl implements LibroService {
 
@@ -25,7 +32,12 @@ public class LibroServiceImpl implements LibroService {
     private final LibroRequestMapperStruct libroRequestMapper;
 
 
-
+    /**
+     * Constructor que inyecta las dependencias necesarias.
+     * @param libroRepository       Repositorio JPA para acceder a los datos de libros.
+     * @param libroResponseMapper   Mapper para convertir entidades Libro a DTOs de respuesta.
+     * @param libroRequestMapper    Mapper para convertir DTOs de solicitud a entidades Libro.
+     */
     public LibroServiceImpl(LibroRepository libroRepository, LibroResponseMapperStruct libroResponseMapper, LibroRequestMapperStruct libroRequestMapper){
         this.libroRepository=libroRepository;
 
@@ -33,8 +45,13 @@ public class LibroServiceImpl implements LibroService {
         this.libroRequestMapper = libroRequestMapper;
     }
 
-    //metodos actuales
 
+    /**
+     * Busca un libro por su ID.
+     * @param id Identificador único del libro.
+     * @return DTO con la información del libro.
+     * @throws EntidadNoEncontradaException Si el libro no existe en la base de datos.
+     */
     @Override
     public LibroResponseDTO encontrarLibroPorId(UUID id){
 
@@ -50,6 +67,11 @@ public class LibroServiceImpl implements LibroService {
 
     }
 
+    /**
+     * Elimina un libro por su ID.
+     * @param id Identificador único del libro.
+     * @throws EntidadNoEncontradaException Si el libro no existe.
+     */
     @Override
     @Transactional
     public void eliminarLibroPorId(UUID id) {
@@ -61,7 +83,14 @@ public class LibroServiceImpl implements LibroService {
         libroRepository.delete(libro);
     }
 
-
+    /**
+     * Actualiza un libro existente con los datos proporcionados.
+     * Solo se actualizan los campos no nulos del DTO.
+     * @param id Identificador del libro a actualizar.
+     * @param libroActualizar DTO con los campos a actualizar.
+     * @return DTO actualizado con la información final del libro.
+     * @throws EntidadNoEncontradaException Si el libro no existe.
+     */
     @Override
     @Transactional
     public LibroResponseDTO actualizarLibro(UUID id, LibroActualizarRequestDTO libroActualizar) {
@@ -79,6 +108,10 @@ public class LibroServiceImpl implements LibroService {
         return  libroResponseMapper.toResponseDTO(libroGuardado);
     }
 
+    /**
+     * Crea una lista de libros en la base de datos.
+     * @param libroCrearRequestDTO Lista de DTOs con la información de los libros a crear.
+     */
     @Override
     @Transactional
     public void crearLibro(List<LibroCrearRequestDTO> libroCrearRequestDTO) {
@@ -89,13 +122,15 @@ public class LibroServiceImpl implements LibroService {
         libroRepository.saveAll(libros);
     }
 
-    //Metodos paginados
+    // ==========================================
+    // MÉTODOS CON PAGINACIÓN
+    // ==========================================
 
-
-
-
-    //Metodos nuevos con paginacion incluida
-
+    /**
+     * Obtiene todos los libros de forma paginada.
+     * @param pageable Información de la página solicitada (número de página, tamaño, ordenamiento).
+     * @return Página de DTOs de libros.
+     */
     @Override
     public Page<LibroResponseDTO> encontrarLibros(Pageable pageable) {
         //Buscamos en la base de datos
@@ -105,6 +140,9 @@ public class LibroServiceImpl implements LibroService {
         return libroResponseMapper.toResponseDTOPage(libros);
     }
 
+    /**
+     * Busca libros por título (contiene) de forma paginada.
+     */
     @Override
     public Page<LibroResponseDTO> encontrarLibroPorTitulo(String titulo, Pageable pageable) {
         //Buscamos en la base de datos
@@ -114,6 +152,9 @@ public class LibroServiceImpl implements LibroService {
         return  libroResponseMapper.toResponseDTOPage(libros);
     }
 
+    /**
+     * Busca libros por autor (contiene) de forma paginada.
+     */
     @Override
     public Page<LibroResponseDTO> encontrarLibroPorAutor(String autor, Pageable pageable) {
         //Buscamos en la base de datos
@@ -123,6 +164,9 @@ public class LibroServiceImpl implements LibroService {
         return libroResponseMapper.toResponseDTOPage(libros);
     }
 
+    /**
+     * Busca libros por ISBN (contiene) de forma paginada.
+     */
     @Override
     public Page<LibroResponseDTO> encontrarLibroPorIsbn(String isbn, Pageable pageable) {
         //Buscamos en la base de datos
@@ -132,6 +176,9 @@ public class LibroServiceImpl implements LibroService {
         return libroResponseMapper.toResponseDTOPage(libros);
     }
 
+    /**
+     * Busca libros por categoría (contiene) de forma paginada.
+     */
     @Override
     public Page<LibroResponseDTO> encontrarLibroPorCategoria(String categoria, Pageable pageable) {
         //Buscamos en la base de datos
@@ -141,6 +188,9 @@ public class LibroServiceImpl implements LibroService {
         return libroResponseMapper.toResponseDTOPage(libros);
     }
 
+    /**
+     * Busca libros por estado (contiene) de forma paginada.
+     */
     @Override
     public Page<LibroResponseDTO> encontrarLibroPorEstado(String estado, Pageable pageable) {
         //Buscamos en la base de datos
@@ -150,6 +200,17 @@ public class LibroServiceImpl implements LibroService {
         return libroResponseMapper.toResponseDTOPage(libros);
     }
 
+    // ==========================================
+    // MÉTODOS AUXILIARES
+    // ==========================================
+
+    /**
+     * Busca un libro por ID y devuelve la entidad directamente.
+     * Útil para operaciones internas donde necesitamos la entidad completa.
+     * @param id Identificador del libro.
+     * @return Entidad Libro.
+     * @throws EntidadNoEncontradaException Si no se encuentra el libro.
+     */
     @Override
     public Libro encontrarLibroPorIdInternal(UUID id) {
 
@@ -164,7 +225,10 @@ public class LibroServiceImpl implements LibroService {
         return libro;
     }
 
-
+    /**
+     * Marca un libro como prestado (estado = "reservado").
+     * @param libro Entidad libro a actualizar.
+     */
     @Override
     @Transactional
     public void marcarLibroComoPrestado(Libro libro){
@@ -172,6 +236,11 @@ public class LibroServiceImpl implements LibroService {
         libro.setEstado("reservado");
     }
 
+    /**
+     * Marca un libro como disponible (estado = "disponible").
+     *
+     * @param libro Entidad libro a actualizar.
+     */
     @Override
     @Transactional
     public void marcarLibroComoDisponible(Libro libro){

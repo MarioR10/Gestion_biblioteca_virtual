@@ -7,40 +7,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Entidad que representa un Libro en la base de datos.
+ * Contiene información básica del libro y mantiene la relación bidireccional con Prestamo.
+ */
 @Entity
 @Table( name = "libro")
 public class Libro {
 
-    //Campos
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name= "UUID", strategy = "org.hibernate.id.UUIDGenerator" )
     @Column(name="id")
-    private UUID id;
-
+    private UUID id; //Identificador único del libro
 
     @Column(name = "titulo")
-    private String titulo;
+    private String titulo; //Título del libro
 
     @Column(name = "autor")
-    private String autor;
+    private String autor; // Autor del libro
 
     @Column(name = "isbn")
-    private  String isbn;
+    private  String isbn; // Código ISBN del libro
 
     @Column(name = "categoria")
-    private  String categoria;
+    private  String categoria; // Categoría o género del libro
 
     @Column(name = "anio_de_publicacion")
-    private Integer AnioDePublicacion;
+    private Integer AnioDePublicacion; // Año de publicación
 
     @Column(name = "estado", insertable = false)
-    private String estado;
+    private String estado; // Estado del libro en la base de datos (por ejemplo, "activo" o "prestado")
 
-    //Campos que ayudan a la relacion bidireccional con la entidad Prestamos
     @OneToMany(mappedBy = "libro")
-    private List<Prestamo> prestamo= new ArrayList<>();
-
+    private List<Prestamo> prestamo= new ArrayList<>();  // Lista de préstamos asociados al libro (relación bidireccional)
 
     //Constructores
 
@@ -124,14 +124,16 @@ public class Libro {
     public void setPrestamo(List<Prestamo> prestamo) {
         this.prestamo = prestamo;
     }
+
+    /**
+     * Agrega un préstamo a la lista de préstamos del libro.
+     * @param tempPrestamo objeto Prestamo a agregar
+     */
     public void agregarPrestamo( Prestamo tempPrestamo){
-
         prestamo.add(tempPrestamo);
-
     }
 
     //To String
-
     @Override
     public String toString() {
         return "Libro{" +

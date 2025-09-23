@@ -16,10 +16,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio encargado de gestionar todas las operaciones relacionadas con usuarios.
+ * Incluye:
+ * 1. Creación de usuarios (individual o en lote) con validación de duplicados.
+ * 2. Actualización de datos de usuario existentes.
+ * 3. Eliminación de usuarios.
+ * 4. Búsqueda de usuarios por ID o de forma paginada.
+ * 5. Operaciones internas para acceder a entidades Usuario directamente.
+ */
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
@@ -28,7 +36,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioResponseMapperStruct usuarioResponseMapper;
     private final UsuarioRequestMapperStruct usuarioRequestMapper;
 
-
+    /**
+     * Constructor que inyecta las dependencias necesarias.
+     * @param usuarioRepository       Repositorio JPA para acceder a los datos de usuarios.
+     * @param usuarioResponseMapper   Mapper para convertir entidades Usuario a DTOs de respuesta.
+     * @param usuarioRequestMapper    Mapper para convertir DTOs de solicitud a entidades Usuario.
+     */
     @Autowired
     public UsuarioServiceImpl(UsuarioRepository usuarioRepository, UsuarioResponseMapperStruct usuarioResponseMapper, UsuarioRequestMapperStruct usuarioRequestMapper){
         this.usuarioRepository=usuarioRepository;
@@ -37,7 +50,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
 
-    //Encontrar Usuario Por Id
+    /**
+     * Busca un usuario por su ID.
+     * @param id Identificador del usuario.
+     * @return DTO con la información del usuario.
+     * @throws EntidadNoEncontradaException Si el usuario no existe.
+     */
     @Override
     public UsuarioResponseDTO encontrarUsuarioPorId(UUID id) {
 
@@ -50,7 +68,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     }
 
-    //Eliminamos usuario por Id
+    /**
+     * Elimina un usuario por su ID.
+     * @param id Identificador del usuario a eliminar.
+     */
     @Override
     @Transactional
     public void eliminarUsuarioPorId(UUID id){
@@ -61,7 +82,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
-    //Actualizamos usuario mediante su Id
+    /**
+     * Actualiza los datos de un usuario existente.
+     * @param id               ID del usuario a actualizar.
+     * @param usuarioActualizar DTO con los campos a actualizar.
+     * @return DTO con los datos actualizados del usuario.
+     */
     @Override
     @Transactional
     public UsuarioResponseDTO actualizarUsuario(UUID id, UsuarioActualizarDTO usuarioActualizar){
@@ -79,8 +105,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         return  usuarioResponseMapper.toResponseDTO(usuarioGuardado);
     }
 
-
-    //Creamos uno o más usuarios
+    /**
+     * Crea uno o más usuarios a partir de una lista de DTOs.
+     * Realiza validaciones internas de duplicados y contra la base de datos.
+     * @param usuariosDTO Lista de DTOs con los datos de los usuarios a crear.
+     * @throws SolicitudConDuplicadosException Si hay emails duplicados en la lista.
+     * @throws EntidadDuplicadaException       Si alguno de los emails ya existe en la base de datos.
+     */
     @Transactional
     public void crearUsuario(List<UsuarioCrearRequestDTO> usuariosDTO){
 
@@ -148,7 +179,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     }
 
-    //metodos paginados
+    // ==========================================
+    // MÉTODOS CON PAGINACIÓN
+    // ==========================================
+
+    /**
+     * Obtiene todos los usuarios de forma paginada.
+     * @param pageable Información de paginación.
+     * @return Página de DTOs con los usuarios.
+     */
     @Override
     public Page<UsuarioResponseDTO> encontrarUsuarios(Pageable pageable) {
         Page<Usuario> usuarios = usuarioRepository.findAll(pageable);
@@ -156,8 +195,17 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioResponseMapper.toResponsePageDTO(usuarios);
     }
 
-    //Metodos para logica interna
+    // ==========================================
+    // MÉTODOS AUXILIARES
+    // ==========================================
 
+    /**
+     * Método interno que busca un usuario por ID y devuelve la entidad completa.
+     * Útil para operaciones internas donde se requiere la entidad directamente.
+     * @param id Identificador del usuario.
+     * @return Entidad Usuario.
+     * @throws EntidadNoEncontradaException Si el usuario no existe.
+     */
     @Override
     public Usuario encontrarUsuarioPorIdInterno(UUID id){
         //Encontramos el Usuario en la DB
@@ -166,7 +214,4 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return usuario;
     }
-
-
-
 }

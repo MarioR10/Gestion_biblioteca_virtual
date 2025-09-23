@@ -24,11 +24,18 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 /**
- *  Esta clase es un filtro  en el contexto de Spring SecurityTiene, tiene como proposito interceptar las solicitudes
- *  Http entrantes a la aplicacion,para verificar si la solicitud trae consigo un JWT valido  y,si lo hace,autentifica
- * al usuario.Esto ocurre antes que la solicitud llegue  a los controladores.
- *Al extender la clase  OncePerRequestFilter asegura que dicho proceso de validacion y autenticacion ocurra solo una vez por
- * solicitud
+ * Filtro de autenticación JWT en el contexto de Spring Security.
+ * Su propósito es interceptar solicitudes HTTP entrantes y verificar si contienen un JWT válido.
+ * Si el token es válido, autentica al usuario antes de que la solicitud llegue a los controladores.
+ * Extiende OncePerRequestFilter para asegurar que la validación y autenticación ocurran
+ * solo una vez por solicitud.
+ * Funcionalidades principales:
+ * 1. Extrae el token JWT del encabezado "Authorization".
+ * 2. Valida que el token no esté revocado (lista negra).
+ * 3. Obtiene el username del token y carga los detalles del usuario desde la base de datos.
+ * 4. Verifica la validez del token para el usuario cargado.
+ * 5. Si todo es correcto, establece la autenticación en el contexto de Spring Security.
+ * 6. Maneja excepciones específicas de JWT y delega errores al CustomAuthenticationEntryPoint.
  */
 @Component
 public class JwtAuthenticationFilter  extends OncePerRequestFilter {
@@ -146,7 +153,7 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
         }catch (JwtRevokedException | JwtException e) {
             logger.error("Error de autenticación JWT: {}", e.getMessage());
             logger.info("Entramos al EntryPoint");
-            authenticationEntryPoint.commence(request,response,new CustomAuthException(e.getMessage(),e));
+            authenticationEntryPoint.commence(request,response,new CustomAuthException(e.getMessage()));
             // NO continuamos con doFilter: fail-fast.
 
         } catch (Exception e){ //Catch para errores inesperados

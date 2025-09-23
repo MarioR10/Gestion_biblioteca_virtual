@@ -9,8 +9,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Esta clase adapta la entidad de dominio `Usuario` para proporcionar los datos mínimos que Spring Security necesita
- * para los procesos de autenticación y autorización.Spring utiliza esta clase para obtener esos datos.
+ * Esta clase adapta la entidad de dominio `Usuario` para proporcionar a Spring Security
+ * los datos necesarios para autenticación y autorización.
+ * Spring utiliza esta clase para obtener el username, contraseña y roles del usuario.
  */
 public class CustomUserDetails implements UserDetails {
 
@@ -35,9 +36,7 @@ public class CustomUserDetails implements UserDetails {
      * @return Una colección genérica que puede contener cualquier tipo de objeto (?) que sea GrantedAuthority
      * (o cualquier subclase que la implemente, como SimpleGrantedAuthority).
      * Esta colección representará los roles del usuario.
-     * Comúnmente, los objetos dentro de esta colección serán instancias de SimpleGrantedAuthority,
-     * cada una conteniendo la cadena del rol (ej., "ROLE_ADMIN").
-     */
+    */
     @Override
     public Collection <? extends GrantedAuthority> getAuthorities(){
 
@@ -49,6 +48,8 @@ public class CustomUserDetails implements UserDetails {
                         //El prefijo ROLE es una convencion para que spring reconozca el rol
                         new SimpleGrantedAuthority("ROLE_"+usuario.getRol()));
 }
+
+//Getters
     @Override
     public  String getUsername(){
 
@@ -70,5 +71,6 @@ public class CustomUserDetails implements UserDetails {
         return usuario;
     }
 
-    //otros que vienen por default en la interfaz
+    // Otros métodos de UserDetails (isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired)
+    // pueden implementarse si se requiere un control más detallado de la cuenta.
 }

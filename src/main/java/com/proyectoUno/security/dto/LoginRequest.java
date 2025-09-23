@@ -1,6 +1,9 @@
 package com.proyectoUno.security.dto;
 
-//DTO que encapsula las credenciales del usuasrio, utilizada para iniciar sesion
+/**
+ * DTO que representa las credenciales del usuario
+ * utilizadas en el inicio de sesión.
+ */
 public record LoginRequest(
         String email,
         String contrasena

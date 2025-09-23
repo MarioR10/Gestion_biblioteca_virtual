@@ -7,41 +7,44 @@ import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Entidad que representa un Préstamo en la base de datos.
+ * Contiene información sobre la fecha del préstamo, devolución, estado
+ * y relaciones con Usuario y Libro.
+ */
 @Entity
 @Table(name = "prestamo")
 public class Prestamo {
 
-    //Campos
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name="UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column( name = "id")
-    private UUID id;
+    private UUID id; // Identificador único del préstamo
 
     @CreationTimestamp
     @Column(name = "fecha_prestamo")
-    private LocalDateTime fechaPrestamo;
-
+    private LocalDateTime fechaPrestamo; // Fecha y hora en que se realizó el préstamo
 
     @Column(name = "fecha_devolucion")
-    private LocalDateTime fechaDevolucion;
+    private LocalDateTime fechaDevolucion; // Fecha y hora de devolución del libro (puede ser null si aún no se ha devuelto)
 
     @Column( name="estado",insertable = false)
-    private String estado;
+    private String estado;  // Estado del préstamo (por ejemplo, "activo", "devuelto" o "vencido")
 
-
-    //Campos que ayudan a las relaciones
+    // ==========================
+    // Relaciones
+    // ==========================
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "id_usuario", referencedColumnName = "id")
-    private Usuario usuario;
+    private Usuario usuario;  // Usuario que realizó el préstamo
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn( name= "id_libro", referencedColumnName = "id")
-    private Libro libro;
+    private Libro libro; // Libro que se presta
 
     //Constructores
-
 
     public Prestamo() {
     }

@@ -34,8 +34,12 @@ import java.util.List;
 
 
 /**
- * Esta clase es la encargada de los procesos de autentificacion del usuario en el servidor,
- *  se encarga de: Login, Register, genera los token de acceso y refresh para el usuario
+ * Servicio encargado de los procesos de autenticación y registro de usuarios.
+ * Sus responsabilidades principales son:
+ * 1. Login de usuarios existentes y emisión de JWT (access y refresh token).
+ * 2. Registro de nuevos usuarios con codificación de contraseña.
+ * 3. Renovación de tokens mediante refresh tokens válidos.
+ * 4. Logout y revocación de tokens.
  */
 
 @Service
@@ -65,8 +69,9 @@ public class AuthService {
     }
 
     /**
-     * Metodo para iniciar sesion, para usuario ya existentes en la base de datos
-     * valida las credenciales y emite tokens para el usuario
+     * Autentica a un usuario existente y genera los tokens JWT.
+     * @param request DTO con las credenciales del usuario.
+     * @return AuthResponse con accessToken y refreshToken.
      */
     @Transactional
     public AuthResponse login(LoginRequest request){
@@ -123,6 +128,11 @@ public class AuthService {
          return  new AuthResponse(jwtToken,refreshToken);
     }
 
+    /**
+     * Registra un nuevo usuario, codifica su contraseña y genera los tokens JWT.
+     * @param request DTO con los datos del usuario a registrar.
+     * @return AuthResponse con accessToken y refreshToken.
+     */
     @Transactional
     public AuthResponse register(RegisterRequest request){
         logger.debug("Iniciando autenticacion para el usuario (register)");
@@ -167,10 +177,11 @@ public class AuthService {
 
     }
 
-    /*
-    El metodo tiene como objetivo validar el refreshtoken existente y, si es valido emitir un nuevo access token junto con
-    el refreshToken original (o uno nuevo si se implementa rotacion).De esta forma evitamos que el usuario tenga que iniciar sesion constantemente
-
+    /**
+     * Renueva el accessToken a partir de un refreshToken válido.
+     * También implementa rotación de refresh tokens y manejo de lista negra.
+     * @param oldRefreshToken Refresh token existente.
+     * @return AuthResponse con nuevo accessToken y refreshToken.
      */
     @Transactional
     public AuthResponse refreshToken(String oldRefreshToken){
@@ -219,13 +230,16 @@ public class AuthService {
         newRefreshTokenEntity .setUsuario(usuario);
         newRefreshTokenEntity .setFechaExpiracion(Instant.now().plusMillis(jwtService.getEXPIRATION_REFRESH_TOKEN()));
 
-
         refreshTokenRepository.save(newRefreshTokenEntity);
 
         return new AuthResponse(newAccessToken,newRefreshToken);
-
     }
 
+    /**
+     * Realiza logout del usuario, revocando accessToken y refreshToken.
+     * @param accessToken Token de acceso a invalidar.
+     * @param refreshToken Refresh token a revocar.
+     */
     @Transactional
     public void logout( String accessToken, String refreshToken){
 

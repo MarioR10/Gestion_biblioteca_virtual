@@ -14,44 +14,39 @@ import java.time.Instant;
 import java.util.function.Function;
 
 /**
- * Clase responsable de todas las operaciones relacionadas con JSON Web Tokens (JWT).
- * Sus responsabilidades principales son:
- * 1. Generar tokens para usuarios autenticados.
- * 2. Validar los tokens recibidos en las peticiones.
+ * Servicio responsable de todas las operaciones relacionadas con JSON Web Tokens (JWT).
+ * Su objetivo es:
+ * 1. Generar tokens de acceso y refresh para usuarios autenticados.
+ * 2. Validar tokens recibidos en las peticiones.
  * 3. Extraer información (claims) de los tokens.
  */
 
 @Service
 public class JwtService {
+
     /**
-     * La clave secreta utilizada para firmar y verificar los tokens JWT.
-     * Esta es una medida de seguridad  para asegurar que los tokens no sean alterados.
-     * La anotación @Value inyecta el valor desde 'application.properties',
-     * buscando la propiedad llamada "jwt.secret" que contiene el valor de la llave secreta.
+     * Clave secreta para firmar y verificar tokens.
+     * Inyectada desde 'application.properties' como 'jwt.secret'.
+     * Garantiza la integridad y autenticidad del token.
      */
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    /**
-     * Tiempo de expiracion del JWT
-     */
+    /** Tiempo de expiración del token de acceso en milisegundos. */
     @Value("${jwt.expiration}")
     private Long EXPIRATION_ACCESS_TOKEN;
 
-    /**
-     * Refresh token
-     */
+    /** Tiempo de expiración del refresh token en milisegundos. */
     @Value("${jwt.refresh-expiration}")
     private Long EXPIRATION_REFRESH_TOKEN;
 
-    // --- MÉTODOS PÚBLICOS PRINCIPALES ---
+  // ======================= MÉTODOS PRINCIPALES =======================//
 
     /**
-     * Genera un nuevo token de acceso para un usuario específico.
-     * @param userDetails Los detalles del usuario (proporcionados por Spring Security) para quien se genera el token.
-     * @return Un String que representa el JWT compacto y firmado.
+     * Genera un token de acceso para un usuario.
+     * @param userDetails Datos del usuario autenticado.
+     * @return JWT firmado como String.
      */
-
     public String generateAccessToken(UserDetails userDetails) {
 
         // Patrón de diseño Builder: Utilizamos el objeto JwtBuilder para construir un JWT (String) paso a paso.
@@ -73,8 +68,9 @@ public class JwtService {
     }
 
     /**
-     * Genera un refresh token, permite obtener un nuevo token de acceso sin que el usuario deba iniciar sesion nuevamente
-     * util cuando el token prinicipal expira.
+     * Genera un refresh token para obtener nuevos tokens de acceso sin re-login.
+     * @param userDetails Datos del usuario autenticado.
+     * @return Refresh token firmado.
      */
     public  String generateRefreshToken(UserDetails userDetails){
         return
@@ -124,7 +120,7 @@ public class JwtService {
                 );
     }
 
-    // --- MÉTODOS PRIVADOS Y PROTEGIDOS DE AYUDA ---
+    // ======================= MÉTODOS AUXILIARES =======================//
     /**
      * Verifica si un token ha expirado comparando su fecha de expiración con la fecha actual.
      * @param token El token a verificar.
@@ -138,7 +134,6 @@ public class JwtService {
 
     /**
      * Obtiene la fecha de expiración de un token.
-     *
      * @param token El token del cual obtener la fecha.
      * @return La fecha de expiración (Date).
      */
@@ -213,9 +208,8 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    //METODOS PUBLICOS
+    // ======================= MÉTODOS DE UTILIDAD =======================//
 
-    //Metodos para obtener los tiempos de duracion (Long) del token (y no la fecha)
 
     public Long getEXPIRATION_REFRESH_TOKEN() {
         return EXPIRATION_REFRESH_TOKEN;
@@ -225,7 +219,9 @@ public class JwtService {
         return EXPIRATION_ACCESS_TOKEN;
     }
 
-    //Metodo que calcula el tiempo restante de validez de un token
+    /**
+     * Calcula la duración restante hasta la expiración del token.
+     */
     public Duration getRemainingTime(String token){
 
         // obtenemos la fecha de expiracion del token
