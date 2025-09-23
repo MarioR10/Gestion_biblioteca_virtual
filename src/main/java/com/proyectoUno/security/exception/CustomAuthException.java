@@ -1,7 +1,9 @@
 package com.proyectoUno.security.exception;
 
-public class CustomAuthException extends RuntimeException {
-  public CustomAuthException(String message) {
-    super(message);
-  }
+import org.springframework.security.core.AuthenticationException;
+
+public class CustomAuthException extends AuthenticationException {
+    public CustomAuthException(String message, Throwable cause) {
+        super(message);
+    }
 }
