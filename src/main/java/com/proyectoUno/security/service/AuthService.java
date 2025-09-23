@@ -8,6 +8,7 @@ import com.proyectoUno.security.dto.AuthResponse;
 import com.proyectoUno.security.dto.LoginRequest;
 import com.proyectoUno.security.dto.RegisterRequest;
 import com.proyectoUno.security.entity.RefreshToken;
+import com.proyectoUno.security.exception.JwtRevokedException;
 import com.proyectoUno.security.jwt.JwtService;
 import com.proyectoUno.security.mapper.UsuarioRegisterMapper;
 import com.proyectoUno.security.model.CustomUserDetails;
@@ -197,7 +198,7 @@ public class AuthService {
             //El token que nos pasan ya ha sido revocado (por logout o por rotacion de token)
             //o su fecha de expriacion paso
 
-            throw  new JwtException( "Refresh Token invalido o expirado");
+            throw  new JwtRevokedException( "Refresh Token invalido o expirado");
         }
 
         //Obtenemos el username (email) del refresh token que nos mandan
