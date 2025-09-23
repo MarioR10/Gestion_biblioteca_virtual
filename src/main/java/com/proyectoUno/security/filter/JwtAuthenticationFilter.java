@@ -1,5 +1,6 @@
 package com.proyectoUno.security.filter;
 
+import com.proyectoUno.security.exception.CustomAuthException;
 import com.proyectoUno.security.exception.JwtRevokedException;
 import com.proyectoUno.security.jwt.JwtService;
 import com.proyectoUno.security.service.TokenBlackListService;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,13 +37,15 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final TokenBlackListService tokenBlackListService;
     private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, TokenBlackListService tokenBlackListService){
+    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, TokenBlackListService tokenBlackListService, AuthenticationEntryPoint authenticationEntryPoint){
 
         this.jwtService=jwtService;
         this.userDetailsService=userDetailsService;
         this.tokenBlackListService = tokenBlackListService;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     //Metodo principal, Spring Security lo llama automaticamente para cada solicitud HTTP. Aqui se define la logica
@@ -76,11 +80,13 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
          Los encabezados de una solicitud Http son pares clave-valor (Authorization: Bearer <token>, u otro esquema como Basic
           en lugar de Bearer), nos interesa manejar autenticación basada en JWT */
 
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             //Si alguna de las condiciones anteriores se cumple, signica que no hay un JWT que deba procesar,
             //pasa la solicitud al siguiente filtro(si lo hay) o directamente al controlador
+            logger.info("Authorization Header inválido o ausente: {}", authHeader);
             filterChain.doFilter(request, response);
-            return; //detiene la eejcucion de este filtro, evitando que se proceda con la ejecucion
+            return; //detiene la ejcucion de este filtro, evitando que se proceda con la ejecucion
         }
 
         //3. Si el encabezado existe y comienza con el prefijo "Bearer", extraemos la cadena JWT.
@@ -119,6 +125,7 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
                             null,  // La contraseña (ya no es necesaria porque ya se autenticó con el token)
                             userDetails.getAuthorities()
                     );
+                    logger.info("Autenticación exitosa: {}",authToken );
 
                     // 9. Establecer detalles de autenticación (opcional pero buena práctica)
                     // Esto añade detalles como la dirección IP y la sesión del usuario al objeto de autenticación
@@ -137,12 +144,15 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         }catch (JwtRevokedException | JwtException e) {
-            request.setAttribute("excepcion", e);
             logger.error("Error de autenticación JWT: {}", e.getMessage());
-            filterChain.doFilter(request, response);
-        } catch (Exception e){
-            request.setAttribute("excepcion", e);
-            filterChain.doFilter(request, response);
+            logger.info("Entramos al EntryPoint");
+            authenticationEntryPoint.commence(request,response,new CustomAuthException(e.getMessage(),e));
+            // NO continuamos con doFilter: fail-fast.
+
+        } catch (Exception e){ //Catch para errores inesperados
+
+            logger.info("Error inesperado {}",e.getMessage());
+            throw e; //dejamos que se progague si no es una excepción auth, la maneja /error
         }
     }
 }
