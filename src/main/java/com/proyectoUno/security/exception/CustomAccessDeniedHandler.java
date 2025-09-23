@@ -1,6 +1,7 @@
 package com.proyectoUno.security.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.proyectoUno.exception.ErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,26 +14,35 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class CustomAccessDeniedHandler  implements AccessDeniedHandler {
 
     private final Logger logger = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
-    private final ObjectMapper objectMapper= new ObjectMapper();
+    private final ObjectMapper objectMapper= new ObjectMapper().registerModule(new JavaTimeModule());
 
+     /*
+    El metodo recibe tres parametros importantes para su funcionamiento:
+        1. HttpServletRequest que representa la solicitud http que el cliente envio al servidor
+        2. HttpServletResponse representa la respuesta que nuestra aplicacion le mostrara al cliente.
+        3. es la excepcion que contiene los detalles del error de autorización que ocurrio.
+     */
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
         String path = request.getRequestURI();
-        logger.error("Error de Autorizacion en: {}, {}",path,accessDeniedException.getMessage(),accessDeniedException);
+        String errorMesage = accessDeniedException.getMessage();
+        logger.error("Entradando en CustomAccessDeniedHandler para path: {}, Excepcion: {}: ",path,accessDeniedException, errorMesage);
 
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.FORBIDDEN,
-                accessDeniedException.getMessage(),
+                errorMesage,
                 path,
                 "ACCESS_DENIED"
-
         );
 
         //Creamos la respuesta que le mandaremos al cliente
@@ -46,7 +56,7 @@ public class CustomAccessDeniedHandler  implements AccessDeniedHandler {
             String jsonResponse = objectMapper.writeValueAsString(errorResponse);
             logger.info("Respondiendo con JSON para {}: {}", path, jsonResponse); // Depuración
             writer.write(jsonResponse);
-            writer.flush();
+            writer.flush();// Asegura que se envíe la respuesta
 
         }catch (IOException e) {
             logger.error("Fallo al serializar o escribir la respuesta JSON: {}", e.getMessage(), e);
