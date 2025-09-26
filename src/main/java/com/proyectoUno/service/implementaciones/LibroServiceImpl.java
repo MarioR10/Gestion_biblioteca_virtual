@@ -248,4 +248,11 @@ public class LibroServiceImpl implements LibroService {
         libro.setEstado("disponible");
     }
 
+    @Override
+    @Transactional
+    public void crearLibro(LibroCrearRequestDTO libroCrearRequestDTO) {
+
+        Libro libro = libroRequestMapper.toEntity(libroCrearRequestDTO);
+        libroRepository.save(libro);
+    }
 }
