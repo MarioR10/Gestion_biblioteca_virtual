@@ -40,4 +40,6 @@ public interface LibroService {
 
     void marcarLibroComoDisponible(Libro libro);
 
+    void crearLibro(LibroCrearRequestDTO libroCrearRequestDTO);
+
 }
