@@ -36,6 +36,12 @@ public class ConflictException extends RuntimeException {
         this.valorCampoBusqueda=valorCampoBusqueda;
     }
 
+    public ConflictException(String message){
+        super(message);
+        this.entidadNombre=null;
+        this.campoBusqueda= null;
+        this.valorCampoBusqueda=null;
+    }
     //Getters
     public String getInternalCode() {
         return internalCode;
