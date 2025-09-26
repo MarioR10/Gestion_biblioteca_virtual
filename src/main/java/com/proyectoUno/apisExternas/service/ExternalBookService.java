@@ -36,10 +36,6 @@ public class ExternalBookService {
     @Value("${google.books.api.key}")
     private String apiKey;
 
-    @Value("${google.books.api.url}")
-    private String apiUrl;
-
-
     public ExternalBookService(WebClient webClient, ObjectMapper objectMapper) {
         this.webClient=webClient;
         this.objectMapper=objectMapper;
