@@ -78,17 +78,32 @@ public class AuthService {
     public AuthResponse login(LoginRequest request){
 
         logger.debug("Iniciando autenticacion para el usuario (login)");
-         /*
-        Creamos un AuthenticationManager y le pasamos las credenciales del usuario mediante un objeto
-        UsernamePasswordAuthenticationToken() que encapsula las credenciales (un Authentication).
+
+        /*
+         * Se delega el proceso de autenticación al AuthenticationManager.
+         *
+         * Se construye un UsernamePasswordAuthenticationToken que encapsula
+         * las credenciales proporcionadas por el usuario (email y contraseña).
+         *
+         * El AuthenticationManager se encarga de:
+         *  - Invocar el AuthenticationProvider configurado
+         *  - Validar las credenciales contra el UserDetailsService
+         *  - Verificar la contraseña usando el PasswordEncoder
+         *
+         * Si las credenciales son válidas, se devuelve un objeto Authentication
+         * autenticado; en caso contrario, se lanza una AuthenticationException.
          */
          Authentication authentication=authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.contrasena()));
+                new UsernamePasswordAuthenticationToken(
+                        request.email(),
+                        request.contrasena()
+                )
+         );
 
-         //Obtenemos el UserDetails del Authentication (asi evitamos hacer una segunda consulta a la base de datos)
+         //Obtenemos el UserDetails a partir del objeto Authentication (asi evitamos hacer una segunda consulta a la base de datos)
          UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-         //Obtenemos la entidad Usuario del UserDetails (asi evitamos un tercer consulta a la base de datos)
+         //Obtenemos la entidad Usuario a partir del objeto UserDetails (asi evitamos un tercer consulta a la base de datos)
          Usuario usuario = ((CustomUserDetails) userDetails).getUsuario();
 
         //Creamos token de acceso y refresh
@@ -96,10 +111,14 @@ public class AuthService {
         String refreshToken = jwtService.generateRefreshToken(userDetails);
 
         /*
-        Guardamos en refresh Token en la base de datos.
-        1. Eliminamos cualquier refresh Token activo para este usuario si es Admin o Moderator, de esta manera
-        nos aseguramos que haya una sesion activa por usuario. Si es un usuario comun "User" le
-        permitimos poder abrir sesion en multiples dispositivos.
+         * Una vez creado el refresh token, antes de persistirlo:
+         *
+         * Para usuarios con roles privilegiados (Admin, Moderator),
+         * se eliminan previamente todos los refresh tokens activos asociados
+         * al usuario, garantizando que solo exista una sesión activa a la vez.
+         *
+         * Esta es una política de seguridad opcional (single-session),
+         * aplicada únicamente a roles sensibles.
          */
 
         if( usuario.getRol().equals("Admin") || usuario.getRol().equals("Moderator")){
@@ -107,11 +126,16 @@ public class AuthService {
             logger.info("Se elimaron los tokens de la base de datos asociados al usuario {} exitosamente", usuario);
         }
 
-        //fecha de expiracion del refresh Token
+        /*
+         * Se extrae el claim de expiración (exp) del refresh token.
+         * El valor obtenido se convierte de Date a Instant para
+         * facilitar cálculos de tiempo y manejo de TTL.
+         */
         Date tokenExpiracion = jwtService.getExpiration(refreshToken);
         Instant expiracion = tokenExpiracion.toInstant();
 
         logger.debug("Fecha de expiración extraída del token: {}", expiracion.atZone(ZoneId.of("UTC")));
+
 
         //Mapeamos a la entidad refreshToken para persistir en la base de datos
          RefreshToken refreshTokenEntity = new RefreshToken();
@@ -121,10 +145,9 @@ public class AuthService {
          refreshTokenEntity.setFechaExpiracion(expiracion);
         logger.info("Fecha de expiracion del token de refresh: {}", refreshTokenEntity.getFechaExpiracion());
 
-
+        //Guardamos
         refreshTokenRepository.save(refreshTokenEntity);
-         logger.info("Mapeo a entidad RefreshToken exitoso: {}", refreshToken);
-        logger.info("Mapeo a entidad RefreshToken exitoso: {}, expiración guardada: {}", refreshToken, refreshTokenEntity.getFechaExpiracion().atZone(ZoneId.of("UTC")));
+         logger.info("Mapeo a entidad RefreshToken exitoso: {}, expiración guardada: {}", refreshToken, refreshTokenEntity.getFechaExpiracion().atZone(ZoneId.of("UTC")));
 
          return  new AuthResponse(jwtToken,refreshToken);
     }
@@ -174,6 +197,8 @@ public class AuthService {
 
         refreshTokenRepository.save(refreshTokenEntity);
         logger.info("refresh token persistido correctamente {}",refreshTokenEntity);
+
+        //Devolvemos DTO, con el par de tokens
         return new AuthResponse(jwtToken,refreshToken);
 
     }
@@ -188,7 +213,8 @@ public class AuthService {
     public AuthResponse refreshToken(String oldRefreshToken){
         logger.debug("Inciando el proceso de creacion de rotacion de tokens y lista Redis ");
 
-        // Verificamos si el token que nos mandan, esta presente en la base de datos; si no lo esta directamente mandamos una excepcion
+        // Verificamos si el token que nos mandan, esta presente en la base de datos; si no lo esta directamente mandamos una excepcion.
+        // De esta forma solo aceptamos tokens que el servidor haya emitido.
         RefreshToken refreshToken = refreshTokenRepository.findRefreshTokenByToken(oldRefreshToken)
                 .orElseThrow(() -> new EntidadNoEncontradaException("El refresh Token no ha sido encontrado"));
 
@@ -204,7 +230,7 @@ public class AuthService {
         //Obtenemos el username (email) del refresh token que nos mandan
         String username = jwtService.getUsernameFromToken(oldRefreshToken);
 
-        //Con el username obtenido, cargamos los datos del usuario (en el contexto de Spring Security0
+        //Con el username obtenido, cargamos los datos del usuario (en el contexto de Spring Security)
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         //Obtenemos al usuario
@@ -226,7 +252,7 @@ public class AuthService {
         //D. Guardamos el nuevo refresh token en la base de datos (este es el nuevo token que el usuario usara para las renovaciones)
         //Mapeamos a la entidad refreshToken para persistir en la base de datos
         RefreshToken newRefreshTokenEntity = new RefreshToken();
-        newRefreshTokenEntity .setToken(newAccessToken);
+        newRefreshTokenEntity .setToken(newRefreshToken);
         newRefreshTokenEntity .setRevoked(false);
         newRefreshTokenEntity .setUsuario(usuario);
         newRefreshTokenEntity .setFechaExpiracion(Instant.now().plusMillis(jwtService.getEXPIRATION_REFRESH_TOKEN()));
