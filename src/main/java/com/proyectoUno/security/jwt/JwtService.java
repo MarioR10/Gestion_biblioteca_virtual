@@ -58,15 +58,18 @@ public class JwtService {
         // Patrón de diseño Builder: Utilizamos el objeto JwtBuilder para construir un JWT (String) paso a paso.
         return
                 Jwts.builder() //Inicia la construcción de un nuevo JWT, obteniendo una instancia de JwtBuilder.
-                        //Este builder permite configurar las diferentes partes del token.
+                        //Este builder permite configurar las diferentes partes del token. va acumulando cada paso hasta
+                        //construir el JWT final
 
                         // Los "claims" son la información (payload) contenida en el token.
                         .subject(userDetails.getUsername()) //'sub' (Subject): Establece el identificador principal del token,
                         .issuedAt(new Date(System.currentTimeMillis())) //'iat' (Issued At): Establece la fecha y hora de creación del token. (toma la actual)
                         .expiration(new Date(System.currentTimeMillis() + EXPIRATION_ACCESS_TOKEN)) // 'exp' (Expiration): Establece la fecha y hora de expiración del token.
                         //toma la actual y le suma lo que establecimos y crea la fecha.
-                        .signWith(getSigningKey()) // Firma el token. Se especifica la clave secreta (getSigningKey())
-                        //el algoritmo de firma (HS256) a utilizar.
+                        .signWith(getSigningKey()) // Firma el token. Se especifica la clave secreta (getSigningKey()), y ya tiene acumulado header (por defecto o custom) y payload (los claims que pusimos)
+                        //el algoritmo de firma  a utilizar: #HS256 (HMAC-SHA256): Si la clave tiene  exactamente 256 bits (32 bytes).
+                                                            //#HS384 (HMAC-SHA384): Si la clave tiene  exactamente 384 bits (48 bytes).
+                                                            //#HS512 (HMAC-SHA512): Si la clave tiene  exactamente 512 bits (64 bytes).
                         //Esta firma garantiza la integridad y autenticidad del token.
                         .compact(); //Finaliza la construcción del JWT. Este metodo es el equivalente a 'build()'.
         //Toma toda la configuración ensambla el JWT en su formato compacto (Header.Payload.Signature)
@@ -207,18 +210,28 @@ public class JwtService {
     }
 
     /**
-     * Decodifica la clave secreta desde formato base64 y la convierte en un objeto {@link SecretKey}
-     * apto para ser usado con el algoritmo de firma HMAC-SHA256.
+     * Construye la clave criptográfica usada para firmar y validar JWT iseñado exclusivamente para crear una SecretKey
+     * que funcione con algoritmos HMAC-SHA (es decir, HS256, HS384 o HS512).
      *
-     * @return La clave de firma lista para usar con el método signWith.
+     * Flujo:
+     * - SECRET_KEY está en Base64 (String)
+     * - Se decodifica a bytes (la criptografía trabaja con bytes)
+     * - Se envuelve en un SecretKey compatible con HMAC-SHA256
+     *
+     * Esta clave se usa tanto al crear el token (firma)
+     * como al recibirlo (verificación de integridad).
      */
     private SecretKey getSigningKey() {
 
-        // Decodificamos la clave secreta desde base64 a una matriz de bytes
+        // Convertimos la SECRET_KEY (String en Base64) a bytes,
+        // ya que los algoritmos criptográficos trabajan con bytes.
+
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
 
-        /* Preparamos la clave secreta decodificada para ser usada con el algoritmo HMAC-SHA256,
-           creando un SecretKey que se pasará al metodo signWith para firmar el token. */
+        /* Creamos un SecretKey a partir de los bytes,
+        compatible con el algoritmo HMAC.
+        Esta clave se usará para firmar y validar el JWT.
+       */
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
