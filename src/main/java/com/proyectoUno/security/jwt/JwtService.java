@@ -66,6 +66,9 @@ public class JwtService {
                 // Sirve como referencia temporal del token.
                 .issuedAt(new Date(System.currentTimeMillis()))
 
+                //Establece un claim personalizado, le da el tipo de token.
+                .claim("type", "ACCESS_TOKEN")
+
                 // Fecha en la que el token deja de ser válido.
                 // Se calcula a partir del tiempo actual + duración configurada.
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_ACCESS_TOKEN))
@@ -103,7 +106,8 @@ public class JwtService {
                 .subject(userDetails
                 .getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_REFRESH_TOKEN)).claim("type", "REFRESH_TOKEN")
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_REFRESH_TOKEN))
+                .claim("type", "REFRESH_TOKEN")
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -176,34 +180,14 @@ public class JwtService {
     }
 
     /**
-     * Metodo genérico para extraer cualquier claim de un token.
-     * Utiliza una función (claimsResolver) para determinar qué claim específico extraer.
-     *
-     * @param token          El JWT del cual se extraerá el claim.
-     * @param claimsResolver Una función que toma un objeto tipo Claims y devuelve el valor del claim deseado tipo T. (interfaz funcional)
-     * @return El valor del claim extraído.
-     */
-
-    public <T> T getClaim(
-            //le pasamos el token del cual extraera el claim
-            String token,
-            //interfaz que convierte un tipo Claim a un tipo T (dependiendo del claim); la forma compacta de escribirlo es
-            // mediante una funcion lambda
-            Function<Claims, T> claimsResolver) {
-
-        // Primero, obtiene todos los claims del token.
-        // El resultado es un objeto 'Claims' con toda la información.
-        final Claims claims = getAllClaims(token);
-
-        return
-                // Ejecuta la lógica definida en 'claimsResolver', pasándole el objeto 'Claims' completo, medainte el metodo apply
-                // La lambda procesa este 'Claims' y devuelve el dato específico de tipo 'T' que se buscaba.
-                claimsResolver.apply(claims);
-    }
-
-    /**
-     * Metodo que toma un token, valida su firma con la clave secreta y devuelve el contenido (claims)
+     * Metodo para obtener todos los claims del token
+     * REGLA: NUNCA SE LEE UN CLAIM SIN VALIDAR ANTES LA FIRMA DE UN TOKEN.
      * Este flujo se hace asi porque no se puede confiar en el contenido de un JWT sin primero verificar la firma secreta
+     *
+     * este método:
+     * 1. Toma un token, valida su firma con la clave secreta
+     * 2. devuelve el contenido (TODOS LOS CLAIMS)
+     *
      */
     private Claims getAllClaims(String token) {
 
@@ -230,8 +214,44 @@ public class JwtService {
                  */
                 .parseSignedClaims(token)
 
-                // Devuelve el objeto Claims extraído del payload del token.
+                // Devuelve el objeto Claims extraído del payload del token. (  obtiene todos los claims)
                 .getPayload();
+    }
+
+    /**
+     * Metodo que permite extraer un claim especifico.
+     * Utiliza una función (claimsResolver) para determinar qué claim específico extraer.
+     *
+     * @param token          El JWT del cual se extraerá el claim.
+     * @param claimsResolver Una función que toma un objeto tipo Claims y devuelve el valor del claim deseado tipo T. (interfaz funcional)
+     * @return El valor del claim extraído.
+     */
+
+    public <T> T getClaim(
+            //le pasamos el token del cual extraera el claim
+            String token,
+
+            /*
+             * Función que define qué dato se quiere obtener del objeto Claims.
+             * El lambda que se pasa aquí es una implementación de Function<Claims, T>
+             * y contiene la lógica para extraer un claim específico
+             * (por ejemplo: subject, expiration, o un claim personalizado).
+             */
+            Function<Claims, T> claimsResolver) {
+
+        // 1. Obtenemos todos los claims del token (aqui recordemos que va la validación del token), el resultado es un objeto 'Claims' con toda la información.
+        final Claims claims = getAllClaims(token);
+
+        return
+
+                /*
+                 * 2. Se ejecuta la lógica recibida (lambda) sobre el objeto Claims.
+                 *
+                 * El método apply(...) pertenece a la interfaz Function
+                 * y aplica la lógica definida en el lambda para devolver el dato deseado.
+                 */
+                claimsResolver.apply(claims);
+
     }
 
     /**
@@ -264,6 +284,26 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes); // Devuelve el objeto SecretKey
     }
 
+
+    /**
+     * Obtiene el tipo del token
+     * @return
+     */
+    public  String getTokenType(String token){
+
+        return  getClaim(
+                token,
+
+                /*Los claims personalizados no tienen método propio (como:
+                getSubject() → sub
+                getExpiration() → exp
+
+                Por eso se obtienen como un Map.Se busca por su llave (nombre) y se obtiene su valor.
+                pasanmos nombre del claim y tipo esperado <--Devuelve el valor asociado
+                 */
+
+                claim -> claim.get("type", String.class));
+    }
     // ======================= MÉTODOS DE UTILIDAD =======================//
 
 
