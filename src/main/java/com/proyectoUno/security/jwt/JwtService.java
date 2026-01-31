@@ -55,25 +55,41 @@ public class JwtService {
      */
     public String generateAccessToken(UserDetails userDetails) {
 
-        // Patrón de diseño Builder: Utilizamos el objeto JwtBuilder para construir un JWT (String) paso a paso.
-        return
-                Jwts.builder() //Inicia la construcción de un nuevo JWT, obteniendo una instancia de JwtBuilder.
-                        //Este builder permite configurar las diferentes partes del token. va acumulando cada paso hasta
-                        //construir el JWT final
+        // Inicia la construcción de un JWT mediante el patrón Builder. Utilizamos el objeto JwtBuilder para construir un JWT (String) paso a paso.
+        return Jwts.builder()
 
-                        // Los "claims" son la información (payload) contenida en el token.
-                        .subject(userDetails.getUsername()) //'sub' (Subject): Establece el identificador principal del token,
-                        .issuedAt(new Date(System.currentTimeMillis())) //'iat' (Issued At): Establece la fecha y hora de creación del token. (toma la actual)
-                        .expiration(new Date(System.currentTimeMillis() + EXPIRATION_ACCESS_TOKEN)) // 'exp' (Expiration): Establece la fecha y hora de expiración del token.
-                        //toma la actual y le suma lo que establecimos y crea la fecha.
-                        .signWith(getSigningKey()) // Firma el token. Se especifica la clave secreta (getSigningKey()), y ya tiene acumulado header (por defecto o custom) y payload (los claims que pusimos)
-                        //el algoritmo de firma  a utilizar: #HS256 (HMAC-SHA256): Si la clave tiene  exactamente 256 bits (32 bytes).
-                                                            //#HS384 (HMAC-SHA384): Si la clave tiene  exactamente 384 bits (48 bytes).
-                                                            //#HS512 (HMAC-SHA512): Si la clave tiene  exactamente 512 bits (64 bytes).
-                        //Esta firma garantiza la integridad y autenticidad del token.
-                        .compact(); //Finaliza la construcción del JWT. Este metodo es el equivalente a 'build()'.
-        //Toma toda la configuración ensambla el JWT en su formato compacto (Header.Payload.Signature)
-        // y lo serializa a una cadena de texto (String) lista para ser utilizada.
+                // Establece el "subject" del token.
+                // Normalmente es el identificador del usuario (username, email, id).
+                .subject(userDetails.getUsername())
+
+                // Fecha en la que el token fue creado.
+                // Sirve como referencia temporal del token.
+                .issuedAt(new Date(System.currentTimeMillis()))
+
+                // Fecha en la que el token deja de ser válido.
+                // Se calcula a partir del tiempo actual + duración configurada.
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_ACCESS_TOKEN))
+
+                /*
+                 * Firma el token.
+                 *
+                 * - Usa la clave secreta devuelta por getSigningKey()
+                 * - La firma se realiza usando  HMAC (algoritmo simétrico)
+                 * - El algoritmo HS256 / HS384 / HS512 se elige según el tamaño de la clave
+                 *
+                 * Esta firma:
+                 * - Garantiza que el token no fue modificado
+                 * - Permite verificar que fue emitido por este servidor
+                 */
+                 .signWith(getSigningKey())
+
+                /*
+                 * Finaliza la construcción del JWT (Este metodo es el equivalente a 'build()'):
+                 * - Genera header, payload y firma
+                 * - Los codifica en Base64URL
+                 * - Los une en el formato compacto: header.payload.signature
+                 */.compact();
+
     }
 
     /**
@@ -83,14 +99,13 @@ public class JwtService {
      * @return Refresh token firmado.
      */
     public String generateRefreshToken(UserDetails userDetails) {
-        return
-                Jwts.builder()
-                        .subject(userDetails.getUsername())
-                        .issuedAt(new Date(System.currentTimeMillis()))
-                        .expiration(new Date(System.currentTimeMillis() + EXPIRATION_REFRESH_TOKEN))
-                        .claim("type", "REFRESH_TOKEN")
-                        .signWith(getSigningKey())
-                        .compact();
+        return Jwts.builder()
+                .subject(userDetails
+                .getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_REFRESH_TOKEN)).claim("type", "REFRESH_TOKEN")
+                .signWith(getSigningKey())
+                .compact();
     }
 
     /**
@@ -109,7 +124,7 @@ public class JwtService {
 
         return
                 // Comprueba que el username coincida con el de userDetails y que el token no haya expirado.
-                (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+                username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     // --- MÉTODOS PÚBLICOS AUXILIARES PARA EXTRAER INFORMACIÓN ---
@@ -128,8 +143,7 @@ public class JwtService {
                         token,
                         //Expresion lambda,forma abreviada de Function<Claims,String>, a indica que se transforma
                         // el tipo Claims a tipo String utilizando el metodo getSubject() del objeto claims
-                        (claims -> claims.getSubject())
-                );
+                        (claims -> claims.getSubject()));
     }
 
     // ======================= MÉTODOS AUXILIARES =======================//
@@ -193,46 +207,61 @@ public class JwtService {
      */
     private Claims getAllClaims(String token) {
 
-        // Patrón de diseño Builder: Ocupamos un objeto Builder para crear paso a paso un objeto JwtParser.
-        return
-                Jwts.parser()  // Inicia la construcción de un JwtParserBuilder para configurar la validación y extracción del token.
-                        // Nota: Jwts.parser() devuelve un builder que permite encadenar configuraciones y luego crear un objeto JwtParser.
-                        .verifyWith(getSigningKey()) // Asigna la clave secreta que se usará para verificar la firma del token.
-                        // La firma del JWT se valida contra esta clave.
-                        .build() // Finaliza la configuración y construye una instancia inmutable de JwtParser.
-                        // El JwtParser ya está listo para procesar tokens. (este objeto se crea para poder leer, dividir en partes,
-                        // decodificarlo, validar, convertitlo en un objeto que java entiend. Brinda herramientas y funcionalidades para esto
-                        .parseSignedClaims(token)  // Usa el JwtParser para:
-                        // 1. Validar la firma del token con la clave secreta (lanzará excepción si falla).
-                        // 2. Separar y decodificar las partes del JWT (header, payload, firma). Esto nos devuelve un
-                        // Jwt<Claims> que java entiende
-                        .getPayload(); // Devuelve el objeto Claims extraído del payload del token.
+        // Patrón de diseño Builder:
+        // Usamos un Builder para crear paso a paso un JwtParser.
+        return Jwts.parser()
+
+                /*
+                 * Asignamos la clave secreta con la que se validará la firma.
+                 *
+                 * Esta debe ser la misma clave usada para firmar el token.
+                 * Si no coincide, la validación falla.
+                 */
+                .verifyWith(getSigningKey())
+
+                // Finaliza la configuración y construye una instancia inmutable de JwtParser.
+                .build()
+
+                /*
+                 * Usa el JwtParser para:
+                 * 1. Validar la firma del token con la clave secreta (lanza excepción si falla)
+                 * 2. Separar y decodificar las partes del JWT (header, payload y firma)
+                 * 3. Convertir el contenido en un objeto Jwt<Claims> que Java entiende
+                 */
+                .parseSignedClaims(token)
+
+                // Devuelve el objeto Claims extraído del payload del token.
+                .getPayload();
     }
 
     /**
-     * Construye la clave criptográfica usada para firmar y validar JWT iseñado exclusivamente para crear una SecretKey
-     * que funcione con algoritmos HMAC-SHA (es decir, HS256, HS384 o HS512).
-     *
-     * Flujo:
-     * - SECRET_KEY está en Base64 (String)
-     * - Se decodifica a bytes (la criptografía trabaja con bytes)
-     * - Se envuelve en un SecretKey compatible con HMAC-SHA256
-     *
-     * Esta clave se usa tanto al crear el token (firma)
-     * como al recibirlo (verificación de integridad).
+     * Obtiene la clave secreta que se usará para firmar y verificar JWT.
+     * <p>
+     * Esta aplicación usa JWT firmados con HMAC.
+     * HMAC necesita una clave secreta compartida (la misma para firmar y validar).
+     * <p>
+     * La clave se guarda como texto en Base64 en application.properties,
+     * pero para usarla en criptografía debe convertirse a bytes
+     * y luego a un objeto SecretKey.
      */
     private SecretKey getSigningKey() {
 
-        // Convertimos la SECRET_KEY (String en Base64) a bytes,
-        // ya que los algoritmos criptográficos trabajan con bytes.
+        // La clave (SECRET_KEY) viene como String en Base64.
+        // Aquí la decodificamos para obtener los bytes reales de la clave.
 
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
 
-        /* Creamos un SecretKey a partir de los bytes,
-        compatible con el algoritmo HMAC.
-        Esta clave se usará para firmar y validar el JWT.
-       */
-        return Keys.hmacShaKeyFor(keyBytes);
+        /*
+         * Construye un SecretKey a partir de bytes.
+         *
+         * El SecretKey:
+         * - Contiene el material secreto (bytes)
+         * - Indica que esta clave es válida para algoritmos HMAC
+         *
+         * No ejecuta HMAC ni firma nada.
+         * Solo describe la clave que HMAC utilizará más adelante.
+         */
+        return Keys.hmacShaKeyFor(keyBytes); // Devuelve el objeto SecretKey
     }
 
     // ======================= MÉTODOS DE UTILIDAD =======================//
