@@ -108,6 +108,19 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
                 throw new JwtRevokedException("El token fue revocado o invalido");
 
             }
+
+            // --- VERIFICAR SI EL TOKEN ES ACCESS Y NO RERESH ---
+            final String tokenType= jwtService.getTokenType(jwt);
+            if (!"ACCESS_TOKEN".equals(tokenType)) {
+
+                String msg = tokenType==null
+                                ? "Token sin claim 'type' → rechazado por seguridad"
+                                : "Tipo de token inválido: " + tokenType;
+
+                logger.warn(msg);
+                throw new JwtException(msg);
+            }
+
             //4. Extrae el username del JWT
             username = jwtService.getUsernameFromToken(jwt);
 
